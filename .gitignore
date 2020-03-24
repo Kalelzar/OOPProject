@@ -1,0 +1,8 @@
+/.dir-locals.el
+/.dir-locals.elc
+/cmake-build-debug/
+/compile.sh
+/run.sh
+/lib
+/googletest-build
+/.idea

@@ -1,0 +1,16 @@
+#+AUTHOR: Borislav Atanasov
+#+DESCRIPTION: Issue tracker for project
+
+:TableOfContents:
+[[./main.org][MAIN]]
+[[./todo.org][TODO]]
+:END:
+
+
+* Issue                                                               :issue:
+** Bug                                                                  :bug:
+*** TODO Open [0/0]                                                      :open:
+*** DONE Closed [0/0]                                                  :closed:
+** Enchancement                                                :enchancement:
+*** TODO Open [0/0]                                                      :open:
+*** DONE Closed [0/0]                                                  :closed:

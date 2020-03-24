@@ -1,0 +1,63 @@
+#+AUTHOR: Borislav Atanasov
+#+DESCRIPTION: TO-DO list for the project
+
+:TableOfContents:
+[[./main.org][MAIN]]
+[[./issuetracker.org][ISSUES]]
+:END:
+
+* TODO Project [2/3]                                                :project:
+** TODO Set up git repo                                                 :git:
+** DONE Pick a unit testing library                                    :unit:
+   CLOSED: [2020-03-24 Tue 23:23]
+** DONE Set up CPP support in Emacs                               :cpp:emacs:
+   CLOSED: [2020-03-24 Tue 23:23]
+* TODO Topic - Hotel(11) [0/1]                                      :project:
+** TODO Requirements [0/1]
+*** TODO Working with files [0/6]                                      :file:
+**** TODO Open [0/4]
+     - [ ] Opened files must have their entire contents loaded in memory and then
+      they must be closed.
+      That could be an issue with large files
+     - [ ] All modifications to the file content must be done in-memory unless
+      explicitly told otherwise
+     - [ ] Output success or failure and what was done
+     - [ ] If there was an error while reading the file tell so to the user and terminate
+**** TODO Close [0/2]
+     - [ ] Close the currently opened file by clearing all internal state
+       regarding the file.
+     - [ ] Only the command "open" is available after closing the file ( What about exit? )
+**** TODO Save [0/1]
+     - [ ] Write all changes to the same file from which the information was read ( i.e the 'opened' file )
+**** TODO Save As [0/1]
+     - [ ] Same as Save but takes a path to save the file to rather than to original 'opened' file
+**** TODO Help [0/1]
+     - [ ] Returns short help about the supported commands and arguments
+**** TODO Exit [0/1]
+     - [ ] Closes the program
+*** TODO Hotel operations [0/0]
+**** TODO Check-in [0/2]
+     - [ ] Takes the number of the room, as well as the start and end date of the stay, and a note
+     - [ ] Register the provided room as taken
+**** TODO Availability [0/2]
+     - [ ] Takes the optional <date>. If not provided assume today.
+     - [ ] Displays a list of free rooms on <date>
+**** TODO Check-out [0/1]
+     - [ ] Free the room with the provided number
+**** TODO Report [0/2]
+     - [ ] Takes two arguments <from: Date> <to: Date>
+     - [ ] Displays the usage of rooms in the given range along with the days a room has been used.
+       NOTICE: A room may be used more than once in the given time period
+**** TODO Find [0/2]
+     - [ ] Takes three arguments <beds: Int> <from: Date> <to: Date>
+     - [ ] Finds a free room with at least <beds> beds for the period from <from> to <to>
+**** TODO Find! [0/2]
+     - [ ] Takes three arguments <beds: Int> <from: Date> <to: Date>
+     - [ ] Same as find but allows for moving the guests in at most 2 rooms to other rooms.
+**** TODO Unavailable [0/2]
+     - [ ] Takes four arguments <room: Int> <from: Date> <to: Date> <note: String>
+     - [ ] Mark room <room> as unavailable in the provided period and with the note <note>
+       Nobody may check-into an unavailable room.
+*** TODO Bonus [0/1]
+**** TODO Activities
+***** TODO [#A] Finish this section

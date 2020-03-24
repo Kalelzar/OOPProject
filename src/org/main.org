@@ -1,0 +1,7 @@
+#+AUTHOR: Borislav Atanasov
+#+DESCRIPTION: Main org file for the project
+
+:TableOfContents:
+[[./issuetracker.org][ISSUES]]
+[[./todo.org][TODO]]
+:END:
