@@ -12,8 +12,8 @@
    CLOSED: [2020-03-24 Tue 23:23]
 ** DONE Set up CPP support in Emacs                               :cpp:emacs:
    CLOSED: [2020-03-24 Tue 23:23]
-* TODO Topic - Hotel(11) [0/1]                                      :project:
-** TODO Requirements [0/1]
+* TODO Topic - Hotel(11) [[https://docs.google.com/document/d/1quesENVOm28Ue37vGhU2oB4d-dsUG0VX1mCELxx6LN4/edit#heading=h.uyrb68787w5m][Link]] [0/1] :project:
+** TODO Requirements [0/3]
 *** TODO Working with files [0/6]                                      :file:
 **** TODO Open [0/4]
      - [ ] Opened files must have their entire contents loaded in memory and then
@@ -35,7 +35,7 @@
      - [ ] Returns short help about the supported commands and arguments
 **** TODO Exit [0/1]
      - [ ] Closes the program
-*** TODO Hotel operations [0/0]
+*** TODO Hotel operations [0/7]
 **** TODO Check-in [0/2]
      - [ ] Takes the number of the room, as well as the start and end date of the stay, and a note
      - [ ] Register the provided room as taken
@@ -61,3 +61,32 @@
 *** TODO Bonus [0/1]
 **** TODO Activities
 ***** TODO [#A] Finish this section
+** TODO Tasks [0/1]                                                    :task:
+*** TODO Create a way to store dates in the appropriate format [0/7]
+**** TODO A constructor with explicit day, month and year will definetely be useful
+**** TODO A default constructor? Maybe set it to current day? Or maybe a static method today()? Both?
+**** TODO A constructor from string? As that is the way the dates will be read it seems logical.
+     Is it better to off-load the parsing of the date to Date or do it in-place while it is read? Why?
+     Maybe have an explicit static method for that like Date Date::fromString(const char* str). In what way is that
+     Better than a constructor?
+**** TODO Does this class need a Big Four? Why? Why not?
+**** TODO Is a date immutable? Is there a reason for or benefit to making the Date class immutable?
+     What about mutable? Will the Date class need to change? Perhaps there is a need for Date arithmetics?
+**** TODO How do we format the date? Using a format string? By baking in the ISO Whatever Standard?
+     Do we just straight up print the date to stdout? What about stderr? Is there a reason to return a string?
+     How do we write the date to a file? Maybe override the << and >> operators? If we do return a string
+     how do we do that? Create the string inside the function and return that?
+     That would require trusting the user to remember to free it, and I have trust issues when it comes to memory managment.
+     Maybe take the string in as reference and make the usage of memory more explicit in a similiar manner to C's scanf/printf?
+     What are the benefits to each approach?
+**** TODO What do we do with malformed dates? Just assume that the user meant what they typed and try to compensate?
+     Throw a tantrum? Maybe add support for both approaches?
+**** TODO Any other functionality that a date needs?
+*** TODO How do we store the data in a file? Should it be human-readable? Maybe a binary data format?
+#+SRC_BEGIN
+  hotel 1.0
+  room 10 booked from 2020-03-19 to 2020-03-23 - FAMILY
+  room 9  unavailable from 2020-03-01 to 2020-04-15 - Repairs
+#+SRC_END
+    Maybe something like that? It's simple enough. Parsing it should be relatively simple too.
+**** How do we know what rooms exist? Is there info anywhere? There doesn't seem to be.
