@@ -195,4 +195,46 @@ namespace Hotel {
         return std::abs(daysSince1900(date) - daysSince1900()) + 1;
     }
 
+    std::ostream &operator<<(std::ostream &out, const Date &date) {
+        char str[11];
+        date.getString(str);
+
+        out<<str;
+
+        return out;
+    }
+
+    static bool isDash(std::istream &in){
+        return in.get() == '-';
+    }
+
+    std::istream &operator>>(std::istream &in, Date &date) {
+
+        int year;
+        int month;
+        int day;
+
+        in>>year;
+
+        if(!isDash(in)){
+            in.setstate(std::ios::failbit);
+            return in;
+        }
+
+        in>>month;
+
+        if(!isDash(in)){
+            in.setstate(std::ios::failbit);
+            return in;
+        }
+
+        in>>day;
+
+        date.setYear(year);
+        date.setMonth(month);
+        date.setDay(day);
+
+        return in;
+    }
+
 }

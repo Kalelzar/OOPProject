@@ -14,6 +14,11 @@ namespace Hotel {
         int year;
         int month;
         int day;
+
+        void setYear(int _year){year = _year;}
+        void setMonth(int _month){month = _month;}
+        void setDay(int _day){day = _day;}
+
     public:
         /**
          * Constructs a date with the provided arguments
@@ -42,6 +47,10 @@ namespace Hotel {
             getString(str);
             std::cout<<str;
         }
+
+        friend std::ostream& operator<<(std::ostream& out, const Date& date);
+
+        friend std::istream& operator>>(std::istream& in, Date& date);
 
         /**
          * Prints the date in the ISO 8601 format ( <year>-<month>-<day> ) and a newline
