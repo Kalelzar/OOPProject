@@ -18,8 +18,8 @@ namespace Hotel {
 
     class Room {
     private:
-        int id;
-        char *note;
+        int id{};
+        char *note{};
         RoomState state;
         Date stateFrom;
         Date stateTo;
@@ -40,7 +40,7 @@ namespace Hotel {
 
         Room();
 
-        Room(int id);
+        explicit Room(int id);
 
         ~Room() {
             freeNote();
@@ -52,7 +52,7 @@ namespace Hotel {
 
         int getID() const { return id; }
 
-        bool operator==(Room const &other) {
+        bool operator==(Room const &other) const {
             return getID() == other.getID();
         }
 

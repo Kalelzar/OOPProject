@@ -27,7 +27,7 @@ namespace Hotel {
     public:
         RoomList();
 
-        RoomList(unsigned reserved);
+        explicit RoomList(unsigned reserved);
 
         RoomList(RoomList const &other);
 
@@ -41,7 +41,7 @@ namespace Hotel {
 
         void addAll(RoomList const &rl);
 
-        void remove(Room room);
+        void remove(const Room& room);
 
         Room get(unsigned index) const;
 

@@ -74,3 +74,17 @@ Hotel::Room Hotel::RoomList::get(unsigned index) const {
     if (index >= length()) return rooms[length() - 1];
     return rooms[index];
 }
+
+void Hotel::RoomList::remove(const Hotel::Room& room) {
+    bool found = false;
+    unsigned index=0;
+    for(unsigned i = 0; i<length(); i++){
+        if(get(i) == room)
+            continue;
+        if(index != i){
+            rooms[index] = rooms[i];
+        }
+        index++;
+    }
+    elemCount--;
+}

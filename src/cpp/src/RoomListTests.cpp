@@ -58,3 +58,16 @@ TEST(RoomList, Expand) {
     EXPECT_EQ(rl.capacity(), capacity * 4);
 }
 
+TEST(RoomList, Remove){
+    RoomList rl;
+    Room r1(1);
+    Room r2(2);
+    Room r3(3);
+    rl.add(r1);
+    rl.add(r2);
+    rl.add(r3);
+    rl.remove(r2);
+    EXPECT_EQ(rl.length(), 2);
+    EXPECT_TRUE(rl.get(0) == r1);
+    EXPECT_TRUE(rl.get(1) == r3);
+}
