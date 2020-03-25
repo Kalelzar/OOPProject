@@ -12,35 +12,44 @@ namespace Hotel {
     class RoomList {
     private:
         static const unsigned DEFAULT_RESERVED_SPACE = 16;
-        Room* rooms;
+        Room *rooms;
         unsigned reserved;
         unsigned elemCount;
 
         void expand();
+
         void free();
+
         void create(unsigned reserve);
-        void copy(RoomList const& other);
+
+        void copy(RoomList const &other);
 
     public:
-
-
         RoomList();
+
         RoomList(unsigned reserved);
-        RoomList(RoomList const& other);
 
-        RoomList& operator=(RoomList const& other);
+        RoomList(RoomList const &other);
 
-        ~RoomList(){ free(); }
+        RoomList &operator=(RoomList const &other);
 
-        void add(Room room);
-        void addAll(RoomList const& rl);
+        ~RoomList() {
+            free();
+        }
+
+        void add(Room const &room);
+
+        void addAll(RoomList const &rl);
+
         void remove(Room room);
-        Room get(unsigned index) const ;
+
+        Room get(unsigned index) const;
 
         unsigned length() const { return elemCount; }
+
         unsigned capacity() const { return reserved; }
 
-        static unsigned getDefaultReservedSpace(){ return DEFAULT_RESERVED_SPACE; };
+        static unsigned getDefaultReservedSpace() { return DEFAULT_RESERVED_SPACE; };
     };
 
 }

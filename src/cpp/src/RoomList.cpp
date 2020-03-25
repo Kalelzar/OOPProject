@@ -15,7 +15,7 @@ void Hotel::RoomList::create(unsigned reserve) {
 }
 
 void Hotel::RoomList::free() {
-    delete [] rooms;
+    delete[] rooms;
 }
 
 Hotel::RoomList::RoomList(unsigned reserved) {
@@ -23,12 +23,12 @@ Hotel::RoomList::RoomList(unsigned reserved) {
 }
 
 Hotel::RoomList::RoomList(const Hotel::RoomList &other) {
-    if(&other != this)
+    if (&other != this)
         copy(other);
 }
 
 void Hotel::RoomList::copy(const Hotel::RoomList &other) {
-    delete [] rooms;
+    delete[] rooms;
     rooms = new Room[other.capacity()];
     reserved = other.capacity();
     elemCount = 0;
@@ -42,32 +42,35 @@ Hotel::RoomList &Hotel::RoomList::operator=(const Hotel::RoomList &other) {
 }
 
 void Hotel::RoomList::expand() {
-    unsigned newCapacity = capacity()*2;
-    Room* newRooms = new Room[newCapacity];
+    unsigned newCapacity = capacity() * 2;
+    reserved = newCapacity;
 
-    for(int i = 0; i < length(); i++){
+    Room *newRooms = new Room[newCapacity];
+
+    for (int i = 0; i < length(); i++) {
         newRooms[i] = get(i);
     }
 
-    delete [] rooms;
+    delete[] rooms;
     rooms = newRooms;
 }
 
-void Hotel::RoomList::add(Hotel::Room room) {
-    if(elemCount + 1 >= capacity()){
+void Hotel::RoomList::add(Hotel::Room const &room) {
+    if (elemCount + 1 > capacity()) {
         expand();
     }
     rooms[elemCount] = room;
     elemCount++;
+
 }
 
 void Hotel::RoomList::addAll(const Hotel::RoomList &rl) {
-    for(int i = 0; i < rl.length(); i++){
+    for (int i = 0; i < rl.length(); i++) {
         add(rl.get(i));
     }
 }
 
 Hotel::Room Hotel::RoomList::get(unsigned index) const {
-    if(index >= length()) return rooms[length() - 1];
+    if (index >= length()) return rooms[length() - 1];
     return rooms[index];
 }

@@ -6,6 +6,7 @@
 #define OOPPROJECT_ROOM_HPP
 
 #include "Date.hpp"
+
 namespace Hotel {
 
     enum class RoomState {
@@ -22,28 +23,50 @@ namespace Hotel {
         RoomState state;
         Date stateFrom;
         Date stateTo;
+        bool noteFreed = true;
+
+        void copy(Room const &other);
 
         void init(int id);
+
     public:
+
+        void freeNote() {
+            if (!noteFreed) {
+                noteFreed = true;
+                delete[] note;
+            }
+        }
+
         Room();
+
         Room(int id);
-        ~Room(){ delete [] note; }
+
+        ~Room() {
+            freeNote();
+        }
+
+        Room(Room const &other);
+
+        Room &operator=(Room const &other);
 
         int getID() const { return id; }
 
-        bool operator==(Room const& other){
+        bool operator==(Room const &other) {
             return getID() == other.getID();
         }
 
-        void setNote(const char* note);
-        char* getNote() const { return note; }
+        void setNote(const char *note);
+
+        char *getNote() const { return note; }
 
         void setState(RoomState state, Date from, Date to);
+
         RoomState getState() const { return state; }
+
         Date getStateFrom() const { return stateFrom; }
+
         Date getStateTo() const { return stateTo; }
-
-
     };
 
 }
