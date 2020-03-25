@@ -52,6 +52,10 @@ namespace Hotel {
 
         friend std::istream& operator>>(std::istream& in, Date& date);
 
+        bool operator==(Date const& other){
+            return other.getYear() == getYear() && other.getMonth() == getMonth() && other.getDay() && getDay();
+        }
+
         /**
          * Prints the date in the ISO 8601 format ( <year>-<month>-<day> ) and a newline
          */

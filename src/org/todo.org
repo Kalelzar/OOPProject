@@ -100,6 +100,11 @@
      Throw a tantrum? Maybe add support for both approaches?
      For now I will compensate. I will probably add support for strict evaluation later on.
 **** TODO Any other functionality that a date needs?
+*** TODO Reading commands
+**** TODO Maybe implement each command as a separate class that inherits from a common HotelCommand class
+     Seems far too bulky and unintuitive. Hard pass.
+**** TODO Just do a standard parser? I guess so.
+
 *** TODO How do we store the data in a file? Should it be human-readable? Maybe a binary data format? [0/0]
 #+SRC_BEGIN
   hotel 1.0
