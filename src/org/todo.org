@@ -82,11 +82,13 @@
 **** TODO What do we do with malformed dates? Just assume that the user meant what they typed and try to compensate?
      Throw a tantrum? Maybe add support for both approaches?
 **** TODO Any other functionality that a date needs?
-*** TODO How do we store the data in a file? Should it be human-readable? Maybe a binary data format?
+*** TODO How do we store the data in a file? Should it be human-readable? Maybe a binary data format? [0/0]
 #+SRC_BEGIN
   hotel 1.0
   room 10 booked from 2020-03-19 to 2020-03-23 - FAMILY
   room 9  unavailable from 2020-03-01 to 2020-04-15 - Repairs
 #+SRC_END
     Maybe something like that? It's simple enough. Parsing it should be relatively simple too.
-**** How do we know what rooms exist? Is there info anywhere? There doesn't seem to be.
+**** TODO Why not just store the info as a sequence of commands? The same commands that the user inputs that is.
+     And then when a file is opened just pass the commands line-by-line to the same interpreter that the user does.
+**** TODO How do we know what rooms exist? Is there info anywhere? There doesn't seem to be.
