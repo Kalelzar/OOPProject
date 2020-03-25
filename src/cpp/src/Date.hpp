@@ -4,6 +4,7 @@
 
 #ifndef OOPPROJECT_DATE_HPP
 #define OOPPROJECT_DATE_HPP
+#include <iostream>
 namespace Hotel {
 /**
  * Stores a date and has some useful methods for working with dates
@@ -23,14 +24,69 @@ namespace Hotel {
         Date(int year, int month, int day);
 
         /**
+         * Constructs a date with the current date.
+         */
+        Date();
+
+        /**
+         * Constructs a date from a string representing a date in the ISO 8601 format
+         * @param str the string to convert from
+         */
+        Date(const char str[11]);
+
+        /**
          * Prints the date in the ISO 8601 format ( <year>-<month>-<day> )
          */
-        void print() const;
+        void print() const {
+            char str[11];
+            getString(str);
+            std::cout<<str;
+        }
 
         /**
          * Prints the date in the ISO 8601 format ( <year>-<month>-<day> ) and a newline
          */
-        void println() const;
+        void println() const {
+            print();
+            std::cout<<std::endl;
+        }
+
+        /**
+         * Converts this date to the ISO 8601 format
+         * @param str the string to which to write
+         */
+        void getString(char (&str)[11]) const;
+
+        /**
+         * Returns the day represented by this Date
+         * @return the day
+         */
+        int getDay() const { return day; }
+
+        /**
+         * Returns the month represented by this Date
+         * @return the month
+         */
+        int getMonth() const { return month; }
+
+        /**
+         * Returns the year represented by this Date
+         * @return the year
+         */
+        int getYear() const { return year; }
+
+        /**
+         * Returns the days between this date and 1900-01-01
+         * @return the days since 1900
+         */
+        int daysSince1900() const;
+
+        /**
+         * Returns the days between this date and the provided date
+         * @param date the other date
+         * @return the days between the two dates
+         */
+        int daysBetween(const Date& date) const;
 
         /**
          * Returns the current date
@@ -54,11 +110,45 @@ namespace Hotel {
          */
         static bool isLeapYear(int year);
 
-        int getDay() const { return day; }
+        /**
+         * Returns the current year
+         * @return the current year
+         */
+        static int currentYear();
 
-        int getMonth() const { return month; }
+        /**
+         * Returns the current month
+         * @return the current month
+         */
+        static int currentMonth();
 
-        int getYear() const { return year; }
+        /**
+         * Returns the current day
+         * @return the current day
+         */
+        static int currentDay();
+
+        /**
+         * Converts a string representing a date in the ISO 8601 format into a Date instance.
+         * @param str the string to convert to date
+         * @return the converted date
+         */
+        static Date fromString(const char str[11]);
+
+        /**
+         * Returns the days between two dates
+         * @param start the first date
+         * @param end the second date
+         * @return thr days between the two dates
+         */
+        static int daysBetween(const Date& start, const Date& end);
+
+        /**
+         * Returns the days between 1900-01-01 to date.
+         * @param date the date to check
+         * @return the days since 1900
+         */
+        static int daysSince1900(const Date& date);
 
     };
 

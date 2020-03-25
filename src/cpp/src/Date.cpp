@@ -4,7 +4,12 @@
 
 #include "Date.hpp"
 #include <ctime>
-#include <iostream>
+#include <cstring>
+
+#ifdef _MSC_VER
+#define sprintf sprintf_s
+#endif //_MSC_VER
+
 namespace Hotel {
     Date::Date(int year, int month, int day) {
         if (month > 12) {
@@ -81,10 +86,7 @@ namespace Hotel {
     }
 
     Date Date::today() {
-        time_t now = time(nullptr);
-        tm *ltm = localtime(&now);
-
-        return {ltm->tm_year, ltm->tm_mon, ltm->tm_mday};
+        return Date{};
     }
 
     int Date::daysOfMonth(int month, int year) {
@@ -123,6 +125,74 @@ namespace Hotel {
         }else{
             return false;
         }
+    }
+
+    int Date::currentYear() {
+        time_t now = time(nullptr);
+        tm *ltm = localtime(&now);
+        return ltm->tm_year+ 1900;
+    }
+
+    int Date::currentMonth() {
+        time_t now = time(nullptr);
+        tm *ltm = localtime(&now);
+        return ltm->tm_mon + 1;
+    }
+
+    int Date::currentDay() {
+        time_t now = time(nullptr);
+        tm *ltm = localtime(&now);
+        return ltm->tm_mday;
+    }
+
+    void Date::getString(char (&str)[11]) const {
+        sprintf(str, "%04d-%02d-%02d", getYear(), getMonth(), getDay());
+    }
+
+    Date::Date(const char str[11]){
+        char s_year[5];
+        strncpy(s_year, str, 4);
+        char s_month[3];
+        strncpy(s_month, str+5, 2);
+        char s_day[3];
+        strncpy(s_day, str+8, 2);
+        year  = atoi(s_year);
+        month = atoi(s_month);
+        day   = atoi(s_day);
+    }
+
+    Date::Date() {
+        year = currentYear();
+        month = currentMonth();
+        day = currentDay();
+    }
+
+    Date Date::fromString(const char *str) {
+        return {str};
+    }
+
+    int Date::daysBetween(const Date &start, const Date &end) {
+        return start.daysBetween(end);
+    }
+
+    int Date::daysSince1900(const Date &date) {
+        return date.daysSince1900();
+    }
+
+    int Date::daysSince1900() const {
+        int days = 0;
+        for(int i = 1900; i < getYear(); i++){
+            days+= Date::isLeapYear(i) ? 366 : 365;
+        }
+        for(int i = 1; i < getMonth(); i++){
+            days+= Date::daysOfMonth(i, getYear());
+        }
+        days+=day;
+        return days;
+    }
+
+    int Date::daysBetween(const Date &date) const {
+        return std::abs(daysSince1900(date) - daysSince1900()) + 1;
     }
 
 }

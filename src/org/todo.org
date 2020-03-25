@@ -62,25 +62,43 @@
 **** TODO Activities
 ***** TODO [#A] Finish this section
 ** TODO Tasks [0/1]                                                    :task:
-*** TODO Create a way to store dates in the appropriate format [0/7]
-**** TODO A constructor with explicit day, month and year will definetely be useful
-**** TODO A default constructor? Maybe set it to current day? Or maybe a static method today()? Both?
-**** TODO A constructor from string? As that is the way the dates will be read it seems logical.
+*** TODO Create a way to store dates in the appropriate format [7/8]
+**** DONE A constructor with explicit day, month and year will definetely be useful
+     CLOSED: [2020-03-25 Wed 17:06]
+**** DONE A default constructor? Maybe set it to current day? Or maybe a static method today()? Both?
+     CLOSED: [2020-03-25 Wed 17:06]
+     Decided to add both.
+**** DONE A constructor from string? As that is the way the dates will be read it seems logical.
+     CLOSED: [2020-03-25 Wed 17:29]
      Is it better to off-load the parsing of the date to Date or do it in-place while it is read? Why?
      Maybe have an explicit static method for that like Date Date::fromString(const char* str). In what way is that
      Better than a constructor?
-**** TODO Does this class need a Big Four? Why? Why not?
-**** TODO Is a date immutable? Is there a reason for or benefit to making the Date class immutable?
+     Parse inside Date and do both constructor and static method.
+**** DONE Does this class need a Big Four? Why? Why not?
+     CLOSED: [2020-03-25 Wed 17:08]
+     Not really. I mean there is a default constructor but that's about it. No need for destructors or explicit copy constructor/operator= as the defaults work just fine;
+**** DONE Is a date immutable? Is there a reason for or benefit to making the Date class immutable?
+     CLOSED: [2020-03-25 Wed 18:06]
      What about mutable? Will the Date class need to change? Perhaps there is a need for Date arithmetics?
-**** TODO How do we format the date? Using a format string? By baking in the ISO Whatever Standard?
+     It really doesn't need to change. As such immutable it is. Full-blown date arithmetics are unnecessary but getting the amount of days between two dates is needed.
+**** DONE How do we format the date? Using a format string? By baking in the ISO Whatever Standard?
+     CLOSED: [2020-03-25 Wed 17:14]
      Do we just straight up print the date to stdout? What about stderr? Is there a reason to return a string?
      How do we write the date to a file? Maybe override the << and >> operators? If we do return a string
      how do we do that? Create the string inside the function and return that?
      That would require trusting the user to remember to free it, and I have trust issues when it comes to memory managment.
      Maybe take the string in as reference and make the usage of memory more explicit in a similiar manner to C's scanf/printf?
      What are the benefits to each approach?
-**** TODO What do we do with malformed dates? Just assume that the user meant what they typed and try to compensate?
+
+     Printing the date to stdout is maybe unnecessary? But I will implement it for now.
+     Stderr? Not really needed for now so I will skip it.
+     Overriding << and >> is a good idea so I will get to it in a bit.
+     Use a reference for the return function. It makes me feel safer.
+     Also bake in ISO 8601. No need to overcomplicate things.
+**** DONE What do we do with malformed dates? Just assume that the user meant what they typed and try to compensate?
+     CLOSED: [2020-03-25 Wed 17:14]
      Throw a tantrum? Maybe add support for both approaches?
+     For now I will compensate. I will probably add support for strict evaluation later on.
 **** TODO Any other functionality that a date needs?
 *** TODO How do we store the data in a file? Should it be human-readable? Maybe a binary data format? [0/0]
 #+SRC_BEGIN
