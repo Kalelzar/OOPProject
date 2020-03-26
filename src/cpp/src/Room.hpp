@@ -112,6 +112,10 @@ namespace Hotel {
             return getID() == other.getID();
         }
 
+        bool operator!=(Room const &other) const {
+            return !(*this == other);
+        }
+
         /**
          * Set the note attached to this room's state
          * @param note the note

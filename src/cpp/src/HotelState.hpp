@@ -7,15 +7,21 @@
 
 #include "Date.hpp"
 #include "Room.hpp"
-#include "RoomList.hpp"
+#include "ArrayList.hpp"
+#include "ArraySet.hpp"
+#include "LinkedList.hpp"
 
 namespace Hotel {
     class HotelState {
     private:
-        RoomList rl;
+        IList<Room>* rl;
         char *filepath;
         bool modified;
     public:
+
+        ~HotelState(){
+            delete rl;
+        }
 
         void load();
 

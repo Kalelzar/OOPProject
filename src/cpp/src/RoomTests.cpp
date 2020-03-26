@@ -41,3 +41,22 @@ TEST(Room, SetState){
     EXPECT_TRUE(r.getStateFrom() == begin );
     EXPECT_TRUE(r.getStateTo()   == end );
 }
+
+TEST(Room, Equality){
+    Room r1(0, 1);
+    Room r2(1, 1);
+    Room r3(0, 5);
+    EXPECT_TRUE(r1 == r3);
+    EXPECT_FALSE(r1 == r2);
+    EXPECT_FALSE(r2 == r3);
+}
+
+
+TEST(Room, Unequality){
+    Room r1(0, 1);
+    Room r2(1, 1);
+    Room r3(0, 5);
+    EXPECT_FALSE(r1 != r3);
+    EXPECT_TRUE(r1 != r2);
+    EXPECT_TRUE(r2 != r3);
+}
