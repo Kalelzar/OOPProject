@@ -41,19 +41,19 @@
      - [ ] Register the provided room as taken
 **** TODO Availability [0/2]
      - [ ] Takes the optional <date>. If not provided assume today.
-     - [ ] Displays a list of free rooms on <date>
+     - [ ] Displays a list of free beds on <date>
 **** TODO Check-out [0/1]
      - [ ] Free the room with the provided number
 **** TODO Report [0/2]
      - [ ] Takes two arguments <from: Date> <to: Date>
-     - [ ] Displays the usage of rooms in the given range along with the days a room has been used.
+     - [ ] Displays the usage of beds in the given range along with the days a room has been used.
        NOTICE: A room may be used more than once in the given time period
 **** TODO Find [0/2]
      - [ ] Takes three arguments <beds: Int> <from: Date> <to: Date>
      - [ ] Finds a free room with at least <beds> beds for the period from <from> to <to>
 **** TODO Find! [0/2]
      - [ ] Takes three arguments <beds: Int> <from: Date> <to: Date>
-     - [ ] Same as find but allows for moving the guests in at most 2 rooms to other rooms.
+     - [ ] Same as find but allows for moving the guests in at most 2 beds to other beds.
 **** TODO Unavailable [0/2]
      - [ ] Takes four arguments <room: Int> <from: Date> <to: Date> <note: String>
      - [ ] Mark room <room> as unavailable in the provided period and with the note <note>
@@ -114,4 +114,4 @@
     Maybe something like that? It's simple enough. Parsing it should be relatively simple too.
 **** TODO Why not just store the info as a sequence of commands? The same commands that the user inputs that is.
      And then when a file is opened just pass the commands line-by-line to the same interpreter that the user does.
-**** TODO How do we know what rooms exist? Is there info anywhere? There doesn't seem to be.
+**** TODO How do we know what beds exist? Is there info anywhere? There doesn't seem to be.

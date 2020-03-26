@@ -8,8 +8,9 @@
 using namespace Hotel;
 
 TEST(Room, Constructor){
-    Room r(0);
+    Room r(0, 3);
     EXPECT_EQ(r.getID(), 0);
+    EXPECT_EQ(r.getBeds(), 3);
     EXPECT_EQ(r.getState(), RoomState::FREE);
     EXPECT_TRUE(r.getStateFrom() == Date::today() );
     EXPECT_TRUE(r.getStateTo()   == Date::today() );
@@ -17,7 +18,7 @@ TEST(Room, Constructor){
 }
 
 TEST(Room, SetNote){
-    Room r(0);
+    Room r(0, 1);
     EXPECT_STREQ(r.getNote(), "");
     char str[] = "Banana Fish";
     r.setNote(str);
@@ -25,7 +26,7 @@ TEST(Room, SetNote){
 }
 
 TEST(Room, SetState){
-    Room r(0);
+    Room r(0, 1);
     EXPECT_EQ(r.getState(), RoomState::FREE);
     EXPECT_TRUE(r.getStateFrom() == Date::today() );
     EXPECT_TRUE(r.getStateTo()   == Date::today() );

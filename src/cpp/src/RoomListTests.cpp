@@ -22,8 +22,8 @@ TEST(RoomList, Constructor) {
 
 TEST(RoomList, AddGet) {
     RoomList rl;
-    Room r(0);
-    Room r2(1);
+    Room r(0, 1);
+    Room r2(1, 1);
     EXPECT_EQ(rl.length(), 0);
     rl.add(r);
     EXPECT_EQ(rl.length(), 1);
@@ -35,8 +35,8 @@ TEST(RoomList, AddGet) {
 
 TEST(RoomList, AddAll) {
     RoomList rl;
-    Room r(0);
-    Room r2(1);
+    Room r(0, 1);
+    Room r2(1, 1);
     rl.add(r);
     rl.add(r2);
     RoomList newList;
@@ -60,9 +60,9 @@ TEST(RoomList, Expand) {
 
 TEST(RoomList, Remove){
     RoomList rl;
-    Room r1(1);
-    Room r2(2);
-    Room r3(3);
+    Room r1(1, 1);
+    Room r2(2, 1);
+    Room r3(3, 1);
     rl.add(r1);
     rl.add(r2);
     rl.add(r3);

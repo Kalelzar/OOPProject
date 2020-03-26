@@ -5,8 +5,8 @@
 #include <cstring>
 #include "Room.hpp"
 
-Hotel::Room::Room(int id) {
-    init(id);
+Hotel::Room::Room(int _id, int _beds) {
+    init(_id, _beds);
 }
 
 void Hotel::Room::setNote(const char *note) {
@@ -23,11 +23,12 @@ void Hotel::Room::setState(Hotel::RoomState state, Hotel::Date from, Hotel::Date
 }
 
 Hotel::Room::Room() {
-    init(0);
+    init(0, 0);
 }
 
-void Hotel::Room::init(int id) {
-    this->id = id;
+void Hotel::Room::init(int _id, int _beds) {
+    id = _id;
+    beds = _beds;
     state = RoomState::FREE;
     stateFrom = Date::today();
     stateTo = Date::today();
@@ -52,6 +53,7 @@ void Hotel::Room::copy(const Hotel::Room &other) {
     state = other.getState();
     stateFrom = other.getStateFrom();
     stateTo = other.getStateTo();
+    beds = other.getBeds();
     freeNote();
     note = new char[strlen(other.getNote()) + 1];
     strcpy(note, other.note);
