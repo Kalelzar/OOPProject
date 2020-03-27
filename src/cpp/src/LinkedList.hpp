@@ -25,6 +25,9 @@ private:
             delete cur;
             cur = next;
         }
+        _head = nullptr;
+        _last = nullptr;
+        elemCount = 0;
     }
 
 protected:
@@ -122,6 +125,10 @@ public:
 
     unsigned int length() const override {
         return elemCount;
+    }
+
+    void clear() override {
+        free();
     }
 
     unique_ptr<Nullable<A>> removeAt(unsigned at) override {

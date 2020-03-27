@@ -14,6 +14,17 @@ TEST(ArrayList, DefaultConstructor_Room) {
     EXPECT_EQ(rl.length(), 0);
 }
 
+TEST(ArrayList, Clear){
+    ArrayList<int> rl;
+    for(int i = 0; i < 10; i++){
+        rl.append(i);
+    }
+    EXPECT_EQ(rl.length(), 10);
+    rl.clear();
+    EXPECT_EQ(rl.length(), 0);
+    EXPECT_THROW(rl[0]->get(), NoValueException);
+}
+
 TEST(ArrayList, Subscript){
     ArrayList<int> rl;
     EXPECT_THROW(rl[0]->get(), NoValueException);

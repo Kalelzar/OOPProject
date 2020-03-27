@@ -152,6 +152,11 @@ public:
 
     unsigned capacity() const { return reserved; }
 
+    void clear() override {
+        free();
+        create(getDefaultReservedSpace());
+    }
+
     static unsigned getDefaultReservedSpace() { return DEFAULT_RESERVED_SPACE; };
 };
 

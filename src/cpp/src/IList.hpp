@@ -26,7 +26,7 @@ public:
 
     virtual ~IList() = default;
 
-    unique_ptr<Nullable<A>> operator[](unsigned index){
+    unique_ptr<Nullable<A>> operator[](unsigned index) const {
         if(index < length()) return std::make_unique<NotNull<A>>(get(index));
         return std::make_unique<Null<A>>();
     }
@@ -44,6 +44,11 @@ public:
     virtual unique_ptr<Nullable<A>> shift() = 0;
 
     virtual A get(unsigned index) const = 0;
+    virtual void clear() = 0;
+
+    bool isEmpty() const {
+        return length()==0;
+    }
 
     virtual unsigned length() const = 0;
 };

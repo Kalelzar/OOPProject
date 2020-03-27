@@ -23,6 +23,29 @@ TEST(LinkedList, Append_Int){
     EXPECT_EQ(ll.last()->get(), 2);
 }
 
+TEST(LinkedList, Clear){
+    LinkedList<int> rl;
+    for(int i = 0; i < 10; i++){
+        rl.append(i);
+    }
+    EXPECT_EQ(rl.length(), 10);
+    rl.clear();
+    EXPECT_EQ(rl.length(), 0);
+    EXPECT_THROW(rl[0]->get(), NoValueException);
+}
+
+TEST(LinkedList, Subscript){
+    LinkedList<int> rl;
+    EXPECT_THROW(rl[0]->get(), NoValueException);
+    rl.append(1);
+    rl.append(2);
+    rl.append(3);
+    EXPECT_EQ(rl[0]->get(), 1);
+    EXPECT_EQ(rl[1]->get(), 2);
+    EXPECT_EQ(rl[2]->get(), 3);
+    EXPECT_THROW(rl[3]->get(), NoValueException);
+}
+
 TEST(LinkedList, Prepend_Int){
     LinkedList<int> ll;
     ll.prepend(1);
