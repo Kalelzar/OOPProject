@@ -14,14 +14,19 @@
 namespace Hotel {
     class HotelState {
     private:
-        IList<Room>* rl;
+        ArrayList<Room> rl{};
         char *filepath;
         bool modified;
+        void copy(HotelState const& state);
     public:
 
-        ~HotelState(){
-            delete rl;
-        }
+        HotelState(const char* filepath);
+        HotelState();
+        HotelState(HotelState const& state);
+
+        HotelState& operator=(HotelState const& other);
+
+        ~HotelState();
 
         void load();
 

@@ -50,6 +50,9 @@ public:
         return length()==0;
     }
 
+
+
+
     virtual unsigned length() const = 0;
 };
 

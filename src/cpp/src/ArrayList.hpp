@@ -37,19 +37,6 @@ protected:
     unsigned reserved;
     unsigned elemCount;
 
-    void expand() {
-        unsigned newCapacity = capacity() * 2;
-        reserved = newCapacity;
-
-        A *newRooms = new A[newCapacity];
-
-        for (int i = 0; i < length(); i++) {
-            newRooms[i] = get(i);
-        }
-
-        delete[] elems;
-        elems = newRooms;
-    }
 public:
     ArrayList() {
         create(getDefaultReservedSpace());
@@ -93,6 +80,30 @@ public:
 
         elems[at] = elem;
         elemCount++;
+    }
+
+    void expand() {
+        unsigned newCapacity = capacity() * 2;
+        reserved = newCapacity;
+
+        A *newRooms = new A[newCapacity];
+
+        for (int i = 0; i < length(); i++) {
+            newRooms[i] = get(i);
+        }
+
+        delete[] elems;
+        elems = newRooms;
+    }
+
+    void fill(){
+        fill(A{});
+    }
+
+    void fill(A const& elem){
+        for(int i = 0; i < capacity(); i++){
+            append(elem);
+        }
     }
 
     void append(A const &elem) {

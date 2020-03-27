@@ -3,3 +3,12 @@
 //
 
 #include "HotelState.hpp"
+
+
+void Hotel::HotelState::add(Room r){
+    rl.append(r);
+}
+
+void Hotel::HotelState::remove(Room r){
+    rl.remove(r);
+}
