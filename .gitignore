@@ -6,3 +6,5 @@
 /lib
 /googletest-build
 /.idea
+*.bash
+*.sh
