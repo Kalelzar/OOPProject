@@ -42,6 +42,12 @@ public:
         create(getDefaultReservedSpace());
     }
 
+    void appendAll(ArrayList<A> const &l) {
+        for (int i = 0; i < l.length(); i++) {
+            append(l.get(i));
+        }
+    }
+
     explicit ArrayList(unsigned reserved) {
         create(reserved);
     }

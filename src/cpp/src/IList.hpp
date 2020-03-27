@@ -18,12 +18,6 @@ public:
 
     virtual void insert(A const &elem, unsigned at) = 0;
 
-    void appendAll(IList<A> const &l) {
-        for (int i = 0; i < l.length(); i++) {
-            append(l.get(i));
-        }
-    }
-
     virtual ~IList() = default;
 
     unique_ptr<Nullable<A>> operator[](unsigned index) const {

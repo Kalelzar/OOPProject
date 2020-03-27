@@ -2,29 +2,40 @@
 #define OOPPROJECT_HASHMAP_HPP
 
 #include "ArrayList.hpp"
-#include<cstdlib>
+#include <cstdlib>
 
 template<class Key, class Value>
-struct Entry{
-    Key k{};
-    Value v{};
+struct Entry {
+    Key key{};
+    Value value{};
+    bool uninit=true;
+
+    bool operator==(Entry<Key, Value> const& other) const {
+        return key == other.key && value == other.value && uninit == other.uninit;
+    }
+
+    bool operator!=(Entry<Key, Value> const& other) const {
+        return !(*this == other);
+    }
 };
 
 //TODO: Maybe don't use an ArrayList but implement a resizable array inside HashMap for more efficient expansion;
 template<class Key, class Value>
-class HashMap{
+class HashMap {
 private:
+    typedef Entry<Key, Value> SpecEntry;
     static const unsigned DEFAULT_SIZE = 64;
-    static constexpr double EXPAND_FACTOR = 0.2;
-    ArrayList<Entry<Key, Value>> al;
+    static constexpr double EXPAND_FACTOR = 0.8;
+    SpecEntry* array;
+    unsigned reserved{};
     unsigned elemCount{};
 
     //32-bit FNV-1a hash function
-    uint32_t hash(Key* const key) const {
-        unsigned char* bytes = (unsigned char*) key;
+    uint32_t hash(const Key *key) const {
+        unsigned char *bytes = (unsigned char *) key;
         uint32_t hash = 2166136261u;
         uint32_t elems = sizeof(*key);
-        for(int i = 0; i < elems; i++){
+        for (int i = 0; i < elems; i++) {
             hash ^= bytes[i];
             hash *= 16777619;
         }
@@ -36,62 +47,98 @@ private:
         return length()/(double)capacity();
     }
 
-    void copy(HashMap const& other){
-        al = other.al; //Should either Key or Value be a pointer of some kind this screws up.
+
+    void copy(HashMap<Key, Value> const &other) {
+        delete[] array;
+        array = new SpecEntry[other.capacity()];
+        reserved = other.capacity();
+        elemCount = 0;
+        putAll(other);
     }
 
-    Entry<Key, Value>* findEntry(Key const& k, ArrayList<Entry<Key, Value>> & al){
-        uint32_t hsh = hash(k) % capacity();
-        while(al.get(hsh).key != k && al.get(hsh).key != Key{}){
-            hsh++;
-            if(hsh>=capacity()){
-                hsh=0;
+    unsigned findEntry(Key const &k) const {
+
+        if(k==103){
+            uint32_t hsh = hash(&k) % capacity();
+
+            while (array[hsh].key != k && !array[hsh].uninit) {
+                hsh++;
+                if (hsh >= capacity()) {
+                    hsh = 0;
+                }
             }
-        }
-        return &al.get(hsh);
-    }
+            return hsh;
+        }else{
+            uint32_t hsh = hash(&k) % capacity();
 
-    void init(unsigned size){
-        al = ArrayList<Entry<Key, Value>>(size);
-        al.fill();
-    }
-
-    void expand(){
-        ArrayList<Entry<Key, Value>> newal(capacity()*2);
-        newal.fill();
-        for(unsigned i = 0; i < capacity(); i++){
-            Entry<Key, Value> entry = al.get(i);
-            if(entry.key == Key{}) continue;
-            put(entry.key, entry.value, newal);
-        }
-        al = newal;
-    }
-
-    void put(Key const& k, Value const& v, ArrayList<Entry<Key, Value>> &al){
-        Entry<Key, Value>* current = findEntry(k, al);
-        if(current->key == Key{}){
-            if(loadFactor() >= EXPAND_FACTOR){
-                expand();
+            while (array[hsh].key != k && !array[hsh].uninit) {
+                hsh++;
+                if (hsh >= capacity()) {
+                    hsh = 0;
+                }
             }
-            current->key = k;
-            elemCount++;
+            return hsh;
+
         }
-        current->value = v;
+    }
+
+    void init(unsigned size) {
+        array = new SpecEntry[size];
+        reserved = size;
+        elemCount = 0;
+        for(int i = 0; i < size; i++){
+            array[i] = SpecEntry{};
+        }
+    }
+
+    void expand() {
+        SpecEntry* const newarray = new SpecEntry[capacity()*2];
+
+        for(int i = 0; i < capacity()*2; i++){
+            newarray[i] = SpecEntry{};
+        }
+
+        const SpecEntry* const oldarray = array;
+
+        array = newarray;
+        reserved = capacity()*2;
+        elemCount = 0;
+
+        putAll(oldarray, capacity()/2);
+        delete [] oldarray;
+    }
+
+    void putAll(const SpecEntry * other, unsigned size){
+        for(int i = 0; i < size; i++){
+            if(other[i].uninit) continue;
+
+            put(other[i].key, other[i].value);
+        }
     }
 
 public:
 
-    HashMap(){
+    void putAll(HashMap<Key, Value> const& other){
+        putAll(other.array, other.length());
+    }
+
+    HashMap() {
         init(DEFAULT_SIZE);
     }
 
-    HashMap(HashMap const& other){
-        if(this != &other)
+    void print(){
+        for(int i = 0; i < capacity(); i++){
+            std::cout<<"("<<array[i].key<<", "<<array[i].value<<") - "<<std::boolalpha<<array[i].uninit<<std::endl;
+        }
+    }
+
+    HashMap(HashMap<Key, Value> const &other) {
+        if (this != &other)
             copy(other);
     }
 
-    HashMap& operator=(HashMap const& other){
-        if(this != &other)
+    HashMap<Key, Value> &operator=(HashMap<Key, Value> const &other) {
+        if (this == &other)
             copy(other);
         return *this;
     }
@@ -100,18 +147,27 @@ public:
         return elemCount;
     }
 
-    unique_ptr<Nullable<Value>> get(Key const& k){
-        Entry<Key, Value>* entry = findEntry(k, al);
-        if(entry->key == Key{}) return std::make_unique<Null<Value>>();
-        else return std::make_unique<NotNull<Value>>(entry->value);
+    unique_ptr <Nullable<Value>> get(Key const &k) {
+        unsigned hsh = findEntry(k);
+        if (array[hsh].uninit) return std::make_unique<Null<Value>>();
+        else return std::make_unique<NotNull<Value>>(array[hsh].value);
     }
 
     unsigned capacity() const {
-        return al.capacity();
+        return reserved;
     }
 
-    void put(Key const& k, Value const& v) {
-        put(k, v, al);
+    void put(Key const &k, Value const &v) {
+        if (loadFactor() >= EXPAND_FACTOR) {
+            expand();
+        }
+        unsigned hsh = findEntry(k);
+        if (array[hsh].uninit) {
+            array[hsh].key = k;
+            array[hsh].uninit = false;
+            elemCount++;
+        }
+        array[hsh].value = v;
     }
 
 

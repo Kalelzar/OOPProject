@@ -82,6 +82,12 @@ public:
         elemCount++;
     }
 
+    void appendAll(LinkedList<A> const &l) {
+        for (int i = 0; i < l->length(); i++) {
+            append(l->get(i));
+        }
+    }
+
     unsigned remove(const A &elem) override {
         if (_head == nullptr) return 0;
         unsigned foundAt=0;
