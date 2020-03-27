@@ -10,8 +10,8 @@ using namespace Hotel;
 
 TEST(LinkedList, Constructor_Int){
     LinkedList<int> ll;
-    EXPECT_EQ(ll.head(), int{});
-    EXPECT_EQ(ll.last(), int{});
+    EXPECT_THROW(ll.head()->get(), NoValueException);
+    EXPECT_THROW(ll.last()->get(), NoValueException);
 }
 
 TEST(LinkedList, Append_Int){
@@ -19,8 +19,8 @@ TEST(LinkedList, Append_Int){
     ll.append(1);
     ll.append(2);
     EXPECT_EQ(ll.length(), 2);
-    EXPECT_EQ(ll.head(), 1);
-    EXPECT_EQ(ll.last(), 2);
+    EXPECT_EQ(ll.head()->get(), 1);
+    EXPECT_EQ(ll.last()->get(), 2);
 }
 
 TEST(LinkedList, Prepend_Int){
@@ -28,8 +28,8 @@ TEST(LinkedList, Prepend_Int){
     ll.prepend(1);
     ll.prepend(2);
     EXPECT_EQ(ll.length(), 2);
-    EXPECT_EQ(ll.head(), 2);
-    EXPECT_EQ(ll.last(), 1);
+    EXPECT_EQ(ll.head()->get(), 2);
+    EXPECT_EQ(ll.last()->get(), 1);
 }
 
 TEST(LinkedList, Insert_Int){
@@ -38,9 +38,9 @@ TEST(LinkedList, Insert_Int){
     ll.append(2);
     ll.insert(3, 1);
     EXPECT_EQ(ll.length(), 3);
-    EXPECT_EQ(ll.head(), 1);
+    EXPECT_EQ(ll.head()->get(), 1);
     EXPECT_EQ(ll.get(1), 3);
-    EXPECT_EQ(ll.last(), 2);
+    EXPECT_EQ(ll.last()->get(), 2);
 }
 
 TEST(LinkedList, Remove_Int){
@@ -50,8 +50,8 @@ TEST(LinkedList, Remove_Int){
     ll.append(3);
     ll.remove(2);
     EXPECT_EQ(ll.length(), 2);
-    EXPECT_EQ(ll.head(), 1);
-    EXPECT_EQ(ll.last(), 3);
+    EXPECT_EQ(ll.head()->get(), 1);
+    EXPECT_EQ(ll.last()->get(), 3);
 }
 
 TEST(LinkedList, RemoveAt_Int){
@@ -61,8 +61,8 @@ TEST(LinkedList, RemoveAt_Int){
     ll.append(3);
     ll.removeAt(1);
     EXPECT_EQ(ll.length(), 2);
-    EXPECT_EQ(ll.head(), 1);
-    EXPECT_EQ(ll.last(), 3);
+    EXPECT_EQ(ll.head()->get(), 1);
+    EXPECT_EQ(ll.last()->get(), 3);
 }
 
 TEST(LinkedList, Pop_Int){
@@ -72,8 +72,8 @@ TEST(LinkedList, Pop_Int){
     ll.append(3);
     ll.pop();
     EXPECT_EQ(ll.length(), 2);
-    EXPECT_EQ(ll.head(), 1);
-    EXPECT_EQ(ll.last(), 2);
+    EXPECT_EQ(ll.head()->get(), 1);
+    EXPECT_EQ(ll.last()->get(), 2);
 }
 
 TEST(LinkedList, Shift_Int){
@@ -83,14 +83,14 @@ TEST(LinkedList, Shift_Int){
     ll.append(3);
     ll.shift();
     EXPECT_EQ(ll.length(), 2);
-    EXPECT_EQ(ll.head(), 2);
-    EXPECT_EQ(ll.last(), 3);
+    EXPECT_EQ(ll.head()->get(), 2);
+    EXPECT_EQ(ll.last()->get(), 3);
 }
 
 TEST(LinkedList, Constructor_Room){
     LinkedList<Room> ll;
-    EXPECT_EQ(ll.head(), Room{});
-    EXPECT_EQ(ll.last(), Room{});
+    EXPECT_THROW(ll.head()->get(), NoValueException);
+    EXPECT_THROW(ll.last()->get(), NoValueException);
 }
 
 TEST(LinkedList, Append_Room){
@@ -100,8 +100,8 @@ TEST(LinkedList, Append_Room){
     ll.append(r1);
     ll.append(r2);
     EXPECT_EQ(ll.length(), 2);
-    EXPECT_TRUE(ll.head() == r1);
-    EXPECT_TRUE(ll.last() == r2);
+    EXPECT_TRUE(ll.head()->get() == r1);
+    EXPECT_TRUE(ll.last()->get() == r2);
 }
 
 TEST(LinkedList, Prepend_Room){
@@ -111,8 +111,8 @@ TEST(LinkedList, Prepend_Room){
     ll.prepend(r1);
     ll.prepend(r2);
     EXPECT_EQ(ll.length(), 2);
-    EXPECT_TRUE(ll.head() == r2);
-    EXPECT_TRUE(ll.last() == r1);
+    EXPECT_TRUE(ll.head()->get() == r2);
+    EXPECT_TRUE(ll.last()->get() == r1);
 }
 
 TEST(LinkedList, Insert_Room){
@@ -124,9 +124,9 @@ TEST(LinkedList, Insert_Room){
     ll.append(r2);
     ll.insert(r3, 1);
     EXPECT_EQ(ll.length(), 3);
-    EXPECT_TRUE(ll.head() ==r1);
+    EXPECT_TRUE(ll.head()->get() ==r1);
     EXPECT_TRUE(ll.get(1) ==r3);
-    EXPECT_TRUE(ll.last() ==r2);
+    EXPECT_TRUE(ll.last()->get() ==r2);
 }
 
 TEST(LinkedList, Remove_Room){
@@ -139,8 +139,8 @@ TEST(LinkedList, Remove_Room){
     ll.append(r3);
     ll.remove(r2);
     EXPECT_EQ(ll.length(), 2);
-    EXPECT_TRUE(ll.head() == r1);
-    EXPECT_TRUE(ll.last() == r3);
+    EXPECT_TRUE(ll.head()->get() == r1);
+    EXPECT_TRUE(ll.last()->get() == r3);
 }
 
 TEST(LinkedList, RemoveAt_Room){
@@ -153,8 +153,8 @@ TEST(LinkedList, RemoveAt_Room){
     ll.append(r3);
     ll.removeAt(1);
     EXPECT_EQ(ll.length(), 2);
-    EXPECT_TRUE(ll.head() == r1);
-    EXPECT_TRUE(ll.last() == r3);
+    EXPECT_TRUE(ll.head()->get() == r1);
+    EXPECT_TRUE(ll.last()->get() == r3);
 }
 
 TEST(LinkedList, Pop_Room){
@@ -167,8 +167,8 @@ TEST(LinkedList, Pop_Room){
     ll.append(r3);
     ll.pop();
     EXPECT_EQ(ll.length(), 2);
-    EXPECT_TRUE(ll.head() == r1);
-    EXPECT_TRUE(ll.last() == r2);
+    EXPECT_TRUE(ll.head()->get() == r1);
+    EXPECT_TRUE(ll.last()->get() == r2);
 }
 
 TEST(LinkedList, Shift_Room){
@@ -181,6 +181,6 @@ TEST(LinkedList, Shift_Room){
     ll.append(r3);
     ll.shift();
     EXPECT_EQ(ll.length(), 2);
-    EXPECT_TRUE(ll.head() == r2);
-    EXPECT_TRUE(ll.last() == r3);
+    EXPECT_TRUE(ll.head()->get() == r2);
+    EXPECT_TRUE(ll.last()->get() == r3);
 }

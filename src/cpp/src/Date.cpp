@@ -151,11 +151,14 @@ namespace Hotel {
 
     Date::Date(const char str[11]){
         char s_year[5];
-        strncpy(s_year, str, 4);
+        strncpy(s_year, str+0, 4);
+        s_year[4] = '\0';
         char s_month[3];
         strncpy(s_month, str+5, 2);
+        s_month[2] = '\0';
         char s_day[3];
         strncpy(s_day, str+8, 2);
+        s_day[2]='\0';
         year  = atoi(s_year);
         month = atoi(s_month);
         day   = atoi(s_day);
@@ -167,7 +170,7 @@ namespace Hotel {
         day = currentDay();
     }
 
-    Date Date::fromString(const char *str) {
+    Date Date::fromString(const char str[11]) {
         return {str};
     }
 

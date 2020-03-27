@@ -14,6 +14,18 @@ TEST(ArrayList, DefaultConstructor_Room) {
     EXPECT_EQ(rl.length(), 0);
 }
 
+TEST(ArrayList, Subscript){
+    ArrayList<int> rl;
+    EXPECT_THROW(rl[0]->get(), NoValueException);
+    rl.append(1);
+    rl.append(2);
+    rl.append(3);
+    EXPECT_EQ(rl[0]->get(), 1);
+    EXPECT_EQ(rl[1]->get(), 2);
+    EXPECT_EQ(rl[2]->get(), 3);
+    EXPECT_THROW(rl[3]->get(), NoValueException);
+}
+
 TEST(ArrayList, Constructor_Room) {
     int capacity = 4;
     ArrayList<Room> rl(capacity);

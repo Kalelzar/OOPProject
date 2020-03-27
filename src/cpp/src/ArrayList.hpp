@@ -6,6 +6,7 @@
 #define OOPPROJECT_ARRAYLIST_HPP
 
 #include "IList.hpp"
+#include<iostream>
 
 template<class A>
 class ArrayList : public IList<A> {
@@ -94,7 +95,7 @@ public:
         elemCount++;
     }
 
-    virtual void append(A const &elem) {
+    void append(A const &elem) {
         insert(elem, length());
     }
 
@@ -102,43 +103,47 @@ public:
         insert(elem, 0);
     }
 
-    void remove(const A &elem) {
-        bool found = false;
+    unsigned remove(const A &elem) {
+        unsigned foundAt = 0;
         unsigned index = 0;
         for (unsigned i = 0; i < length(); i++) {
-            if (get(i) == elem)
+            if (get(i) == elem){
+                foundAt = i;
                 continue;
+            }
             if (index != i) {
                 elems[index] = elems[i];
             }
             index++;
         }
         elemCount--;
+        return foundAt;
     }
 
-    void removeAt(unsigned ind) override {
-        if(ind < 0) return;
+    unique_ptr<Nullable<A>> removeAt(unsigned ind) override {
+        if(length() == 0) return std::make_unique<Null<A>>();
+
+        A ret = elems[ind >= length() ? length()-1 : ind];
 
         if(ind < length()-1){
             for(unsigned i = ind; i < length()-1; i++){
                 elems[i] = elems[i+1];
             }
         }
-
         elemCount--;
+        return std::make_unique<NotNull<A>>(ret);
     }
 
-    void pop() override {
-        removeAt(length()-1);
+    unique_ptr<Nullable<A>> pop() override {
+        return removeAt(length()-1);
     }
 
-    void shift() override {
-        removeAt(0);
+    unique_ptr<Nullable<A>> shift() override {
+        return removeAt(0);
     }
 
 
     A get(unsigned index) const {
-        if(index < 0 ) return elems[0];
         if (index >= length()) return elems[length() - 1];
         return elems[index];
     }

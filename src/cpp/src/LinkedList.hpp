@@ -79,30 +79,30 @@ public:
         elemCount++;
     }
 
-    void remove(const A &elem) override {
-        if (_head == nullptr) return;
-
+    unsigned remove(const A &elem) override {
+        if (_head == nullptr) return 0;
+        unsigned foundAt=0;
         Node<A> *cur = _head;
         while (cur != nullptr) {
             if (cur->next->elem == elem) {
                 Node<A> *temp = cur->next;
                 cur->next = temp->next;
                 delete temp;
-
+                foundAt++;
                 elemCount--;
                 break;
             }
             cur = cur->next;
         }
-
+        return foundAt;
     }
 
     A get(unsigned index) const override {
         if (index < 0) return get(0);
         if (index > length() - 1 && length() - 1 > 0) return get(length() - 1);
 
-        if (index == 0) return head();
-        if (index == length() - 1) return last();
+        if (index == 0) return _head->elem;
+        if (index == length() - 1) return _last->elem;
 
         Node<A> *cur = _head;
         A value{};
@@ -124,13 +124,15 @@ public:
         return elemCount;
     }
 
-    void removeAt(unsigned at) override {
-        if (at < 0 || _head == nullptr) return;
-        if( at > length()-1) removeAt(length()-1);
+    unique_ptr<Nullable<A>> removeAt(unsigned at) override {
+        if (_head == nullptr) return std::make_unique<Null<A>>();
+        if( at > length()-1) return removeAt(length()-1);
 
+        A ret;
         if (at == 0) {
             Node<A> *temp = _head;
             _head = _head->next;
+            ret = temp->elem;
             delete temp;
         } else {
             int counter = 0;
@@ -142,6 +144,7 @@ public:
                     if(at == length()-1){
                         _last=cur;
                     }
+                    ret = temp->elem;
                     delete temp;
                     break;
                 }
@@ -151,24 +154,25 @@ public:
         }
 
         elemCount--;
+        return std::make_unique<NotNull<A>>(ret);
     }
 
-    void pop() override {
-        removeAt(length() - 1);
+    unique_ptr<Nullable<A>> pop() override {
+        return removeAt(length() - 1);
     }
 
-    void shift() override {
-        removeAt(0);
+    unique_ptr<Nullable<A>> shift() override {
+       return removeAt(0);
     }
 
-    A head() const {
-        if (_head == nullptr) return A{};
-        return _head->elem;
+    unique_ptr<Nullable<A>> head() const {
+        if (_head == nullptr) return std::make_unique<Null<A>>();
+        return std::make_unique<NotNull<A>>(_head->elem);
     }
 
-    A last() const {
-        if (_last == nullptr) return A{};
-        return _last->elem;
+    unique_ptr<Nullable<A>> last() const {
+        if (_last == nullptr) return std::make_unique<Null<A>>();
+        return std::make_unique<NotNull<A>>(_last->elem);
     }
 
 // TODO: Figure out a way to do this safely

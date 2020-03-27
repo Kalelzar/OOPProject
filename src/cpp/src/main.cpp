@@ -1,6 +1,7 @@
 #include<iostream>
 #include <cstring>
 
+#include "Room.hpp"
 #include "ArrayList.hpp"
 #include "ArraySet.hpp"
 #include "LinkedList.hpp"
@@ -9,12 +10,13 @@
 #include <vector>
 
 using namespace std::chrono;
+using namespace Hotel;
 
 #define PRINT
 
 
 
-void popElements(char type[255], IList<int>* list, int elements){
+void popElements(char type[255], IList<Room>* list, int elements){
     auto start = high_resolution_clock::now();
 
     for(int i = 0; i < elements; i++){
@@ -27,7 +29,7 @@ void popElements(char type[255], IList<int>* list, int elements){
     std::cout <<"("<< type << ") Pop " << elements << " elements: " << mili<< std::endl;
 }
 
-void accessLast(char type[255], IList<int>* list, int elements){
+void accessLast(char type[255], IList<Room>* list, int elements){
     auto start = high_resolution_clock::now();
 
     for(int i = 0; i < elements; i++){
@@ -41,11 +43,11 @@ void accessLast(char type[255], IList<int>* list, int elements){
 
     popElements(type, list, elements);
 }
-void appendElements(char type[255], IList<int>* list, int elements){
+void appendElements(char type[255], IList<Room>* list, int elements){
     auto start = high_resolution_clock::now();
 
     for(int i = 0; i < elements; i++){
-        list->append(i);
+        list->append(Room(i, 1));
     }
 
     auto stop = high_resolution_clock::now();
@@ -56,7 +58,7 @@ void appendElements(char type[255], IList<int>* list, int elements){
     accessLast(type, list, elements);
 }
 
-void shiftElements(char type[255], IList<int>* list, int elements){
+void shiftElements(char type[255], IList<Room>* list, int elements){
     auto start = high_resolution_clock::now();
 
     for(int i = 0; i < elements; i++){
@@ -69,7 +71,7 @@ void shiftElements(char type[255], IList<int>* list, int elements){
     std::cout <<"("<< type << ") Shift " << elements << " elements: " << mili<< std::endl;
 }
 
-void accessFirst(char type[255], IList<int>* list, int elements){
+void accessFirst(char type[255], IList<Room>* list, int elements){
     auto start = high_resolution_clock::now();
 
     for(int i = 0; i < elements; i++){
@@ -83,11 +85,11 @@ void accessFirst(char type[255], IList<int>* list, int elements){
     shiftElements(type, list, elements);
 }
 
-void prependElements(char type[255], IList<int>* list, int elements){
+void prependElements(char type[255], IList<Room>* list, int elements){
     auto start = high_resolution_clock::now();
 
     for(int i = 0; i < elements; i++){
-        list->prepend(i);
+        list->prepend(Room(i, 1));
     }
 
     auto stop = high_resolution_clock::now();
@@ -97,7 +99,7 @@ void prependElements(char type[255], IList<int>* list, int elements){
     accessFirst(type, list, elements);
 }
 
-void removeAtMiddle(char type[255], IList<int>* list, int elements){
+void removeAtMiddle(char type[255], IList<Room>* list, int elements){
 
     auto start = high_resolution_clock::now();
 
@@ -112,7 +114,7 @@ void removeAtMiddle(char type[255], IList<int>* list, int elements){
 
 }
 
-void accessSeq(char type[255], IList<int>* list, int elements){
+void accessSeq(char type[255], IList<Room>* list, int elements){
 
     auto start = high_resolution_clock::now();
 
@@ -127,12 +129,12 @@ void accessSeq(char type[255], IList<int>* list, int elements){
     removeAtMiddle(type, list, elements);
 }
 
-void insertAtMiddle(char type[255], IList<int>* list, int elements){
+void insertAtMiddle(char type[255], IList<Room>* list, int elements){
 
     auto start = high_resolution_clock::now();
 
     for(int i = 0; i < elements; i++){
-        list->insert(i, list->length()/2);
+        list->insert(Room(i,1), list->length()/2);
     }
 
     auto stop = high_resolution_clock::now();
@@ -142,130 +144,21 @@ void insertAtMiddle(char type[255], IList<int>* list, int elements){
     accessSeq(type, list, elements);
 }
 
-void appendElementsVector(int elements){
-    auto start = high_resolution_clock::now();
-    std::vector<int> list(100000);
-
-    for(int i = 0; i < elements; i++){
-        list.push_back(i);
-    }
-
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<milliseconds>(stop - start);
-    auto mili = duration.count();
-    std::cout <<"(std::vector) Append " << elements << " elements: " << mili<< std::endl;
-
-    start = high_resolution_clock::now();
-
-    for(int i = 0; i < elements; i++){
-        list.at(list.size()-1);
-    }
-
-    stop = high_resolution_clock::now();
-    duration = duration_cast<milliseconds>(stop - start);
-    mili = duration.count();
-    std::cout <<"(std::vector) Access Last " << elements << " elements: " << mili<< std::endl;
-
-    start = high_resolution_clock::now();
-
-    for(int i = 0; i < elements; i++){
-        list.pop_back();
-    }
-
-    stop = high_resolution_clock::now();
-    duration = duration_cast<milliseconds>(stop - start);
-    mili = duration.count();
-    std::cout <<"(std::vector) Pop " << elements << " elements: " << mili<< std::endl;
-}
-
-
-void prependElementsVector(int elements){
-    auto start = high_resolution_clock::now();
-    std::vector<int> list(elements);
-
-    for(int i = 0; i < elements; i++){
-        list.insert(list.begin(), i);
-    }
-
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<milliseconds>(stop - start);
-    auto mili = duration.count();
-    std::cout <<"(std::vector) Prepend " << elements << " elements: " << mili<< std::endl;
-
-    start = high_resolution_clock::now();
-
-    for(int i = 0; i < elements; i++){
-        list.at(0);
-    }
-
-    stop = high_resolution_clock::now();
-    duration = duration_cast<milliseconds>(stop - start);
-    mili = duration.count();
-    std::cout <<"(std::vector) Access First " << elements << " elements: " << mili<< std::endl;
-
-    start = high_resolution_clock::now();
-
-    for(int i = 0; i < elements; i++){
-        list.erase(list.begin());
-    }
-
-    stop = high_resolution_clock::now();
-    duration = duration_cast<milliseconds>(stop - start);
-    mili = duration.count();
-    std::cout <<"(std::vector) Shift " << elements << " elements: " << mili<< std::endl;
-}
-
-void insertMiddleElementsVector(int elements){
-    auto start = high_resolution_clock::now();
-    std::vector<int> list(elements);
-
-    for(int i = 0; i < elements; i++){
-        list.insert(list.begin() + list.size()/2, i);
-    }
-
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<milliseconds>(stop - start);
-    auto mili = duration.count();
-    std::cout <<"(std::vector) Insert " << elements << " elements: " << mili<< std::endl;
-
-    start = high_resolution_clock::now();
-
-    for(int i = 0; i < elements; i++){
-        list.at(i);
-    }
-
-    stop = high_resolution_clock::now();
-    duration = duration_cast<milliseconds>(stop - start);
-    mili = duration.count();
-    std::cout <<"(std::vector) Access Sequential " << elements << " elements: " << mili<< std::endl;
-
-    start = high_resolution_clock::now();
-
-    for(int i = 0; i < elements; i++){
-        list.erase(list.begin() + list.size()/2);
-    }
-
-    stop = high_resolution_clock::now();
-    duration = duration_cast<milliseconds>(stop - start);
-    mili = duration.count();
-    std::cout <<"(std::vector) Remove " << elements << " elements: " << mili<< std::endl;
-}
-
 int main(){
-    IList<int>* list;
+    IList<Room>* list;
 
     // Linked List
 
     std::cout<<std::endl;
 
-    list = new LinkedList<int>;
+    list = new LinkedList<Room>;
     appendElements("LinkedList", list, 100000);
 
-    list = new LinkedList<int>;
+    list = new LinkedList<Room>;
     prependElements("LinkedList", list, 100000);
     delete list;
 
-    list = new LinkedList<int>;
+    list = new LinkedList<Room>;
     insertAtMiddle("LinkedList", list, 100000);
     delete list;
 
@@ -273,15 +166,15 @@ int main(){
 
     std::cout<<std::endl;
 
-    list = new ArrayList<int>;
+    list = new ArrayList<Room>;
     appendElements("ArrayList", list, 100000);
     delete list;
 
-    list = new ArrayList<int>;
+    list = new ArrayList<Room>;
     prependElements("ArrayList", list, 100000);
     delete list;
 
-    list = new ArrayList<int>;
+    list = new ArrayList<Room>;
     insertAtMiddle("ArrayList", list, 100000);
     delete list;
 
@@ -289,25 +182,18 @@ int main(){
 
     std::cout<<std::endl;
 
-    list = new ArrayList<int>(100000);
+    list = new ArrayList<Room>(100000);
     appendElements("ArrayList(prealloc)", list, 100000);
     delete list;
 
-    list = new ArrayList<int>(100000);
+    list = new ArrayList<Room>(100000);
     prependElements("ArrayList(prealloc)", list, 100000);
     delete list;
 
-    list = new ArrayList<int>(100000);
+    list = new ArrayList<Room>(100000);
     insertAtMiddle("ArrayList(prealloc)", list, 100000);
     delete list;
 
-    // std::vector
-
-    std::cout<<std::endl;
-
-    appendElementsVector(100000);
-    prependElementsVector(100000);
-    insertMiddleElementsVector(100000);
 
 
 }
