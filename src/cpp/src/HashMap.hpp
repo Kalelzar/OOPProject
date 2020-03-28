@@ -3,6 +3,7 @@
 
 #include "ArrayList.hpp"
 #include <cstdlib>
+#include <type_traits>
 
 template<class Key, class Value>
 struct Entry {
@@ -126,12 +127,6 @@ public:
         init(DEFAULT_SIZE);
     }
 
-    void print(){
-        for(int i = 0; i < capacity(); i++){
-            std::cout<<"("<<array[i].key<<", "<<array[i].value<<") - "<<std::boolalpha<<array[i].uninit<<std::endl;
-        }
-    }
-
     HashMap(HashMap<Key, Value> const &other) {
         if (this != &other)
             copy(other);
@@ -170,6 +165,36 @@ public:
         array[hsh].value = v;
     }
 
+    /**
+     * Removes the given key from the hash map by setting it's corresponding entry's
+     * as uninitialized. This will probably not free any memory associated with the Key, Value pair
+     * Such a thing should be handled by the caller.
+     *
+     * @param k the key to remove
+     */
+    void remove(Key const &k){
+        unsigned hsh = findEntry(k);
+        if(array[hsh].uninit) return;
+        array[hsh].uninit = true;
+        elemCount--;
+    }
+
+    /**
+     * Returns a constant reference to the underlying entry list
+     * for the purposes of iteration
+     * @return the entries
+     */
+    std::remove_reference_t<const SpecEntry*> underlying() const {
+        return array;
+    }
+
+    /**
+     * Clears the contents of the hash map.
+     */
+    void clear(){
+        delete [] array;
+        init(DEFAULT_SIZE);
+    }
 
 };
 
