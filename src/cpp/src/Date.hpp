@@ -52,118 +52,141 @@ namespace Hotel {
 
         friend std::istream& operator>>(std::istream& in, Date& date);
 
-        bool operator==(Date const& other){
-            return other.getYear() == getYear() && other.getMonth() == getMonth() && other.getDay() && getDay();
+        bool operator>(Date const& other) const {
+            return daysSince1900() > other.daysSince1900();
         }
 
-        /**
-         * Prints the date in the ISO 8601 format ( <year>-<month>-<day> ) and a newline
-         */
-        void println() const {
-            print();
-            std::cout<<std::endl;
+        bool operator>=(Date const& other) const {
+            return *this > other || *this == other;
         }
 
-        /**
-         * Converts this date to the ISO 8601 format
-         * @param str the string to which to write
-         */
-        void getString(char (&str)[11]) const;
+        bool operator<(Date const& other) const {
+            return !(*this >= other);
+        }
 
-        /**
-         * Returns the day represented by this Date
-         * @return the day
-         */
-        int getDay() const { return day; }
+        bool operator<=(Date const& other) const {
+            return !(*this > other);
+        }
 
-        /**
-         * Returns the month represented by this Date
-         * @return the month
-         */
-        int getMonth() const { return month; }
+        bool operator!= (Date const& other) const {
+            return !(*this == other);
+        }
 
-        /**
-         * Returns the year represented by this Date
-         * @return the year
-         */
-        int getYear() const { return year; }
+        bool operator==(Date const& other) const {
+            return other.getYear() == getYear()
+                && other.getMonth() == getMonth()
+                && other.getDay() == getDay();
+        }
 
-        /**
-         * Returns the days between this date and 1900-01-01
-         * @return the days since 1900
-         */
-        int daysSince1900() const;
+    /**
+     * Prints the date in the ISO 8601 format ( <year>-<month>-<day> ) and a newline
+     */
+    void println() const {
+        print();
+        std::cout<<std::endl;
+    }
 
-        /**
-         * Returns the days between this date and the provided date
-         * @param date the other date
-         * @return the days between the two dates
-         */
-        int daysBetween(const Date& date) const;
+    /**
+     * Converts this date to the ISO 8601 format
+     * @param str the string to which to write
+     */
+    void getString(char (&str)[11]) const;
 
-        /**
-         * Returns the current date
-         * @return the current date
-         */
-        static Date today();
+    /**
+     * Returns the day represented by this Date
+     * @return the day
+     */
+    int getDay() const { return day; }
 
-        /**
-         * Returns the amount of days in a month
-         * @param month the month for which to check
-         * @param year the year for which to check
-         * @return the days in the provided month during the provided year.
-         */
-        static int daysOfMonth(int month, int year);
+    /**
+     * Returns the month represented by this Date
+     * @return the month
+     */
+    int getMonth() const { return month; }
 
-        /**
-         * Checks if the provided year is a leap year.
-         *
-         * @param year the year which to check.
-         * @return is the provided year a leap year.
-         */
-        static bool isLeapYear(int year);
+    /**
+     * Returns the year represented by this Date
+     * @return the year
+     */
+    int getYear() const { return year; }
 
-        /**
-         * Returns the current year
-         * @return the current year
-         */
-        static int currentYear();
+    /**
+     * Returns the days between this date and 1900-01-01
+     * @return the days since 1900
+     */
+    int daysSince1900() const;
 
-        /**
-         * Returns the current month
-         * @return the current month
-         */
-        static int currentMonth();
+    /**
+     * Returns the days between this date and the provided date
+     * @param date the other date
+     * @return the days between the two dates
+     */
+    int daysBetween(const Date& date) const;
 
-        /**
-         * Returns the current day
-         * @return the current day
-         */
-        static int currentDay();
+    /**
+     * Returns the current date
+     * @return the current date
+     */
+    static Date today();
 
-        /**
-         * Converts a string representing a date in the ISO 8601 format into a Date instance.
-         * @param str the string to convert to date
-         * @return the converted date
-         */
-        static Date fromString(const char str[11]);
+    /**
+     * Returns the amount of days in a month
+     * @param month the month for which to check
+     * @param year the year for which to check
+     * @return the days in the provided month during the provided year.
+     */
+    static int daysOfMonth(int month, int year);
 
-        /**
-         * Returns the days between two dates
-         * @param start the first date
-         * @param end the second date
-         * @return thr days between the two dates
-         */
-        static int daysBetween(const Date& start, const Date& end);
+    /**
+     * Checks if the provided year is a leap year.
+     *
+     * @param year the year which to check.
+     * @return is the provided year a leap year.
+     */
+    static bool isLeapYear(int year);
 
-        /**
-         * Returns the days between 1900-01-01 to date.
-         * @param date the date to check
-         * @return the days since 1900
-         */
-        static int daysSince1900(const Date& date);
+    /**
+     * Returns the current year
+     * @return the current year
+     */
+    static int currentYear();
+
+    /**
+     * Returns the current month
+     * @return the current month
+     */
+    static int currentMonth();
+
+    /**
+     * Returns the current day
+     * @return the current day
+     */
+    static int currentDay();
+
+    /**
+     * Converts a string representing a date in the ISO 8601 format into a Date instance.
+     * @param str the string to convert to date
+     * @return the converted date
+     */
+    static Date fromString(const char str[11]);
+
+    /**
+     * Returns the days between two dates
+     * @param start the first date
+     * @param end the second date
+     * @return thr days between the two dates
+     */
+    static int daysBetween(const Date& start, const Date& end);
+
+    /**
+     * Returns the days between 1900-01-01 to date.
+     * @param date the date to check
+     * @return the days since 1900
+     */
+    static int daysSince1900(const Date& date);
+
+
 
     };
-
 }
 #endif //OOPPROJECT_DATE_HPP

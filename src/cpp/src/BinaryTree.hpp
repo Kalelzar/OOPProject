@@ -49,16 +49,16 @@ public:
         if(predicate(tag)) return this;
         if(left != nullptr){
             BinaryNode<B, A>* res = left->firstMatch(predicate);
-            if(res != nullptr) return nullptr;
+            if(res != nullptr) return res;
         }
         if(right != nullptr){
             BinaryNode<B, A>* res = right->firstMatch(predicate);
-            if(res != nullptr) return nullptr;
+            if(res != nullptr) return res;
         }
         return nullptr;
     }
 
-    unique_ptr<ArrayList<A>> allInRange(B const& lower, B const& upper){
+    unique_ptr<ArrayList<A>> allInRange(B const& lower, B const& upper) const {
         unique_ptr<ArrayList<A>> range = make_unique<ArrayList<A>>();
 
         if(tag >= lower && tag <= upper){
@@ -106,6 +106,19 @@ public:
 
     const BinaryNode<B, A>* viewHead() const {
         return root;
+    }
+
+    void populate(B tag, A value){
+        if(root == nullptr){
+            root = new BinaryNode<B, A>(tag, value);
+        }else{
+            root->populate(tag, value);
+        }
+    }
+
+    unique_ptr<ArrayList<A>> inRange(A const& lower, A const& upper) const {
+        if(root == nullptr) return nullptr;
+        return root->allInRange(lower,upper);
     }
 
     BinaryNode<B, A>* getHead(){

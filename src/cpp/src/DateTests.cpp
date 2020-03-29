@@ -4,17 +4,71 @@
 #include "Date.hpp"
 #include "gtest/gtest.h"
 
+TEST(Date, Equal){
+    Hotel::Date d1(2020, 1, 1);
+    Hotel::Date d2(2020, 1, 1);
+    Hotel::Date d3(2020, 1, 2);
+    EXPECT_TRUE(d1 == d2);
+    EXPECT_FALSE(d1 == d3);
+}
+
+TEST(Date, NotEqual){
+    Hotel::Date d1(2020, 1, 1);
+    Hotel::Date d2(2020, 1, 1);
+    Hotel::Date d3(2020, 1, 2);
+    EXPECT_FALSE(d1 != d2);
+    EXPECT_TRUE(d1 != d3);
+}
+
+TEST(Date, Greater){
+    Hotel::Date d1(2020, 1, 1);
+    Hotel::Date d2(2020, 1, 2);
+    Hotel::Date d3(2020, 1, 3);
+    EXPECT_TRUE(d2 > d1);
+    EXPECT_FALSE(d2 > d3);
+}
+
+TEST(Date, Less){
+    Hotel::Date d1(2020, 1, 1);
+    Hotel::Date d2(2020, 1, 2);
+    Hotel::Date d3(2020, 1, 3);
+    EXPECT_TRUE(d2 < d3);
+    EXPECT_FALSE(d2 < d1);
+}
+
+TEST(Date, GreaterEq){
+    Hotel::Date d1(2020, 1, 1);
+    Hotel::Date d2(2020, 1, 2);
+    Hotel::Date d3(2020, 1, 3);
+    EXPECT_TRUE(d2 >= d1);
+    EXPECT_TRUE(d2 >= d2);
+    EXPECT_FALSE(d2 >= d3);
+}
+
+TEST(Date, LessEq){
+    Hotel::Date d1(2020, 1, 1);
+    Hotel::Date d2(2020, 1, 2);
+    Hotel::Date d3(2020, 1, 3);
+    EXPECT_FALSE(d2 <= d1);
+    EXPECT_TRUE(d2 <= d2);
+    EXPECT_TRUE(d2 <= d3);
+}
+
 TEST(Date, JanuaryHas31Days) {
-    ASSERT_EQ(Hotel::Date::daysOfMonth(1,0), 31) << "January doesn't have 31 days apparently.";
+    ASSERT_EQ(Hotel::Date::daysOfMonth(1,0), 31)
+        << "January doesn't have 31 days apparently.";
 }
 
 TEST(Date, AprilHas30Days) {
-    ASSERT_EQ(Hotel::Date::daysOfMonth(4,0), 30) << "April doesn't have 30 days apparently.";
+    ASSERT_EQ(Hotel::Date::daysOfMonth(4,0), 30)
+        << "April doesn't have 30 days apparently.";
 }
 
 TEST(Date, FebruaryHas28or29Days) {
-    ASSERT_EQ(Hotel::Date::daysOfMonth(2, 2013), 28) << "February doesn't have 28 days during non-leap year.";
-    ASSERT_EQ(Hotel::Date::daysOfMonth(2, 2012), 29) << "February doesn't have 29 days during leap year.";
+    ASSERT_EQ(Hotel::Date::daysOfMonth(2, 2013), 28)
+        << "February doesn't have 28 days during non-leap year.";
+    ASSERT_EQ(Hotel::Date::daysOfMonth(2, 2012), 29)
+        << "February doesn't have 29 days during leap year.";
 }
 
 TEST(Date, Constructor){

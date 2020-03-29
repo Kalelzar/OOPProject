@@ -7,14 +7,13 @@
 
 #include "Date.hpp"
 #include "Room.hpp"
-#include "ArrayList.hpp"
-#include "ArraySet.hpp"
-#include "LinkedList.hpp"
+#include "BinaryTree.hpp"
 
 namespace Hotel {
     class HotelState {
     private:
         ArrayList<Room> rl{};
+        RangeBinaryTree<Date, RoomStateEvent>{};
         char *filepath;
         bool modified;
         void copy(HotelState const& state);

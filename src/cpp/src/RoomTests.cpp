@@ -7,13 +7,93 @@
 
 using namespace Hotel;
 
+
+TEST(RoomStateEvent, Equals){
+    RoomStateEvent rse1 = {RoomState::FREE, {1, 1}, {2020, 2, 1}, {2020, 2, 10}};
+    RoomStateEvent rse2 = {RoomState::TAKEN, {1, 1}, {2020, 2, 1}, {2020, 2, 10}};
+    RoomStateEvent rse3 = {RoomState::FREE, {1, 1}, {2020, 2, 11}, {2020, 2, 20}};
+    RoomStateEvent rse4 = {RoomState::FREE, {1, 1}, {2020, 1, 15}, {2020, 1, 31}};
+    EXPECT_TRUE(rse1 == rse1);
+    EXPECT_FALSE(rse1 == rse2);
+    EXPECT_FALSE(rse1 == rse3);
+    EXPECT_FALSE(rse1 == rse4);
+}
+
+TEST(RoomStateEvent, NotEquals){
+    RoomStateEvent rse1 = {RoomState::FREE, {1, 1}, {2020, 2, 1}, {2020, 2, 10}};
+    RoomStateEvent rse2 = {RoomState::TAKEN, {1, 1}, {2020, 2, 1}, {2020, 2, 10}};
+    RoomStateEvent rse3 = {RoomState::FREE, {1, 1}, {2020, 2, 11}, {2020, 2, 20}};
+    RoomStateEvent rse4 = {RoomState::FREE, {1, 1}, {2020, 1, 15}, {2020, 1, 31}};
+    EXPECT_FALSE(rse1 != rse1);
+    EXPECT_TRUE(rse1 != rse2);
+    EXPECT_TRUE(rse1 != rse3);
+    EXPECT_TRUE(rse1 != rse4);
+}
+
+TEST(RoomStateEvent, Greater){
+    RoomStateEvent rse1 = {RoomState::FREE, {1, 1}, {2020, 2, 1}, {2020, 2, 10}};
+    RoomStateEvent rse2 = {RoomState::TAKEN, {1, 1}, {2020, 2, 1}, {2020, 2, 10}};
+    RoomStateEvent rse3 = {RoomState::FREE, {1, 1}, {2020, 2, 11}, {2020, 2, 20}};
+    RoomStateEvent rse4 = {RoomState::FREE, {1, 1}, {2020, 1, 15}, {2020, 1, 31}};
+    RoomStateEvent rse5 = {RoomState::FREE, {1, 1}, {2020, 2, 1}, {2020, 2, 20}};
+    RoomStateEvent rse6 = {RoomState::FREE, {1, 1} , {2020, 1, 15}, {2020, 2, 10}};
+    EXPECT_FALSE(rse1 > rse1);
+    EXPECT_FALSE(rse1 > rse2);
+    EXPECT_FALSE(rse1 > rse3);
+    EXPECT_TRUE (rse1 > rse4);
+    EXPECT_FALSE(rse1 > rse5);
+    EXPECT_FALSE(rse1 > rse6);
+}
+
+TEST(RoomStateEvent, GreaterEq){
+    RoomStateEvent rse1 = {RoomState::FREE, {1, 1}, {2020, 2, 1}, {2020, 2, 10}};
+    RoomStateEvent rse2 = {RoomState::TAKEN, {1, 1}, {2020, 2, 1}, {2020, 2, 10}};
+    RoomStateEvent rse3 = {RoomState::FREE, {1, 1}, {2020, 2, 11}, {2020, 2, 20}};
+    RoomStateEvent rse4 = {RoomState::FREE, {1, 1}, {2020, 1, 15}, {2020, 1, 31}};
+    RoomStateEvent rse5 = {RoomState::FREE, {1, 1}, {2020, 2, 1}, {2020, 2, 20}};
+    RoomStateEvent rse6 = {RoomState::FREE, {1, 1} , {2020, 1, 15}, {2020, 2, 10}};
+    EXPECT_TRUE (rse1 >= rse1);
+    EXPECT_TRUE (rse1 >= rse2);
+    EXPECT_FALSE(rse1 >= rse3);
+    EXPECT_TRUE (rse1 >= rse4);
+    EXPECT_TRUE (rse1 >= rse5);
+    EXPECT_TRUE (rse1 >= rse6);
+}
+
+TEST(RoomStateEvent, Less){
+    RoomStateEvent rse1 = {RoomState::FREE, {1, 1}, {2020, 2, 1}, {2020, 2, 10}};
+    RoomStateEvent rse2 = {RoomState::TAKEN, {1, 1}, {2020, 2, 1}, {2020, 2, 10}};
+    RoomStateEvent rse3 = {RoomState::FREE, {1, 1}, {2020, 2, 11}, {2020, 2, 20}};
+    RoomStateEvent rse4 = {RoomState::FREE, {1, 1}, {2020, 1, 15}, {2020, 1, 31}};
+    RoomStateEvent rse5 = {RoomState::FREE, {1, 1}, {2020, 2, 1}, {2020, 2, 20}};
+    RoomStateEvent rse6 = {RoomState::FREE, {1, 1} , {2020, 1, 15}, {2020, 2, 10}};
+    EXPECT_FALSE(rse1 < rse1);
+    EXPECT_FALSE(rse1 < rse2);
+    EXPECT_TRUE (rse1 < rse3);
+    EXPECT_FALSE(rse1 < rse4);
+    EXPECT_FALSE(rse1 < rse5);
+    EXPECT_FALSE(rse1 < rse6);
+}
+
+TEST(RoomStateEvent, LessEq){
+    RoomStateEvent rse1 = {RoomState::FREE, {1, 1}, {2020, 2, 1}, {2020, 2, 10}};
+    RoomStateEvent rse2 = {RoomState::TAKEN, {1, 1}, {2020, 2, 1}, {2020, 2, 10}};
+    RoomStateEvent rse3 = {RoomState::FREE, {1, 1}, {2020, 2, 11}, {2020, 2, 20}};
+    RoomStateEvent rse4 = {RoomState::FREE, {1, 1}, {2020, 1, 15}, {2020, 1, 31}};
+    RoomStateEvent rse5 = {RoomState::FREE, {1, 1}, {2020, 2, 1}, {2020, 2, 20}};
+    RoomStateEvent rse6 = {RoomState::FREE, {1, 1} , {2020, 1, 15}, {2020, 2, 10}};
+    EXPECT_TRUE (rse1 <= rse1);
+    EXPECT_TRUE (rse1 <= rse2);
+    EXPECT_TRUE (rse1 <= rse3);
+    EXPECT_FALSE(rse1 <= rse4);
+    EXPECT_TRUE (rse1 <= rse5);
+    EXPECT_TRUE (rse1 <= rse6);
+}
+
 TEST(Room, Constructor){
     Room r(0, 3);
     EXPECT_EQ(r.getID(), 0);
     EXPECT_EQ(r.getBeds(), 3);
-    EXPECT_EQ(r.getState(), RoomState::FREE);
-    EXPECT_TRUE(r.getStateFrom() == Date::today() );
-    EXPECT_TRUE(r.getStateTo()   == Date::today() );
     EXPECT_STREQ(r.getNote(), "");
 }
 
@@ -23,23 +103,6 @@ TEST(Room, SetNote){
     char str[] = "Banana Fish";
     r.setNote(str);
     EXPECT_STREQ(r.getNote(), str);
-}
-
-TEST(Room, SetState){
-    Room r(0, 1);
-    EXPECT_EQ(r.getState(), RoomState::FREE);
-    EXPECT_TRUE(r.getStateFrom() == Date::today() );
-    EXPECT_TRUE(r.getStateTo()   == Date::today() );
-
-    RoomState rs = RoomState::TAKEN;
-    Date begin(2020, 1, 1);
-    Date end(2020, 1, 10);
-
-    r.setState(rs, begin, end);
-
-    EXPECT_EQ(r.getState(), rs);
-    EXPECT_TRUE(r.getStateFrom() == begin );
-    EXPECT_TRUE(r.getStateTo()   == end );
 }
 
 TEST(Room, Equality){

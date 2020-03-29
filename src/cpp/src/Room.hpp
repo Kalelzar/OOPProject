@@ -37,9 +37,6 @@ namespace Hotel {
         int id{};
         int beds{};
         char *note{};
-        RoomState state;
-        Date stateFrom;
-        Date stateTo;
         bool noteFreed = true;
 
         /**
@@ -128,19 +125,21 @@ namespace Hotel {
          */
         char *getNote() const { return note; }
 
-        /**
-         * Sets the state of this room in the range provided
-         * @param state the state
-         * @param from when the state begins
-         * @param to when the state ends
-         */
-        void setState(RoomState state, Date from, Date to);
+    };
 
-        RoomState getState() const { return state; }
+    struct RoomStateEvent {
+        RoomState state;
+        Room room;
+        Date from;
+        Date to;
 
-        Date getStateFrom() const { return stateFrom; }
+        bool operator==(RoomStateEvent const& other) const;
+        bool operator!=(RoomStateEvent const& other) const;
+        bool operator>(RoomStateEvent const& other) const;
+        bool operator>=(RoomStateEvent const& other) const;
+        bool operator<(RoomStateEvent const& other) const;
+        bool operator<=(RoomStateEvent const& other) const;
 
-        Date getStateTo() const { return stateTo; }
     };
 
 }

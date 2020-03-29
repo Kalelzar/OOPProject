@@ -5,6 +5,33 @@
 #include <cstring>
 #include "Room.hpp"
 
+bool Hotel::RoomStateEvent::operator==(RoomStateEvent const& other) const {
+    return room == other.room
+        && state == other.state
+        && from == other.from
+        && to == other.to;
+}
+
+bool Hotel::RoomStateEvent::operator!=(RoomStateEvent const& other) const {
+    return !(*this == other);
+}
+
+bool Hotel::RoomStateEvent::operator>(RoomStateEvent const& other) const {
+    return from > other.to;
+}
+
+bool Hotel::RoomStateEvent::operator<(RoomStateEvent const& other) const {
+    return to < other.from;
+}
+
+bool Hotel::RoomStateEvent::operator>=(RoomStateEvent const& other) const {
+    return from >= other.from;
+}
+
+bool Hotel::RoomStateEvent::operator<=(RoomStateEvent const& other) const {
+    return to <= other.to;
+}
+
 Hotel::Room::Room(int _id, int _beds) {
     init(_id, _beds);
 }
@@ -16,11 +43,6 @@ void Hotel::Room::setNote(const char *note) {
     strcpy(this->note, note);
 }
 
-void Hotel::Room::setState(Hotel::RoomState state, Hotel::Date from, Hotel::Date to) {
-    this->state = state;
-    stateFrom = from;
-    stateTo = to;
-}
 
 Hotel::Room::Room() {
     init(0, 0);
@@ -29,9 +51,6 @@ Hotel::Room::Room() {
 void Hotel::Room::init(int _id, int _beds) {
     id = _id;
     beds = _beds;
-    state = RoomState::FREE;
-    stateFrom = Date::today();
-    stateTo = Date::today();
     note = new char[1];
     note[0] = '\0';
     noteFreed = false;
@@ -50,9 +69,6 @@ Hotel::Room::Room(const Hotel::Room &other) {
 
 void Hotel::Room::copy(const Hotel::Room &other) {
     id = other.getID();
-    state = other.getState();
-    stateFrom = other.getStateFrom();
-    stateTo = other.getStateTo();
     beds = other.getBeds();
     freeNote();
     note = new char[strlen(other.getNote()) + 1];
