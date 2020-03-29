@@ -117,6 +117,12 @@ private:
         }
     }
 
+    void free(){
+        delete [] array;
+        reserved = 0;
+        elemCount = 0;
+    }
+
 public:
 
     void putAll(HashMap<Key, Value> const& other){
@@ -125,6 +131,10 @@ public:
 
     HashMap() {
         init(DEFAULT_SIZE);
+    }
+
+    ~HashMap(){
+        free();
     }
 
     HashMap(HashMap<Key, Value> const &other) {
@@ -192,7 +202,7 @@ public:
      * Clears the contents of the hash map.
      */
     void clear(){
-        delete [] array;
+        free();
         init(DEFAULT_SIZE);
     }
 
