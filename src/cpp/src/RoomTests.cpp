@@ -91,14 +91,13 @@ TEST(RoomStateEvent, LessEq){
 }
 
 TEST(Room, Constructor){
-    Room r(0, 3);
-    EXPECT_EQ(r.getID(), 0);
-    EXPECT_EQ(r.getBeds(), 3);
-    EXPECT_STREQ(r.getNote(), "");
+    Room r{0, 3};
+    EXPECT_EQ(r.id, 0);
+    EXPECT_EQ(r.beds, 3);
 }
 
-TEST(Room, SetNote){
-    Room r(0, 1);
+TEST(RoomStateEvent, SetNote){
+    RoomStateEvent r(RoomState::FREE, {1, 1}, {2020, 2, 1}, {2020, 2, 10});
     EXPECT_STREQ(r.getNote(), "");
     char str[] = "Banana Fish";
     r.setNote(str);

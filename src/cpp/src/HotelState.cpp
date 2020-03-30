@@ -12,3 +12,7 @@ void Hotel::HotelState::add(Room r){
 void Hotel::HotelState::remove(Room r){
     rl.remove(r);
 }
+
+void Hotel::HotelState::checkin(int roomid, Date start, Date end, const char *note){
+    //tree.populate(start)
+}

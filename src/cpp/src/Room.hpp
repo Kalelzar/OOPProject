@@ -32,25 +32,41 @@ namespace Hotel {
      * Free state can be indefinite unless there is a different state scheduled in the future.
      * States can also have a note attached to them.
      */
-    class Room {
-    private:
+    struct Room {
         int id{};
         int beds{};
+
+        Room(int _id, int _beds){
+            id = _id;
+            beds = _beds;
+        }
+
+        Room(){
+            id = -1;
+            beds = 0;
+        }
+
+        /**
+         * Checks if the provided room is the same as this one.
+         * Rooms with the same number are treated as if they were the same
+         * regardless of the rest of their state.
+         * @param other the other room
+         * @return is the other room the same as this one
+         */
+        bool operator==(Room const &other) const {
+            return id == other.id;
+        }
+
+        bool operator!=(Room const &other) const {
+            return !(*this == other);
+        }
+
+    };
+
+    class RoomStateEvent {
+    private:
         char *note{};
         bool noteFreed = true;
-
-        /**
-         * Safely copies a different room to this one
-         * @param other the room to copy
-         */
-        void copy(Room const &other);
-
-        /**
-         * Initializes the room with an id and bed count
-         * @param _id the room number
-         * @param _beds the bed count
-         */
-        void init(int _id, int _beds);
 
         /**
          * Frees the memory associated with the note
@@ -62,76 +78,60 @@ namespace Hotel {
             }
         }
 
+        /**
+         * Safely copies a different room state event to this one
+         * @param other the room state event to copy
+         */
+        void copy(RoomStateEvent const& other);
+
+        void init(RoomState const& _state,
+                  Room const& _room,
+                  Date const& _from,
+                  Date const& _to,
+                  const char* _note);
+
     public:
 
-        /**
-         * Initializes a room with number 0 and no beds.
-         * Such a room is considered invalid hence needs to be marked unavailable
-         */
-        Room();
 
-        /**
-         * Initializes a room with a number and a specified amount of beds.
-         * The default state is FREE unless beds are 0 in which case it is UNAVAILABLE
-         * @param _id
-         * @param _beds
-         */
-        Room(int _id, int _beds);
+        RoomState state;
+        Room room;
+        Date from;
+        Date to;
 
-        ~Room() {
+        RoomStateEvent();
+
+        RoomStateEvent(RoomState const& _state,
+                       Room const& _room,
+                       Date const& _from,
+                       Date const& _to);
+
+        RoomStateEvent(RoomState const& _state,
+                       Room const& _room,
+                       Date const& _from,
+                       Date const& _to,
+                       const char* _note);
+
+
+        RoomStateEvent(RoomStateEvent const &other);
+
+        RoomStateEvent &operator=(RoomStateEvent const &other);
+
+        ~RoomStateEvent() {
             freeNote();
         }
 
-        Room(Room const &other);
-
-        Room &operator=(Room const &other);
-
         /**
-         * Returns the room number associated with this room.
-         * That number should be unique to this room
-         * @return the room number
-         */
-        int getID() const { return id; }
-        /**
-         * Returns the amount of beds in this room
-         * @return the bed count
-         */
-        int getBeds() const { return beds; }
-
-        /**
-         * Checks if the provided room is the same as this one.
-         * Rooms with the same number are treated as if they were the same
-         * regardless of the rest of their state.
-         * @param other the other room
-         * @return is the other room the same as this one
-         */
-        bool operator==(Room const &other) const {
-            return getID() == other.getID();
-        }
-
-        bool operator!=(Room const &other) const {
-            return !(*this == other);
-        }
-
-        /**
-         * Set the note attached to this room's state
+         * Set the note attached to this room state event
          * @param note the note
          */
         void setNote(const char *note);
 
         /**
-         * The note attached to this room
+         * The note attached to this room state event
          * @return the note
          */
         char *getNote() const { return note; }
 
-    };
-
-    struct RoomStateEvent {
-        RoomState state;
-        Room room;
-        Date from;
-        Date to;
 
         bool operator==(RoomStateEvent const& other) const;
         bool operator!=(RoomStateEvent const& other) const;

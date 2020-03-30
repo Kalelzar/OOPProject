@@ -32,46 +32,60 @@ bool Hotel::RoomStateEvent::operator<=(RoomStateEvent const& other) const {
     return to <= other.to;
 }
 
-Hotel::Room::Room(int _id, int _beds) {
-    init(_id, _beds);
-}
 
-void Hotel::Room::setNote(const char *note) {
+void Hotel::RoomStateEvent::setNote(const char *note) {
     freeNote();
     this->note = new char[strlen(note) + 1];
     noteFreed = false;
     strcpy(this->note, note);
 }
 
-
-Hotel::Room::Room() {
-    init(0, 0);
+Hotel::RoomStateEvent::RoomStateEvent(){
+    init(RoomState::UNKNOWN, {}, {}, {}, "");
 }
 
-void Hotel::Room::init(int _id, int _beds) {
-    id = _id;
-    beds = _beds;
-    note = new char[1];
-    note[0] = '\0';
-    noteFreed = false;
-}
 
-Hotel::Room &Hotel::Room::operator=(const Hotel::Room &other) {
+Hotel::RoomStateEvent &Hotel::RoomStateEvent::operator=(const Hotel::RoomStateEvent &other) {
     if (&other != this)
         copy(other);
     return *this;
 }
 
-Hotel::Room::Room(const Hotel::Room &other) {
-    if (&other != this){}
+Hotel::RoomStateEvent::RoomStateEvent(const Hotel::RoomStateEvent &other) {
+    if (&other != this)
         copy(other);
 }
 
-void Hotel::Room::copy(const Hotel::Room &other) {
-    id = other.getID();
-    beds = other.getBeds();
+void Hotel::RoomStateEvent::copy(const Hotel::RoomStateEvent &other) {
     freeNote();
-    note = new char[strlen(other.getNote()) + 1];
-    strcpy(note, other.note);
     noteFreed = false;
+    init(other.state, other.room, other.from, other.to, other.getNote());
+}
+
+void Hotel::RoomStateEvent::init(RoomState const& _state,
+          Room const& _room,
+          Date const& _from,
+          Date const& _to,
+          const char* _note){
+    state = _state;
+    room = _room;
+    from = _from;
+    to = _to;
+    note = new char[strlen(_note) + 1];
+    strcpy(note, _note);
+}
+
+Hotel::RoomStateEvent::RoomStateEvent(RoomState const& _state,
+                                      Room const& _room,
+                                      Date const& _from,
+                                      Date const& _to){
+    init(_state, _room, _from, _to, "");
+}
+
+Hotel::RoomStateEvent::RoomStateEvent(RoomState const& _state,
+                                      Room const& _room,
+                                      Date const& _from,
+                                      Date const& _to,
+                                      const char* _note){
+    init(_state, _room, _from, _to, _note);
 }

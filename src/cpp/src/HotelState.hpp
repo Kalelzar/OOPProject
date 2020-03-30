@@ -13,7 +13,7 @@ namespace Hotel {
     class HotelState {
     private:
         ArrayList<Room> rl{};
-        RangeBinaryTree<Date, RoomStateEvent>{};
+        RangeBinaryTree<Date, RoomStateEvent> tree{};
         char *filepath;
         bool modified;
         void copy(HotelState const& state);
