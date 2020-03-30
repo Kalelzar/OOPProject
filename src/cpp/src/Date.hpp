@@ -78,6 +78,10 @@ namespace Hotel {
                 && other.getDay() == getDay();
         }
 
+        int operator-(Date const& other) const{
+            return daysSince1900() - other.daysSince1900();
+        }
+
     /**
      * Prints the date in the ISO 8601 format ( <year>-<month>-<day> ) and a newline
      */

@@ -72,6 +72,7 @@ void Hotel::RoomStateEvent::init(RoomState const& _state,
     from = _from;
     to = _to;
     note = new char[strlen(_note) + 1];
+    noteFreed = false;
     strcpy(note, _note);
 }
 

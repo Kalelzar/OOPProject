@@ -1,7 +1,9 @@
 #ifndef OOPPROJECT_RANGEBINARYTREE_HPP
 #define OOPPROJECT_RANGEBINARYTREE_HPP
 
-#include "ArrayList.hpp"
+#include "Stack.hpp"
+#include <iostream>
+#include <iomanip>
 
 template <typename B, typename A>
 class BinaryNode{
@@ -10,12 +12,13 @@ public:
     ArrayList<A> value;
     BinaryNode<B, A>* left;
     BinaryNode<B, A>* right;
+    BinaryNode<B, A>* parent;
 
-
-    BinaryNode(B const& tag, A const& value){
+    BinaryNode(B const& tag, A const& value, BinaryNode<B, A>* parent = nullptr){
         this->tag = tag;
         this->value.append(value);
         left = right = nullptr;
+        this->parent = parent;
     }
 
     ~BinaryNode(){
@@ -23,25 +26,115 @@ public:
         delete right;
     }
 
-    static BinaryNode<B, A>* instance(B const& tag, A const&  value){
-        return new BinaryNode(tag, value);
+    static BinaryNode<B, A>* instance(B const& tag, A const&  value, BinaryNode<B, A>* parent = nullptr){
+        return new BinaryNode(tag, value, parent);
     }
 
 
-    void populate(B const& ntag, A const& nvalue){
-
-        if(tag == ntag){
-            value.append(nvalue);
-        }else if(tag > ntag){
-            if(left == nullptr){
-                left = BinaryNode::instance(ntag, nvalue);
+    void print(int depth = 0){
+        for(int i = 0; i < depth; i++){
+            std::cout<<' ';
+        }
+        std::cout<<tag<<std::endl;
+        if(left != nullptr){
+            left->print(depth+2);
+        }else{
+            for(int i = 0; i < depth+2; i++){
+                std::cout<<' ';
             }
-            else left->populate(ntag, nvalue);
+            std::cout<<"XXX"<<std::endl;
+        }
+
+        if(right != nullptr){
+            right->print(depth+2);
+        }else{
+            for(int i = 0; i < depth+2; i++){
+                std::cout<<' ';
+            }
+            std::cout<<"XXX"<<std::endl;
+        }
+    }
+
+    void populate(B const& ntag, A const& nvalue){
+        populate(BinaryNode<B, A>::instance(ntag, nvalue, nullptr));
+    }
+
+    void populate(BinaryNode<B, A>* node){
+        if(!node) return;
+        if(tag == node->tag){
+            value.appendAll(node->value);
+            delete node;
+        }else if(tag > node->tag){
+            if(left == nullptr){
+                left = node;
+                node->parent = this;
+            }
+            else left->populate(node);
         }else{
             if(right == nullptr){
-                right = BinaryNode::instance(ntag, nvalue);
+                right = node;
+                node->parent = this;
             }
-            else right->populate(ntag, nvalue);
+            else right->populate(node);
+        }
+    }
+
+    void populateWithRange(B const& start, B const& end, A const nvalue){
+        if(tag == start || tag == end){
+            value.append(nvalue);
+        }else if(tag > end){
+            if(left == nullptr){
+                left = BinaryNode::instance(start, nvalue, this);
+            }
+            else left->populateWithRange(start, end, nvalue);
+        }else if(tag < start){
+            if (right == nullptr){
+                right = BinaryNode::instance(end, nvalue, this);
+            }
+            else right->populateWithRange(start, end, nvalue);
+        }else{
+            //The current node lies inside the range
+            //First check if a node with tag == end || tag == start exists further down
+            BinaryNode<B, A>* exists = firstMatch(end);
+            if(exists){
+                exists->value.append(nvalue);
+                return;
+            }
+            exists = firstMatch(start);
+            if(exists){
+                exists->value.append(nvalue);
+                return;
+            }
+
+            bool isLeft = (!parent && std::abs(tag-start) <= std::abs(tag-end)) || (parent && parent->left == this);
+            if(isLeft){
+                BinaryNode<B, A>* node = BinaryNode::instance(start, nvalue, parent);
+                if(parent) parent->left = node;
+                node->repopulate(this);
+            }else{
+                BinaryNode<B, A>* node = BinaryNode::instance(end, nvalue, parent);
+                if(parent) parent->right = node;
+                node->repopulate(this);
+            }
+        }
+    }
+
+    unique_ptr<Stack<BinaryNode<B, A>*>> collect(){
+        unique_ptr<Stack<BinaryNode<B, A>*>> stack = make_unique<Stack<BinaryNode<B, A>*>>();
+        stack->push(this);
+        if(left) stack->pushAll(*left->collect());
+        if(right) stack->pushAll(*right->collect());
+        return stack;
+    }
+
+    void repopulate(BinaryNode<B, A>* node){
+        unique_ptr<Stack<BinaryNode<B, A>*>> nodes = node->collect();
+        while(nodes->length()){
+            BinaryNode<B, A>* n = nodes->pop()->get();
+            n->left = nullptr;
+            n->right = nullptr;
+            n->parent = nullptr;
+            populate(n);
         }
     }
 
@@ -58,6 +151,19 @@ public:
         return nullptr;
     }
 
+    BinaryNode<B, A>* firstMatch(B target){
+        if(tag == target) return this;
+        if(left != nullptr){
+            BinaryNode<B, A>* res = left->firstMatch(target);
+            if(res != nullptr) return res;
+        }
+        if(right != nullptr){
+            BinaryNode<B, A>* res = right->firstMatch(target);
+            if(res != nullptr) return res;
+        }
+        return nullptr;
+    }
+
     unique_ptr<ArrayList<A>> allInRange(B const& lower, B const& upper) const {
         unique_ptr<ArrayList<A>> range = make_unique<ArrayList<A>>();
 
@@ -69,7 +175,8 @@ public:
 
         if(tag > upper){
             if(left!=nullptr) range->appendAll(*left->allInRange(lower, upper));
-        }else if(tag < lower){
+        }
+        if(tag < lower){
             if(right!=nullptr) range->appendAll(*right->allInRange(lower, upper));
         }
 
@@ -90,6 +197,10 @@ public:
 
     ~RangeBinaryTree(){
         free();
+    }
+
+    RangeBinaryTree(){
+        root = nullptr;
     }
 
     bool isEmpty() const {
@@ -116,7 +227,22 @@ public:
         }
     }
 
-    unique_ptr<ArrayList<A>> inRange(A const& lower, A const& upper) const {
+    void populateWithRange(B start, B end, A value){
+        if(root == nullptr){
+            root = new BinaryNode<B, A>(start, value);
+        }else{
+            root->populateWithRange(start, end, value);
+            while(root->parent != nullptr){
+                root = root->parent;
+            }
+        }
+    }
+
+    void print(){
+        root->print();
+    }
+
+    unique_ptr<ArrayList<A>> inRange(B const& lower, B const& upper) const {
         if(root == nullptr) return nullptr;
         return root->allInRange(lower,upper);
     }

@@ -1,4 +1,5 @@
 #include<iostream>
+#include "Date.hpp"
 #include "BinaryTree.hpp"
 #include <random>
 #include <chrono>
@@ -6,50 +7,53 @@
 #include <cstdlib>
 
 int main() {
-
     srand(time(nullptr));
+    RangeBinaryTree<Hotel::Date, int> root{};
+    root.populate({2020, 1, 21}, 21);
+    root.populate({2020, 1, 15}, 15);
 
-    int min = 0;
-    int max = 100000;
 
-    int nodes = 10000;
+    root.populate({2020, 1, 30}, 30);
 
-    int randnum = min + rand() % max;
-    BinaryNode<int, int>* root = new BinaryNode<int, int>(randnum, randnum);
-    {
-        auto begin = std::chrono::high_resolution_clock::now();
 
-        for(int i = 0; i < nodes; i++){
-            randnum = min + rand() % max;
-            root->populate(randnum, randnum);
-        }
+    root.populate({2020, 1, 13}, 13);
 
-        auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin);
-        std::cout<<"Populating the tree with "<<nodes<<" random entries took "<<duration.count()<<"ms\n";
+
+    root.populate({2020, 1, 18}, 18);
+
+
+    root.populate({2020, 1, 3}, 3);
+
+
+    root.populate({2020, 1, 8}, 8);
+
+
+    root.populate({2020, 1, 25}, 25);
+
+    std::cout<<"=================\n";
+    root.populate({2020, 2, 10}, 41);
+    root.print();
+    std::cout<<"=================\n";
+//        21
+//      /   \
+//     15    30
+//    / \   /  \
+//   6  18 25  41
+//  / \
+// 3  8
+
+    int start = 1 + rand()%30;
+    int end = 1 + rand()%30;
+    if(start > end) std::swap(start, end);
+    std::cout<<"Start: " << start <<" End: "<<end<<std::endl;
+    root.populateWithRange({2020, 1, start}, {2020, 1, end}, (start+end)/2);
+    root.print();
+    std::cout<<"=================\n";
+    unique_ptr<ArrayList<int>> res = root.inRange({2020, 1, 12}, {2020, 1, 19});
+    for(int i = 0; i<res->length(); i++){
+        std::cout<<res->get(i)<<std::endl;
     }
 
-    {
-        auto begin = std::chrono::high_resolution_clock::now();
-
-        int smin = min + rand() % max;
-        int smax = min + rand() % max;
-
-        if(smin > smax) swap(smin, smax);
-
-        unique_ptr<ArrayList<int>> res = root->allInRange(min, max);
-
-        auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin);
-        std::cout<<"Finding a random range in "<<nodes<<" random entries took "<<duration.count()<<"ms\n";
-    }
-
-
-        //for(unsigned i = 0; i < res->length(); i++){
-        //    std::cout<<">> "<<res->get(i)<<"\n";
-        //}
-
-        delete root;
 
     return 0;
 }

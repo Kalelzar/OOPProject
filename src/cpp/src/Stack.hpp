@@ -18,6 +18,11 @@ public:
         this->append(elem);
     }
 
+    void pushAll(Stack<A> const& stack){
+        for(unsigned i = 0; i < stack.length(); i++)
+            push(stack.get(i));
+    }
+
     unique_ptr<Nullable<A>> peek() const {
         return (*this)[length()-1];
     }
