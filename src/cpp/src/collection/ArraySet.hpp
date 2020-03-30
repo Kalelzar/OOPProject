@@ -20,7 +20,7 @@ public:
 
     void insert(A const &elem, unsigned at) override {
 
-        if(at < 0) return;
+        if (at < 0) return;
 
         for (unsigned i = 0; i < this->length(); i++) {
             if (this->get(i) == elem) {

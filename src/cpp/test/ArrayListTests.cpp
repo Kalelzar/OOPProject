@@ -2,8 +2,8 @@
 // Created by Kalelzar on 25/03/2020.
 //
 
-#include "ArrayList.hpp"
-#include "Room.hpp"
+#include "../src/collection/ArrayList.hpp"
+#include "../src/Room.hpp"
 #include "gtest/gtest.h"
 
 using namespace Hotel;
@@ -14,9 +14,9 @@ TEST(ArrayList, DefaultConstructor_Room) {
     EXPECT_EQ(rl.length(), 0);
 }
 
-TEST(ArrayList, Clear){
+TEST(ArrayList, Clear) {
     ArrayList<int> rl;
-    for(int i = 0; i < 10; i++){
+    for (int i = 0; i < 10; i++) {
         rl.append(i);
     }
     EXPECT_EQ(rl.length(), 10);
@@ -25,7 +25,7 @@ TEST(ArrayList, Clear){
     EXPECT_THROW(rl[0]->get(), NoValueException);
 }
 
-TEST(ArrayList, Subscript){
+TEST(ArrayList, Subscript) {
     ArrayList<int> rl;
     EXPECT_THROW(rl[0]->get(), NoValueException);
     rl.append(1);
@@ -74,8 +74,7 @@ TEST(ArrayList, PrependGet_Room) {
 }
 
 
-
-TEST(ArrayList, Insert_Room){
+TEST(ArrayList, Insert_Room) {
     ArrayList<Room> rl;
     Room r1(0, 1);
     Room r2(1, 1);
@@ -124,13 +123,13 @@ TEST(ArrayList, Expand_Room) {
     int capacity = 1;
     ArrayList<Room> rl(capacity);
     EXPECT_EQ(rl.capacity(), capacity);
-    for (int i = 0; i < capacity*4; i++) {
+    for (int i = 0; i < capacity * 4; i++) {
         rl.append(Room());
     }
     EXPECT_EQ(rl.capacity(), capacity * 4);
 }
 
-TEST(ArrayList, Remove_Room){
+TEST(ArrayList, Remove_Room) {
     ArrayList<Room> rl;
     Room r1(1, 1);
     Room r2(2, 1);
@@ -144,7 +143,7 @@ TEST(ArrayList, Remove_Room){
     EXPECT_TRUE(rl.get(1) == r3);
 }
 
-TEST(ArrayList, RemoveAt_Room){
+TEST(ArrayList, RemoveAt_Room) {
     ArrayList<Room> rl;
     Room r1(1, 1);
     Room r2(2, 1);
@@ -158,7 +157,7 @@ TEST(ArrayList, RemoveAt_Room){
     EXPECT_TRUE(rl.get(1) == r3);
 }
 
-TEST(ArrayList, Pop_Room){
+TEST(ArrayList, Pop_Room) {
     ArrayList<Room> rl;
     Room r1(1, 1);
     Room r2(2, 1);
@@ -172,7 +171,7 @@ TEST(ArrayList, Pop_Room){
     EXPECT_TRUE(rl.get(1) == r2);
 }
 
-TEST(ArrayList, Shift_Room){
+TEST(ArrayList, Shift_Room) {
     ArrayList<Room> rl;
     Room r1(1, 1);
     Room r2(2, 1);
@@ -228,7 +227,7 @@ TEST(ArrayList, PrependGet_Int) {
     EXPECT_EQ(rl.get(1), r);
 }
 
-TEST(ArrayList, Insert_Int){
+TEST(ArrayList, Insert_Int) {
     ArrayList<int> rl;
     int r1 = 1;
     int r2 = 2;
@@ -277,13 +276,13 @@ TEST(ArrayList, Expand_Int) {
     int capacity = 1;
     ArrayList<int> rl(capacity);
     EXPECT_EQ(rl.capacity(), capacity);
-    for (int i = 0; i < capacity*4; i++) {
+    for (int i = 0; i < capacity * 4; i++) {
         rl.append(i);
     }
     EXPECT_EQ(rl.capacity(), capacity * 4);
 }
 
-TEST(ArrayList, Remove_Int){
+TEST(ArrayList, Remove_Int) {
     ArrayList<int> rl;
     int r1 = 1;
     int r2 = 2;
@@ -297,7 +296,7 @@ TEST(ArrayList, Remove_Int){
     EXPECT_EQ(rl.get(1), r3);
 }
 
-TEST(ArrayList, RemoveAt_Int){
+TEST(ArrayList, RemoveAt_Int) {
     ArrayList<int> rl;
     int r1 = 1;
     int r2 = 2;
@@ -311,7 +310,7 @@ TEST(ArrayList, RemoveAt_Int){
     EXPECT_EQ(rl.get(1), r3);
 }
 
-TEST(ArrayList, Pop_Int){
+TEST(ArrayList, Pop_Int) {
     ArrayList<int> rl;
     int r1 = 1;
     int r2 = 2;
@@ -325,7 +324,7 @@ TEST(ArrayList, Pop_Int){
     EXPECT_EQ(rl.get(1), r2);
 }
 
-TEST(ArrayList, Shift_Int){
+TEST(ArrayList, Shift_Int) {
     ArrayList<int> rl;
     int r1 = 1;
     int r2 = 2;

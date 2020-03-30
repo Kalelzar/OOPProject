@@ -72,7 +72,7 @@ public:
             _last = s;
         } else {
             Node<A> *cur = _head;
-            for (int i = 0; i < at-1; i++) {
+            for (int i = 0; i < at - 1; i++) {
                 cur = cur->next;
             }
             Node<A> *s = new Node<A>{elem, cur->next};
@@ -90,7 +90,7 @@ public:
 
     unsigned remove(const A &elem) override {
         if (_head == nullptr) return 0;
-        unsigned foundAt=0;
+        unsigned foundAt = 0;
         Node<A> *cur = _head;
         while (cur != nullptr) {
             if (cur->next->elem == elem) {
@@ -104,6 +104,15 @@ public:
             cur = cur->next;
         }
         return foundAt;
+    }
+
+    bool contains(A const &elem) override {
+        Node<A>* cur = _head;
+        while(cur != nullptr){
+            if(*cur == elem) return true;
+            cur = cur->next;
+        }
+        return false;
     }
 
     A get(unsigned index) const override {
@@ -139,7 +148,7 @@ public:
 
     unique_ptr<Nullable<A>> removeAt(unsigned at) override {
         if (_head == nullptr) return std::make_unique<Null<A>>();
-        if( at > length()-1) return removeAt(length()-1);
+        if (at > length() - 1) return removeAt(length() - 1);
 
         A ret;
         if (at == 0) {
@@ -154,8 +163,8 @@ public:
                 if (counter + 1 == at) {
                     Node<A> *temp = cur->next;
                     cur->next = temp->next;
-                    if(at == length()-1){
-                        _last=cur;
+                    if (at == length() - 1) {
+                        _last = cur;
                     }
                     ret = temp->elem;
                     delete temp;
@@ -175,7 +184,7 @@ public:
     }
 
     unique_ptr<Nullable<A>> shift() override {
-       return removeAt(0);
+        return removeAt(0);
     }
 
     unique_ptr<Nullable<A>> head() const {

@@ -4,7 +4,7 @@
 #include "ArrayList.hpp"
 #include <iostream>
 
-template <class A>
+template<class A>
 class SortedArrayList : public ArrayList<A> {
 
 };

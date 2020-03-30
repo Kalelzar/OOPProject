@@ -2,19 +2,19 @@
 // Created by Kalelzar on 26/03/2020.
 //
 
-#include "LinkedList.hpp"
-#include "Room.hpp"
+#include "../src/collection/LinkedList.hpp"
+#include "../src/Room.hpp"
 #include "gtest/gtest.h"
 
 using namespace Hotel;
 
-TEST(LinkedList, Constructor_Int){
+TEST(LinkedList, Constructor_Int) {
     LinkedList<int> ll;
     EXPECT_THROW(ll.head()->get(), NoValueException);
     EXPECT_THROW(ll.last()->get(), NoValueException);
 }
 
-TEST(LinkedList, Append_Int){
+TEST(LinkedList, Append_Int) {
     LinkedList<int> ll;
     ll.append(1);
     ll.append(2);
@@ -23,9 +23,9 @@ TEST(LinkedList, Append_Int){
     EXPECT_EQ(ll.last()->get(), 2);
 }
 
-TEST(LinkedList, Clear){
+TEST(LinkedList, Clear) {
     LinkedList<int> rl;
-    for(int i = 0; i < 10; i++){
+    for (int i = 0; i < 10; i++) {
         rl.append(i);
     }
     EXPECT_EQ(rl.length(), 10);
@@ -34,7 +34,7 @@ TEST(LinkedList, Clear){
     EXPECT_THROW(rl[0]->get(), NoValueException);
 }
 
-TEST(LinkedList, Subscript){
+TEST(LinkedList, Subscript) {
     LinkedList<int> rl;
     EXPECT_THROW(rl[0]->get(), NoValueException);
     rl.append(1);
@@ -46,7 +46,7 @@ TEST(LinkedList, Subscript){
     EXPECT_THROW(rl[3]->get(), NoValueException);
 }
 
-TEST(LinkedList, Prepend_Int){
+TEST(LinkedList, Prepend_Int) {
     LinkedList<int> ll;
     ll.prepend(1);
     ll.prepend(2);
@@ -55,7 +55,7 @@ TEST(LinkedList, Prepend_Int){
     EXPECT_EQ(ll.last()->get(), 1);
 }
 
-TEST(LinkedList, Insert_Int){
+TEST(LinkedList, Insert_Int) {
     LinkedList<int> ll;
     ll.append(1);
     ll.append(2);
@@ -66,7 +66,7 @@ TEST(LinkedList, Insert_Int){
     EXPECT_EQ(ll.last()->get(), 2);
 }
 
-TEST(LinkedList, Remove_Int){
+TEST(LinkedList, Remove_Int) {
     LinkedList<int> ll;
     ll.append(1);
     ll.append(2);
@@ -77,7 +77,7 @@ TEST(LinkedList, Remove_Int){
     EXPECT_EQ(ll.last()->get(), 3);
 }
 
-TEST(LinkedList, RemoveAt_Int){
+TEST(LinkedList, RemoveAt_Int) {
     LinkedList<int> ll;
     ll.append(1);
     ll.append(2);
@@ -88,7 +88,7 @@ TEST(LinkedList, RemoveAt_Int){
     EXPECT_EQ(ll.last()->get(), 3);
 }
 
-TEST(LinkedList, Pop_Int){
+TEST(LinkedList, Pop_Int) {
     LinkedList<int> ll;
     ll.append(1);
     ll.append(2);
@@ -99,7 +99,7 @@ TEST(LinkedList, Pop_Int){
     EXPECT_EQ(ll.last()->get(), 2);
 }
 
-TEST(LinkedList, Shift_Int){
+TEST(LinkedList, Shift_Int) {
     LinkedList<int> ll;
     ll.append(1);
     ll.append(2);
@@ -110,13 +110,13 @@ TEST(LinkedList, Shift_Int){
     EXPECT_EQ(ll.last()->get(), 3);
 }
 
-TEST(LinkedList, Constructor_Room){
+TEST(LinkedList, Constructor_Room) {
     LinkedList<Room> ll;
     EXPECT_THROW(ll.head()->get(), NoValueException);
     EXPECT_THROW(ll.last()->get(), NoValueException);
 }
 
-TEST(LinkedList, Append_Room){
+TEST(LinkedList, Append_Room) {
     LinkedList<Room> ll;
     Room r1(1, 0);
     Room r2(2, 0);
@@ -127,7 +127,7 @@ TEST(LinkedList, Append_Room){
     EXPECT_TRUE(ll.last()->get() == r2);
 }
 
-TEST(LinkedList, Prepend_Room){
+TEST(LinkedList, Prepend_Room) {
     LinkedList<Room> ll;
     Room r1(1, 0);
     Room r2(2, 0);
@@ -138,7 +138,7 @@ TEST(LinkedList, Prepend_Room){
     EXPECT_TRUE(ll.last()->get() == r1);
 }
 
-TEST(LinkedList, Insert_Room){
+TEST(LinkedList, Insert_Room) {
     LinkedList<Room> ll;
     Room r1(1, 0);
     Room r2(2, 0);
@@ -147,12 +147,12 @@ TEST(LinkedList, Insert_Room){
     ll.append(r2);
     ll.insert(r3, 1);
     EXPECT_EQ(ll.length(), 3);
-    EXPECT_TRUE(ll.head()->get() ==r1);
-    EXPECT_TRUE(ll.get(1) ==r3);
-    EXPECT_TRUE(ll.last()->get() ==r2);
+    EXPECT_TRUE(ll.head()->get() == r1);
+    EXPECT_TRUE(ll.get(1) == r3);
+    EXPECT_TRUE(ll.last()->get() == r2);
 }
 
-TEST(LinkedList, Remove_Room){
+TEST(LinkedList, Remove_Room) {
     LinkedList<Room> ll;
     Room r1(1, 0);
     Room r2(2, 0);
@@ -166,7 +166,7 @@ TEST(LinkedList, Remove_Room){
     EXPECT_TRUE(ll.last()->get() == r3);
 }
 
-TEST(LinkedList, RemoveAt_Room){
+TEST(LinkedList, RemoveAt_Room) {
     LinkedList<Room> ll;
     Room r1(1, 0);
     Room r2(2, 0);
@@ -180,7 +180,7 @@ TEST(LinkedList, RemoveAt_Room){
     EXPECT_TRUE(ll.last()->get() == r3);
 }
 
-TEST(LinkedList, Pop_Room){
+TEST(LinkedList, Pop_Room) {
     LinkedList<Room> ll;
     Room r1(1, 0);
     Room r2(2, 0);
@@ -194,7 +194,7 @@ TEST(LinkedList, Pop_Room){
     EXPECT_TRUE(ll.last()->get() == r2);
 }
 
-TEST(LinkedList, Shift_Room){
+TEST(LinkedList, Shift_Room) {
     LinkedList<Room> ll;
     Room r1(1, 0);
     Room r2(2, 0);

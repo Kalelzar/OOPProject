@@ -12,6 +12,7 @@ template<class A>
 class ArrayList : public IList<A> {
 private:
     static const unsigned DEFAULT_RESERVED_SPACE = 4;
+
     void free() {
         delete[] elems;
     }
@@ -68,20 +69,20 @@ public:
     }
 
     void insert(A const &elem, unsigned at) override {
-        if(at < 0) return;
+        if (at < 0) return;
 
         if (elemCount + 1 > capacity()) {
             expand();
         }
 
-        if(at >= length()){
+        if (at >= length()) {
             elems[elemCount] = elem;
             elemCount++;
             return;
         }
 
-        for(int i = length(); i > at; i--){
-            elems[i] = elems[i-1];
+        for (int i = length(); i > at; i--) {
+            elems[i] = elems[i - 1];
         }
 
         elems[at] = elem;
@@ -102,12 +103,12 @@ public:
         elems = newRooms;
     }
 
-    void fill(){
+    void fill() {
         fill(A{});
     }
 
-    void fill(A const& elem){
-        for(int i = 0; i < capacity(); i++){
+    void fill(A const &elem) {
+        for (int i = 0; i < capacity(); i++) {
             append(elem);
         }
     }
@@ -120,11 +121,18 @@ public:
         insert(elem, 0);
     }
 
+    bool contains(A const &elem) override {
+        for(int i = 0; i < length(); i++){
+            if(get(i) == elem) return true;
+        }
+        return false;
+    }
+
     unsigned remove(const A &elem) {
         unsigned foundAt = 0;
         unsigned index = 0;
         for (unsigned i = 0; i < length(); i++) {
-            if (get(i) == elem){
+            if (get(i) == elem) {
                 foundAt = i;
                 continue;
             }
@@ -138,13 +146,13 @@ public:
     }
 
     unique_ptr<Nullable<A>> removeAt(unsigned ind) override {
-        if(length() == 0) return std::make_unique<Null<A>>();
+        if (length() == 0) return std::make_unique<Null<A>>();
 
-        A ret = elems[ind >= length() ? length()-1 : ind];
+        A ret = elems[ind >= length() ? length() - 1 : ind];
 
-        if(ind < length()-1){
-            for(unsigned i = ind; i < length()-1; i++){
-                elems[i] = elems[i+1];
+        if (ind < length() - 1) {
+            for (unsigned i = ind; i < length() - 1; i++) {
+                elems[i] = elems[i + 1];
             }
         }
         elemCount--;
@@ -152,7 +160,7 @@ public:
     }
 
     unique_ptr<Nullable<A>> pop() override {
-        return removeAt(length()-1);
+        return removeAt(length() - 1);
     }
 
     unique_ptr<Nullable<A>> shift() override {
@@ -172,6 +180,24 @@ public:
     void clear() override {
         free();
         create(getDefaultReservedSpace());
+    }
+
+    unique_ptr<ArrayList<A>> filter(bool predicate(const A&)){
+        unique_ptr<ArrayList<A>> filtered = make_unique<ArrayList<A>>();
+        for(int i = 0; i < length(); i++){
+            if(predicate(get(i))){
+                filtered->append(get(i));
+            }
+        }
+        return filtered;
+    }
+
+    template <typename B>
+    unique_ptr<ArrayList<B>> map(B mapper(const A&)){
+        unique_ptr<ArrayList<B>> mapped = make_unique<ArrayList<B>>(capacity());
+        for(int i = 0; i < length(); i++){
+            mapped->append(mapper(get(i)));
+        }
     }
 
     static unsigned getDefaultReservedSpace() { return DEFAULT_RESERVED_SPACE; };

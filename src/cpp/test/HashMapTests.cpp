@@ -2,11 +2,11 @@
 // Created by Kalelzar on 27/03/2020.
 //
 
-#include "HashMap.hpp"
-#include "Room.hpp"
+#include "../src/collection/HashMap.hpp"
+#include "../src/Room.hpp"
 #include "gtest/gtest.h"
 
-TEST(HashMap, Put){
+TEST(HashMap, Put) {
     HashMap<int, int> map;
     map.put(1, 1);
     map.put(2, 2);
@@ -19,7 +19,7 @@ TEST(HashMap, Put){
     EXPECT_THROW(map.get(3)->get(), NoValueException);
 }
 
-TEST(HashMap, Remove){
+TEST(HashMap, Remove) {
     HashMap<int, int> map;
     map.put(1, 2);
     EXPECT_EQ(map.length(), 1);
@@ -29,33 +29,33 @@ TEST(HashMap, Remove){
     EXPECT_EQ(map.get(1)->getOrElse(-1), -1);
 }
 
-TEST(HashMap, GetEntries){
+TEST(HashMap, GetEntries) {
     HashMap<int, int> map;
     map.put(2, 5);
     Entry<int, int> entry = {2, 5, false};
     bool found = false;
-    for(unsigned i = 0; i < map.capacity(); i++){
+    for (unsigned i = 0; i < map.capacity(); i++) {
         found = map.underlying()[i] == entry;
-        if(found) break;
+        if (found) break;
     }
     ASSERT_TRUE(found);
 }
 
-TEST(HashMap, Clear){
+TEST(HashMap, Clear) {
     HashMap<int, int> map;
     map.put(2, 5);
     Entry<int, int> entry = {2, 5, false};
     bool found = false;
-    for(unsigned i = 0; i < map.capacity(); i++){
+    for (unsigned i = 0; i < map.capacity(); i++) {
         found = map.underlying()[i] == entry;
-        if(found) break;
+        if (found) break;
     }
     ASSERT_TRUE(found);
     map.clear();
     found = false;
-    for(unsigned i = 0; i < map.capacity(); i++){
+    for (unsigned i = 0; i < map.capacity(); i++) {
         found = map.underlying()[i] == entry;
-        if(found) break;
+        if (found) break;
     }
     ASSERT_FALSE(found);
 }

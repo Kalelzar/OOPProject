@@ -2,8 +2,8 @@
 // Created by Kalelzar on 25/03/2020.
 //
 
-#include "ArraySet.hpp"
-#include "Room.hpp"
+#include "../src/collection/ArraySet.hpp"
+#include "../src/Room.hpp"
 #include "gtest/gtest.h"
 
 using namespace Hotel;
@@ -80,7 +80,7 @@ TEST(ArraySet, PrependAll_Room) {
     EXPECT_TRUE(newList.get(1) == rl.get(0));
 }
 
-TEST(ArraySet, Insert_Room){
+TEST(ArraySet, Insert_Room) {
     ArraySet<Room> rl;
     Room r1(0, 1);
     Room r2(1, 1);
@@ -99,13 +99,13 @@ TEST(ArraySet, Expand_Room) {
     int capacity = 1;
     ArraySet<Room> rs(capacity);
     EXPECT_EQ(rs.capacity(), capacity);
-    for (int i = 0; i < capacity*4; i++) {
+    for (int i = 0; i < capacity * 4; i++) {
         rs.append(Room(i, 0));
     }
     EXPECT_EQ(rs.capacity(), capacity * 4);
 }
 
-TEST(ArraySet, Unique_Room){
+TEST(ArraySet, Unique_Room) {
     ArraySet<Room> rs;
     EXPECT_EQ(rs.length(), 0);
     Room r1(1, 0);
@@ -120,7 +120,7 @@ TEST(ArraySet, Unique_Room){
     EXPECT_EQ(rs.length(), 2);
 }
 
-TEST(ArraySet, Remove_Room){
+TEST(ArraySet, Remove_Room) {
     ArraySet<Room> rs;
     Room r1(1, 1);
     Room r2(2, 1);
@@ -134,7 +134,7 @@ TEST(ArraySet, Remove_Room){
     EXPECT_TRUE(rs.get(1) == r3);
 }
 
-TEST(ArraySet, RemoveAt_Room){
+TEST(ArraySet, RemoveAt_Room) {
     ArraySet<Room> rs;
     Room r1(1, 1);
     Room r2(2, 1);
@@ -148,7 +148,7 @@ TEST(ArraySet, RemoveAt_Room){
     EXPECT_TRUE(rs.get(1) == r3);
 }
 
-TEST(ArraySet, Pop_Room){
+TEST(ArraySet, Pop_Room) {
     ArraySet<Room> rs;
     Room r1(1, 1);
     Room r2(2, 1);
@@ -162,7 +162,7 @@ TEST(ArraySet, Pop_Room){
     EXPECT_TRUE(rs.get(1) == r2);
 }
 
-TEST(ArraySet, Shift_Room){
+TEST(ArraySet, Shift_Room) {
     ArraySet<Room> rs;
     Room r1(1, 1);
     Room r2(2, 1);
@@ -218,7 +218,7 @@ TEST(ArraySet, PrependGet_Int) {
     EXPECT_EQ(rl.get(1), r);
 }
 
-TEST(ArraySet, Insert_Int){
+TEST(ArraySet, Insert_Int) {
     ArraySet<int> rl;
     int r1 = 1;
     int r2 = 2;
@@ -267,13 +267,13 @@ TEST(ArraySet, Expand_Int) {
     int capacity = 1;
     ArraySet<int> rs(capacity);
     EXPECT_EQ(rs.capacity(), capacity);
-    for (int i = 0; i < capacity*4; i++) {
+    for (int i = 0; i < capacity * 4; i++) {
         rs.append(i);
     }
     EXPECT_EQ(rs.capacity(), capacity * 4);
 }
 
-TEST(ArraySet, Unique_Int){
+TEST(ArraySet, Unique_Int) {
     ArraySet<int> rs;
     EXPECT_EQ(rs.length(), 0);
     rs.append(1);
@@ -284,7 +284,7 @@ TEST(ArraySet, Unique_Int){
     EXPECT_EQ(rs.length(), 2);
 }
 
-TEST(ArraySet, Remove_Int){
+TEST(ArraySet, Remove_Int) {
     ArraySet<int> rs;
     int r1 = 1;
     int r2 = 2;
@@ -298,7 +298,7 @@ TEST(ArraySet, Remove_Int){
     EXPECT_EQ(rs.get(1), r3);
 }
 
-TEST(ArraySet, RemoveAt_Int){
+TEST(ArraySet, RemoveAt_Int) {
     ArraySet<int> rs;
     int r1 = 1;
     int r2 = 2;
@@ -312,7 +312,7 @@ TEST(ArraySet, RemoveAt_Int){
     EXPECT_EQ(rs.get(1), r3);
 }
 
-TEST(ArraySet, Pop_Int){
+TEST(ArraySet, Pop_Int) {
     ArraySet<int> rs;
     int r1 = 1;
     int r2 = 2;
@@ -326,7 +326,7 @@ TEST(ArraySet, Pop_Int){
     EXPECT_EQ(rs.get(1), r2);
 }
 
-TEST(ArraySet, Shift_Int){
+TEST(ArraySet, Shift_Int) {
     ArraySet<int> rs;
     int r1 = 1;
     int r2 = 2;

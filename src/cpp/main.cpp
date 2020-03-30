@@ -1,6 +1,6 @@
 #include<iostream>
-#include "Date.hpp"
-#include "BinaryTree.hpp"
+#include "src/Date.hpp"
+#include "src/collection/RangeBinaryTree.hpp"
 #include <random>
 #include <chrono>
 #include <ctime>
@@ -30,10 +30,10 @@ int main() {
 
     root.populate({2020, 1, 25}, 25);
 
-    std::cout<<"=================\n";
+    std::cout << "=================\n";
     root.populate({2020, 2, 10}, 41);
     root.print();
-    std::cout<<"=================\n";
+    std::cout << "=================\n";
 //        21
 //      /   \
 //     15    30
@@ -42,16 +42,16 @@ int main() {
 //  / \
 // 3  8
 
-    int start = 1 + rand()%30;
-    int end = 1 + rand()%30;
-    if(start > end) std::swap(start, end);
-    std::cout<<"Start: " << start <<" End: "<<end<<std::endl;
-    root.populateWithRange({2020, 1, start}, {2020, 1, end}, (start+end)/2);
+    int start = 1 + rand() % 30;
+    int end = 1 + rand() % 30;
+    if (start > end) std::swap(start, end);
+    std::cout << "Start: " << start << " End: " << end << std::endl;
+    root.populateWithRange({2020, 1, start}, {2020, 1, end}, (start + end) / 2);
     root.print();
-    std::cout<<"=================\n";
+    std::cout << "=================\n";
     unique_ptr<ArrayList<int>> res = root.inRange({2020, 1, 12}, {2020, 1, 19});
-    for(int i = 0; i<res->length(); i++){
-        std::cout<<res->get(i)<<std::endl;
+    for (int i = 0; i < res->length(); i++) {
+        std::cout << res->get(i) << std::endl;
     }
 
 

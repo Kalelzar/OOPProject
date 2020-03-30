@@ -5,10 +5,10 @@
 #ifndef OOPPROJECT_SCANNERCONTEXT_HPP
 #define OOPPROJECT_SCANNERCONTEXT_HPP
 
-enum class ScannerContext{
-    CONSOLE=0,
+enum class ScannerContext {
+    CONSOLE = 0,
     FILE,
-    UNDEFINED=-1
+    UNDEFINED = -1
 };
 
 #endif //OOPPROJECT_SCANNERCONTEXT_HPP

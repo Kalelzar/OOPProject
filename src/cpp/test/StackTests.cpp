@@ -1,10 +1,10 @@
-#include "Stack.hpp"
-#include "Room.hpp"
+#include "../src/collection/Stack.hpp"
+#include "../src/Room.hpp"
 #include "gtest/gtest.h"
 
 using namespace Hotel;
 
-TEST(Stack, Push_Int){
+TEST(Stack, Push_Int) {
     Stack<int> s;
     s.push(1);
     EXPECT_EQ(s.peek()->get(), 1);
@@ -14,7 +14,7 @@ TEST(Stack, Push_Int){
     EXPECT_EQ(s.length(), 2);
 }
 
-TEST(Stack, Pop_Int){
+TEST(Stack, Pop_Int) {
     Stack<int> s;
     s.push(1);
     EXPECT_EQ(s.peek()->get(), 1);
@@ -29,7 +29,7 @@ TEST(Stack, Pop_Int){
     EXPECT_EQ(s.length(), 0);
 }
 
-TEST(Stack, Push_Room){
+TEST(Stack, Push_Room) {
     Stack<Room> s;
     Room r1(1, 0);
     Room r2(2, 0);
@@ -41,7 +41,7 @@ TEST(Stack, Push_Room){
     EXPECT_EQ(s.length(), 2);
 }
 
-TEST(Stack, Pop){
+TEST(Stack, Pop) {
     Stack<Room> s;
     Room r1(1, 0);
     Room r2(2, 0);

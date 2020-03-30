@@ -7,7 +7,7 @@
 
 #include<iostream>
 #include "ScannerContext.hpp"
-#include "Command.hpp"
+#include "../parser/Command.hpp"
 
 namespace Hotel {
 
@@ -19,12 +19,13 @@ namespace Hotel {
     public:
         CommandScanner(ScannerContext sc, std::istream input);
 
-        void nextLine(char* (&line));
-        Command asCommand(char* (&line)) const;
+        void nextLine(char *(&line));
+
+        Command asCommand(char *(&line)) const;
 
         Command nextCommand();
 
-        Command* scan();
+        Command *scan();
 
     };
 

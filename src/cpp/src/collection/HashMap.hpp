@@ -9,13 +9,13 @@ template<class Key, class Value>
 struct Entry {
     Key key{};
     Value value{};
-    bool uninit=true;
+    bool uninit = true;
 
-    bool operator==(Entry<Key, Value> const& other) const {
+    bool operator==(Entry<Key, Value> const &other) const {
         return key == other.key && value == other.value && uninit == other.uninit;
     }
 
-    bool operator!=(Entry<Key, Value> const& other) const {
+    bool operator!=(Entry<Key, Value> const &other) const {
         return !(*this == other);
     }
 };
@@ -27,7 +27,7 @@ private:
     typedef Entry<Key, Value> SpecEntry;
     static const unsigned DEFAULT_SIZE = 64;
     static constexpr double EXPAND_FACTOR = 0.8;
-    SpecEntry* array;
+    SpecEntry *array;
     unsigned reserved{};
     unsigned elemCount{};
 
@@ -45,7 +45,7 @@ private:
     };
 
     double loadFactor() const {
-        return length()/(double)capacity();
+        return length() / (double) capacity();
     }
 
 
@@ -59,7 +59,7 @@ private:
 
     unsigned findEntry(Key const &k) const {
 
-        if(k==103){
+        if (k == 103) {
             uint32_t hsh = hash(&k) % capacity();
 
             while (array[hsh].key != k && !array[hsh].uninit) {
@@ -69,7 +69,7 @@ private:
                 }
             }
             return hsh;
-        }else{
+        } else {
             uint32_t hsh = hash(&k) % capacity();
 
             while (array[hsh].key != k && !array[hsh].uninit) {
@@ -87,45 +87,45 @@ private:
         array = new SpecEntry[size];
         reserved = size;
         elemCount = 0;
-        for(int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             array[i] = SpecEntry{};
         }
     }
 
     void expand() {
-        SpecEntry* const newarray = new SpecEntry[capacity()*2];
+        SpecEntry *const newarray = new SpecEntry[capacity() * 2];
 
-        for(int i = 0; i < capacity()*2; i++){
+        for (int i = 0; i < capacity() * 2; i++) {
             newarray[i] = SpecEntry{};
         }
 
-        const SpecEntry* const oldarray = array;
+        const SpecEntry *const oldarray = array;
 
         array = newarray;
-        reserved = capacity()*2;
+        reserved = capacity() * 2;
         elemCount = 0;
 
-        putAll(oldarray, capacity()/2);
-        delete [] oldarray;
+        putAll(oldarray, capacity() / 2);
+        delete[] oldarray;
     }
 
-    void putAll(const SpecEntry * other, unsigned size){
-        for(int i = 0; i < size; i++){
-            if(other[i].uninit) continue;
+    void putAll(const SpecEntry *other, unsigned size) {
+        for (int i = 0; i < size; i++) {
+            if (other[i].uninit) continue;
 
             put(other[i].key, other[i].value);
         }
     }
 
-    void free(){
-        delete [] array;
+    void free() {
+        delete[] array;
         reserved = 0;
         elemCount = 0;
     }
 
 public:
 
-    void putAll(HashMap<Key, Value> const& other){
+    void putAll(HashMap<Key, Value> const &other) {
         putAll(other.array, other.length());
     }
 
@@ -133,7 +133,7 @@ public:
         init(DEFAULT_SIZE);
     }
 
-    ~HashMap(){
+    ~HashMap() {
         free();
     }
 
@@ -152,10 +152,12 @@ public:
         return elemCount;
     }
 
-    unique_ptr <Nullable<Value>> get(Key const &k) {
+    unique_ptr<Nullable<Value>> get(Key const &k) {
         unsigned hsh = findEntry(k);
-        if (array[hsh].uninit) return std::make_unique<Null<Value>>();
-        else return std::make_unique<NotNull<Value>>(array[hsh].value);
+        if (array[hsh].uninit) return std::make_unique<Null < Value>>
+        ();
+        else return std::make_unique<NotNull < Value>>
+        (array[hsh].value);
     }
 
     unsigned capacity() const {
@@ -182,9 +184,9 @@ public:
      *
      * @param k the key to remove
      */
-    void remove(Key const &k){
+    void remove(Key const &k) {
         unsigned hsh = findEntry(k);
-        if(array[hsh].uninit) return;
+        if (array[hsh].uninit) return;
         array[hsh].uninit = true;
         elemCount--;
     }
@@ -194,14 +196,14 @@ public:
      * for the purposes of iteration
      * @return the entries
      */
-    std::remove_reference_t<const SpecEntry*> underlying() const {
+    std::remove_reference_t<const SpecEntry *> underlying() const {
         return array;
     }
 
     /**
      * Clears the contents of the hash map.
      */
-    void clear(){
+    void clear() {
         free();
         init(DEFAULT_SIZE);
     }

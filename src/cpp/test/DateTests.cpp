@@ -1,10 +1,10 @@
 //
 // Created by Kalelzar on 24/03/2020.
 //
-#include "Date.hpp"
+#include "../src/Date.hpp"
 #include "gtest/gtest.h"
 
-TEST(Date, Equal){
+TEST(Date, Equal) {
     Hotel::Date d1(2020, 1, 1);
     Hotel::Date d2(2020, 1, 1);
     Hotel::Date d3(2020, 1, 2);
@@ -12,7 +12,7 @@ TEST(Date, Equal){
     EXPECT_FALSE(d1 == d3);
 }
 
-TEST(Date, NotEqual){
+TEST(Date, NotEqual) {
     Hotel::Date d1(2020, 1, 1);
     Hotel::Date d2(2020, 1, 1);
     Hotel::Date d3(2020, 1, 2);
@@ -20,7 +20,7 @@ TEST(Date, NotEqual){
     EXPECT_TRUE(d1 != d3);
 }
 
-TEST(Date, Greater){
+TEST(Date, Greater) {
     Hotel::Date d1(2020, 1, 1);
     Hotel::Date d2(2020, 1, 2);
     Hotel::Date d3(2020, 1, 3);
@@ -28,7 +28,7 @@ TEST(Date, Greater){
     EXPECT_FALSE(d2 > d3);
 }
 
-TEST(Date, Less){
+TEST(Date, Less) {
     Hotel::Date d1(2020, 1, 1);
     Hotel::Date d2(2020, 1, 2);
     Hotel::Date d3(2020, 1, 3);
@@ -36,7 +36,7 @@ TEST(Date, Less){
     EXPECT_FALSE(d2 < d1);
 }
 
-TEST(Date, GreaterEq){
+TEST(Date, GreaterEq) {
     Hotel::Date d1(2020, 1, 1);
     Hotel::Date d2(2020, 1, 2);
     Hotel::Date d3(2020, 1, 3);
@@ -45,7 +45,7 @@ TEST(Date, GreaterEq){
     EXPECT_FALSE(d2 >= d3);
 }
 
-TEST(Date, LessEq){
+TEST(Date, LessEq) {
     Hotel::Date d1(2020, 1, 1);
     Hotel::Date d2(2020, 1, 2);
     Hotel::Date d3(2020, 1, 3);
@@ -55,30 +55,30 @@ TEST(Date, LessEq){
 }
 
 TEST(Date, JanuaryHas31Days) {
-    ASSERT_EQ(Hotel::Date::daysOfMonth(1,0), 31)
-        << "January doesn't have 31 days apparently.";
+    ASSERT_EQ(Hotel::Date::daysOfMonth(1, 0), 31)
+                                << "January doesn't have 31 days apparently.";
 }
 
 TEST(Date, AprilHas30Days) {
-    ASSERT_EQ(Hotel::Date::daysOfMonth(4,0), 30)
-        << "April doesn't have 30 days apparently.";
+    ASSERT_EQ(Hotel::Date::daysOfMonth(4, 0), 30)
+                                << "April doesn't have 30 days apparently.";
 }
 
 TEST(Date, FebruaryHas28or29Days) {
     ASSERT_EQ(Hotel::Date::daysOfMonth(2, 2013), 28)
-        << "February doesn't have 28 days during non-leap year.";
+                                << "February doesn't have 28 days during non-leap year.";
     ASSERT_EQ(Hotel::Date::daysOfMonth(2, 2012), 29)
-        << "February doesn't have 29 days during leap year.";
+                                << "February doesn't have 29 days during leap year.";
 }
 
-TEST(Date, Constructor){
+TEST(Date, Constructor) {
     Hotel::Date date(2020, 3, 24);
     EXPECT_EQ(date.getYear(), 2020) << "Year not set properly.";
     EXPECT_EQ(date.getMonth(), 3) << "Month not set properly.";
     EXPECT_EQ(date.getDay(), 24) << "Day not set properly.";
 }
 
-TEST(Date, ConstructorMonthOverflow){
+TEST(Date, ConstructorMonthOverflow) {
     Hotel::Date monthOverflowPositive(2020, 13, 24);
     Hotel::Date monthOverflowPositive2(2020, 120, 24);
     Hotel::Date monthOverflowNegative(2020, -1, 24);
@@ -93,7 +93,7 @@ TEST(Date, ConstructorMonthOverflow){
     EXPECT_EQ(monthOverflowNegative2.getYear(), 2016);
 }
 
-TEST(Date, ConstructorDayOverflow){
+TEST(Date, ConstructorDayOverflow) {
     Hotel::Date dayOverflowPositive(2020, 4, 31);
     Hotel::Date dayOverflowPositive2(2020, 12, 70);
     Hotel::Date dayOverflowNegative(2020, 7, 0);
@@ -108,21 +108,21 @@ TEST(Date, ConstructorDayOverflow){
     EXPECT_EQ(dayOverflowNegative2.getMonth(), 10);
 }
 
-TEST(Date, LeapYear){
+TEST(Date, LeapYear) {
     EXPECT_TRUE(Hotel::Date::isLeapYear(1600));
     EXPECT_FALSE(Hotel::Date::isLeapYear(1500));
 }
 
-TEST(Date, Today){
+TEST(Date, Today) {
     Hotel::Date today = Hotel::Date::today();
     time_t now = time(nullptr);
     tm *ltm = localtime(&now);
-    EXPECT_EQ(1900+ltm->tm_year, today.getYear());
-    EXPECT_EQ(ltm->tm_mon+1, today.getMonth());
+    EXPECT_EQ(1900 + ltm->tm_year, today.getYear());
+    EXPECT_EQ(ltm->tm_mon + 1, today.getMonth());
     EXPECT_EQ(ltm->tm_mday, today.getDay());
 }
 
-TEST(Date, DefaultConstructor){
+TEST(Date, DefaultConstructor) {
     Hotel::Date today;
     Hotel::Date tday = Hotel::Date::today();
     ASSERT_EQ(today.getDay(), tday.getDay());
@@ -130,28 +130,28 @@ TEST(Date, DefaultConstructor){
     ASSERT_EQ(today.getYear(), tday.getYear());
 }
 
-TEST(Date, CurrentYear){
+TEST(Date, CurrentYear) {
     int year = Hotel::Date::currentYear();
     time_t now = time(nullptr);
     tm *ltm = localtime(&now);
-    EXPECT_EQ(1900+ltm->tm_year, year);
+    EXPECT_EQ(1900 + ltm->tm_year, year);
 }
 
-TEST(Date, CurrentMonth){
+TEST(Date, CurrentMonth) {
     int month = Hotel::Date::currentMonth();
     time_t now = time(nullptr);
     tm *ltm = localtime(&now);
-    EXPECT_EQ(ltm->tm_mon+1, month);
+    EXPECT_EQ(ltm->tm_mon + 1, month);
 }
 
-TEST(Date, CurrentDay){
+TEST(Date, CurrentDay) {
     int day = Hotel::Date::currentDay();
     time_t now = time(nullptr);
     tm *ltm = localtime(&now);
     EXPECT_EQ(ltm->tm_mday, day);
 }
 
-TEST(Date, GetString){
+TEST(Date, GetString) {
     // 2020-01-01 - 10 char
     char str[11];
     Hotel::Date date(2020, 1, 1);
@@ -159,7 +159,7 @@ TEST(Date, GetString){
     ASSERT_STREQ(str, "2020-01-01");
 }
 
-TEST(Date, FromString){
+TEST(Date, FromString) {
     char str[11] = "2020-01-01";
     Hotel::Date date = Hotel::Date::fromString(str);
     char rstr[11];
@@ -167,7 +167,7 @@ TEST(Date, FromString){
     ASSERT_STREQ(rstr, str);
 }
 
-TEST(Date, FromStringConstructor){
+TEST(Date, FromStringConstructor) {
     char str[11] = "2020-01-01";
     Hotel::Date date(str);
     char rstr[11];
@@ -175,7 +175,7 @@ TEST(Date, FromStringConstructor){
     ASSERT_STREQ(rstr, str);
 }
 
-TEST(Date, DaysBetweenStatic){
+TEST(Date, DaysBetweenStatic) {
     Hotel::Date start1(2011, 1, 1);
     Hotel::Date end1(2011, 12, 31);
     EXPECT_EQ(Hotel::Date::daysBetween(start1, end1), 365);
@@ -193,7 +193,7 @@ TEST(Date, DaysBetweenStatic){
     EXPECT_EQ(Hotel::Date::daysBetween(end3, start3), 833);
 }
 
-TEST(Date, DaysSince1900){
+TEST(Date, DaysSince1900) {
     Hotel::Date d1(2000, 1, 1);
     EXPECT_EQ(Hotel::Date::daysSince1900(d1), 36525);
     Hotel::Date d2(2020, 3, 18);

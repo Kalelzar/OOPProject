@@ -4,30 +4,32 @@
 #include "NoValueException.hpp"
 
 template<class A>
-class Nullable{
+class Nullable {
 private:
 protected:
 public:
     virtual ~Nullable() = default;
+
     virtual bool isEmpty() const = 0;
 
-    bool isDefined() const{
+    bool isDefined() const {
         return !isEmpty();
     }
 
     virtual A get() const = 0;
-    A getOrElse(A const& def) const {
-        if(isEmpty()) return def;
+
+    A getOrElse(A const &def) const {
+        if (isEmpty()) return def;
         return get();
     }
 };
 
 template<class A>
-class NotNull : public Nullable<A>{
+class NotNull : public Nullable<A> {
 private:
     A value;
 public:
-    NotNull(A const& _value){
+    NotNull(A const &_value) {
         value = _value;
     }
 
@@ -41,7 +43,7 @@ public:
 };
 
 template<class A>
-class Null: public Nullable<A>{
+class Null : public Nullable<A> {
 public:
     bool isEmpty() const override {
         return true;

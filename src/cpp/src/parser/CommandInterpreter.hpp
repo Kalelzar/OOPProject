@@ -6,7 +6,7 @@
 #define OOPPROJECT_COMMANDINTERPRETER_HPP
 
 #include "Command.hpp"
-#include "HotelState.hpp"
+#include "../HotelState.hpp"
 #include <iostream>
 
 namespace Hotel {
@@ -15,8 +15,9 @@ namespace Hotel {
     private:
     public:
 
-        static void parse(HotelState &state, Command* commands);
-        static void parse(HotelState &state, std::istream& input);
+        static void parse(HotelState &state, Command *commands);
+
+        static void parse(HotelState &state, std::istream &input);
 
     };
 

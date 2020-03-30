@@ -7,51 +7,60 @@
 
 #include "Date.hpp"
 #include "Room.hpp"
-#include "BinaryTree.hpp"
+#include "collection/HashMap.hpp"
+#include "collection/RangeBinaryTree.hpp"
+#include "RoomStateEvent.hpp"
 
 namespace Hotel {
     class HotelState {
     private:
-        ArrayList<Room> rl{};
+        HashMap<int, Room> rl{};
         RangeBinaryTree<Date, RoomStateEvent> tree{};
         char *filepath;
         bool modified;
-        void copy(HotelState const& state);
+
+        void copy(HotelState const &state);
+
+        void setRoomState(RoomState state, int roomid,
+                Hotel::Date from, Hotel::Date to, const char *note);
+
     public:
 
-        HotelState(const char* filepath);
-        HotelState();
-        HotelState(HotelState const& state);
+        explicit HotelState(const char *filepath);
 
-        HotelState& operator=(HotelState const& other);
+        HotelState();
+
+        HotelState(HotelState const &state);
+
+        HotelState &operator=(HotelState const &other);
 
         ~HotelState();
 
         void load();
 
-        void save();
+        void save() const;
 
-        void saveAs(const char *path);
+        void saveAs(const char *path) const;
 
         void add(Room r);
 
         void remove(Room r);
 
-        void checkin(int roomid, Date start, Date end, const char* note);
+        void checkin(int roomid, Date start, Date end, const char *note);
 
-        void available(){ available(Date::today()); }
+        void available() const { available(Date::today()); }
 
-        void available(Date date);
+        void available (Date date) const;
 
         void checkout(int roomid);
 
         void report(Date from, Date to);
 
-        void find(int beds, Date from, Date to);
+        void find(int beds, Date from, Date to) const;
 
         void findForce(int beds, Date from, Date to);
 
-        void unavailable(int roomid, Date from, Date to, const char* note);
+        void unavailable(int roomid, Date from, Date to, const char *note);
 
     };
 }

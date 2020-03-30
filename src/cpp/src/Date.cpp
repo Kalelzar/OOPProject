@@ -18,7 +18,7 @@ namespace Hotel {
 #endif
             year += month / 12;
             month = month % 12;
-            if(month == 0) {
+            if (month == 0) {
                 month = 12;
                 year -= 1;
             }
@@ -36,14 +36,14 @@ namespace Hotel {
 #ifdef PRINT
             std::clog << "A date with a day under 1 is assumed to mean the appropriate day n months earlier.\n";
 #endif
-            while(day < 1){
-                month-=1;
+            while (day < 1) {
+                month -= 1;
 
                 //FIX: Remove code duplication
                 if (month > 12) {
                     year += month / 12;
                     month = month % 12;
-                    if(month == 0) {
+                    if (month == 0) {
                         month = 12;
                         year -= 1;
                     }
@@ -54,20 +54,20 @@ namespace Hotel {
                     }
                 }
 
-                day+=daysOfMonth(month, year);
+                day += daysOfMonth(month, year);
             }
-        }else if(day > daysOfMonth(month, year)){
+        } else if (day > daysOfMonth(month, year)) {
 #ifdef PRINT
             std::clog << "A date with a day above the max days of the month is assumed to mean the appropriate day n months later.\n";
 #endif
-            while(day > daysOfMonth(month, year)){
-                day-=daysOfMonth(month, year);
-                month+=1;
+            while (day > daysOfMonth(month, year)) {
+                day -= daysOfMonth(month, year);
+                month += 1;
                 //FIX: Remove code duplication
                 if (month > 12) {
                     year += month / 12;
                     month = month % 12;
-                    if(month == 0) {
+                    if (month == 0) {
                         month = 12;
                         year -= 1;
                     }
@@ -116,13 +116,13 @@ namespace Hotel {
     }
 
     bool Date::isLeapYear(int year) {
-        if(year % 4 == 0){
-            if(year % 100 == 0){
+        if (year % 4 == 0) {
+            if (year % 100 == 0) {
                 return year % 400 == 0;
-            }else{
+            } else {
                 return true;
             }
-        }else{
+        } else {
             return false;
         }
     }
@@ -130,7 +130,7 @@ namespace Hotel {
     int Date::currentYear() {
         time_t now = time(nullptr);
         tm *ltm = localtime(&now);
-        return ltm->tm_year+ 1900;
+        return ltm->tm_year + 1900;
     }
 
     int Date::currentMonth() {
@@ -149,19 +149,19 @@ namespace Hotel {
         sprintf(str, "%04d-%02d-%02d", getYear(), getMonth(), getDay());
     }
 
-    Date::Date(const char str[11]){
+    Date::Date(const char str[11]) {
         char s_year[5];
-        strncpy(s_year, str+0, 4);
+        strncpy(s_year, str + 0, 4);
         s_year[4] = '\0';
         char s_month[3];
-        strncpy(s_month, str+5, 2);
+        strncpy(s_month, str + 5, 2);
         s_month[2] = '\0';
         char s_day[3];
-        strncpy(s_day, str+8, 2);
-        s_day[2]='\0';
-        year  = atoi(s_year);
+        strncpy(s_day, str + 8, 2);
+        s_day[2] = '\0';
+        year = atoi(s_year);
         month = atoi(s_month);
-        day   = atoi(s_day);
+        day = atoi(s_day);
     }
 
     Date::Date() {
@@ -184,13 +184,13 @@ namespace Hotel {
 
     int Date::daysSince1900() const {
         int days = 0;
-        for(int i = 1900; i < getYear(); i++){
-            days+= Date::isLeapYear(i) ? 366 : 365;
+        for (int i = 1900; i < getYear(); i++) {
+            days += Date::isLeapYear(i) ? 366 : 365;
         }
-        for(int i = 1; i < getMonth(); i++){
-            days+= Date::daysOfMonth(i, getYear());
+        for (int i = 1; i < getMonth(); i++) {
+            days += Date::daysOfMonth(i, getYear());
         }
-        days+=day;
+        days += day;
         return days;
     }
 
@@ -202,12 +202,12 @@ namespace Hotel {
         char str[11];
         date.getString(str);
 
-        out<<str;
+        out << str;
 
         return out;
     }
 
-    static bool isDash(std::istream &in){
+    static bool isDash(std::istream &in) {
         return in.get() == '-';
     }
 
@@ -217,21 +217,21 @@ namespace Hotel {
         int month;
         int day;
 
-        in>>year;
+        in >> year;
 
-        if(!isDash(in)){
+        if (!isDash(in)) {
             in.setstate(std::ios::failbit);
             return in;
         }
 
-        in>>month;
+        in >> month;
 
-        if(!isDash(in)){
+        if (!isDash(in)) {
             in.setstate(std::ios::failbit);
             return in;
         }
 
-        in>>day;
+        in >> day;
 
         date.setYear(year);
         date.setMonth(month);
