@@ -36,7 +36,6 @@ bool Hotel::RoomStateEvent::operator<=(RoomStateEvent const &other) const {
 void Hotel::RoomStateEvent::setNote(const char *note) {
     freeNote();
     this->note = new char[strlen(note) + 1];
-    noteFreed = false;
     strcpy(this->note, note);
 }
 
@@ -57,7 +56,6 @@ Hotel::RoomStateEvent::RoomStateEvent(const Hotel::RoomStateEvent &other) {
 
 void Hotel::RoomStateEvent::copy(const Hotel::RoomStateEvent &other) {
     freeNote();
-    noteFreed = false;
     init(other.state, other.room, other.from, other.to, other.getNote());
 }
 
@@ -71,7 +69,6 @@ void Hotel::RoomStateEvent::init(RoomState const &_state,
     from = _from;
     to = _to;
     note = new char[strlen(_note) + 1];
-    noteFreed = false;
     strcpy(note, _note);
 }
 

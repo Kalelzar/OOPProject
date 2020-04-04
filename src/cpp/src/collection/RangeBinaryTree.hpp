@@ -59,7 +59,7 @@ public:
         }
     }
 
-    void print() {
+    void print() const {
         root->print();
     }
 
@@ -68,12 +68,22 @@ public:
         return root->allInRange(lower, upper);
     }
 
+    template <typename C>
+    unique_ptr<ArrayList<A>> inRangeT(C const &lower, C const &upper) const {
+        if (root == nullptr) return nullptr;
+        return root->template allInRangeT<C>(lower, upper);
+    }
+
     BinaryNode<B, A> *getHead() {
         return root;
     }
 
     const BinaryNode<B, A> *findFirst(bool predicate(B)) {
         return root->firstMatch(predicate);
+    }
+
+    const BinaryNode<B, A> *findFirst(B target) {
+        return root->firstMatch(target);
     }
 
 };

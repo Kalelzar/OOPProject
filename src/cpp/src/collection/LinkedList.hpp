@@ -106,10 +106,10 @@ public:
         return foundAt;
     }
 
-    bool contains(A const &elem) override {
+    bool contains(A const &elem) const override {
         Node<A>* cur = _head;
         while(cur != nullptr){
-            if(*cur == elem) return true;
+            if(cur->elem == elem) return true;
             cur = cur->next;
         }
         return false;

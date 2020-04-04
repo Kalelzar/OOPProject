@@ -5,6 +5,7 @@
 #ifndef OOPPROJECT_BINARYNODE_HPP
 #define OOPPROJECT_BINARYNODE_HPP
 
+#include <functional>
 #include "ArrayList.hpp"
 #include "Stack.hpp"
 
@@ -163,6 +164,7 @@ public:
         return nullptr;
     }
 
+
     unique_ptr<ArrayList<A>> allInRange(B const &lower, B const &upper) const {
         unique_ptr <ArrayList<A>> range = make_unique<ArrayList<A>>();
 
@@ -181,6 +183,32 @@ public:
 
         return range;
     }
+
+    template<typename C>
+    unique_ptr<ArrayList<A>> allInRangeT(C const &lower, C const &upper) const {
+        unique_ptr <ArrayList<A>> range = make_unique<ArrayList<A>>();
+        //std::cout<<"All in range "<<lower<<" to " <<upper<<std::endl;
+        if (tag >= lower && tag <= upper) {
+            //std::cout<<tag<<" is between "<<lower<<" and "<<upper<<std::endl;
+            range->appendAll(value);
+            if (tag != upper && right != nullptr) range->appendAll(*right->allInRangeT<C>(lower, upper));
+            if (tag != lower && left != nullptr) range->appendAll(*left->allInRangeT<C>(lower, upper));
+        }
+        else if (tag > upper) {
+            //std::cout<<tag<<" is greater than "<<upper<<std::endl;
+            if (left != nullptr) range->appendAll(*left->allInRangeT<C>(lower, upper));
+        }else if (tag < lower) {
+            //std::cout<<tag<<" is less than "<<lower<<std::endl;
+            if (right != nullptr) range->appendAll(*right->allInRangeT<C>(lower, upper));
+        }else{
+            std::cout<<"Maldefined comparison operators"<<std::endl;
+        }
+
+        return range;
+    }
+
+
+
 };
 
 #include <iostream>

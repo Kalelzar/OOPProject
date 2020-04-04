@@ -106,6 +106,8 @@ private:
         elemCount = 0;
 
         putAll(oldarray, capacity() / 2);
+
+        delete[] newarray;
         delete[] oldarray;
     }
 
@@ -155,9 +157,9 @@ public:
     unique_ptr<Nullable<Value>> get(Key const &k) {
         unsigned hsh = findEntry(k);
         if (array[hsh].uninit) return std::make_unique<Null < Value>>
-        ();
-        else return std::make_unique<NotNull < Value>>
-        (array[hsh].value);
+                                   ();
+        else return std::make_unique<NotNull<Value>>
+                 (array[hsh].value);
     }
 
     unsigned capacity() const {
@@ -196,8 +198,19 @@ public:
      * for the purposes of iteration
      * @return the entries
      */
-    std::remove_reference_t<const SpecEntry *> underlying() const {
+    const SpecEntry* underlying() const {
         return array;
+    }
+
+    unique_ptr<ArrayList<Value>> values() const {
+        unique_ptr<ArrayList<Value>> list = make_unique<ArrayList<Value>>(length());
+        for(int i = 0; i < capacity(); i++){
+            if(!array[i].uninit){
+                list->append(array[i].value);
+            }
+        }
+
+        return list;
     }
 
     /**
@@ -206,8 +219,8 @@ public:
     void clear() {
         free();
         init(DEFAULT_SIZE);
-    }
+    }};
 
-};
+
 
 #endif //#define OOPPROJECT_HASHMAP_HPP

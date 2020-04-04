@@ -5,6 +5,7 @@
 #ifndef OOPPROJECT_HOTELSTATE_HPP
 #define OOPPROJECT_HOTELSTATE_HPP
 
+#include "DateRange.hpp"
 #include "Date.hpp"
 #include "Room.hpp"
 #include "collection/HashMap.hpp"
@@ -15,7 +16,7 @@ namespace Hotel {
     class HotelState {
     private:
         HashMap<int, Room> rl{};
-        RangeBinaryTree<Date, RoomStateEvent> tree{};
+        RangeBinaryTree<DateRange, RoomStateEvent> tree{};
         char *filepath;
         bool modified;
 
@@ -23,6 +24,10 @@ namespace Hotel {
 
         void setRoomState(RoomState state, int roomid,
                 Hotel::Date from, Hotel::Date to, const char *note);
+
+        unique_ptr<ArrayList<RoomStateEvent>> roomEventsCovering(Date d) const;
+
+        unique_ptr<ArrayList<Room>> roomsAvailableFrom(Date from, Date to) const;
 
     public:
 

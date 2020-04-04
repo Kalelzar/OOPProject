@@ -29,6 +29,5 @@ public:
 
 };
 
-const char* InvalidArgumentException::DEFAULT_MESSAGE = "Provided argument was invalid";
 
 #endif //OOPPROJECT_INVALIDARGUMENTEXCEPTION_HPP

@@ -29,6 +29,5 @@ public:
 
 };
 
-const char* NoValueException::DEFAULT_MESSAGE = "Attempted to access null value.";
 
 #endif //OOPPROJECT_NOVALUEEXCEPTION_HPP

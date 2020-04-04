@@ -28,16 +28,12 @@
      class RoomStateEvent {
      private:
          char *note{};
-         bool noteFreed = true;
 
          /**
           * Frees the memory associated with the note
           */
          void freeNote() {
-             if (!noteFreed) {
-                 noteFreed = true;
-                 delete[] note;
-             }
+             delete[] note;
          }
 
          /**

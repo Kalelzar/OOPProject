@@ -7,6 +7,7 @@
 
 #include "IList.hpp"
 #include<iostream>
+#include<functional>
 
 template<class A>
 class ArrayList : public IList<A> {
@@ -31,10 +32,43 @@ private:
         appendAll(other);
     }
 
+    template <typename B>
+    unsigned static partition(unique_ptr<ArrayList<B>> const& array,
+                       unsigned from,
+                       unsigned to,
+                       std::function<bool(const B&, const B&)> comparator){
+        B pivot = array->get(to);
+        unsigned i = from;
+        for(unsigned j = from; j <= to; j++){
+            if(comparator(array->get(j), pivot)){
+                swap(array->elems[j], array->elems[i]);
+                i++;
+            }
+        }
+        swap(array->elems[i], array->elems[to]);
+        return i;
+    }
+
+    template <typename B>
+    void static quickSort(unique_ptr<ArrayList<B>> const& array,
+                   unsigned from,
+                   unsigned to,
+                   std::function<bool(const B&, const B&)> comparator){
+        if(from <= to){
+            //std::cout<<"Sorting from "<<from<<" to "<<to<<std::endl;
+            //std::cout<<"Partitioning!"<<std::endl;
+            unsigned part = partition<B>(array, from, to, comparator);
+            //std::cout<<"Partition: "<<part<<std::endl;
+            //std::cout<<"Quicksort A"<<std::endl;
+            if(part != 0) quickSort<B>(array, from, part-1, comparator);
+            //std::cout<<"Quicksort B"<<std::endl;
+            quickSort<B>(array, part+1, to, comparator);
+        }
+     }
 
 protected:
 
-    A *elems;
+    A *elems = nullptr;
     unsigned reserved;
     unsigned elemCount;
 
@@ -121,7 +155,7 @@ public:
         insert(elem, 0);
     }
 
-    bool contains(A const &elem) override {
+    bool contains(A const &elem) const override {
         for(int i = 0; i < length(); i++){
             if(get(i) == elem) return true;
         }
@@ -182,7 +216,7 @@ public:
         create(getDefaultReservedSpace());
     }
 
-    unique_ptr<ArrayList<A>> filter(bool predicate(const A&)){
+    unique_ptr<ArrayList<A>> filter(std::function<bool(const A&)> predicate) const {
         unique_ptr<ArrayList<A>> filtered = make_unique<ArrayList<A>>();
         for(int i = 0; i < length(); i++){
             if(predicate(get(i))){
@@ -192,11 +226,54 @@ public:
         return filtered;
     }
 
+    void foreach(std::function<void(const A&)> consumer) const {
+        for(int i = 0; i < length(); i++){
+            consumer(get(i));
+        }
+    }
+
     template <typename B>
-    unique_ptr<ArrayList<B>> map(B mapper(const A&)){
+    unique_ptr<ArrayList<B>> map(std::function<B(const A&)> mapper) const {
         unique_ptr<ArrayList<B>> mapped = make_unique<ArrayList<B>>(capacity());
         for(int i = 0; i < length(); i++){
             mapped->append(mapper(get(i)));
+        }
+        return mapped;
+    }
+
+    unique_ptr<ArrayList<A>> sort(
+        std::function<bool(const A&, const A&)> comparator) const {
+        unique_ptr<ArrayList<A>> sorted = make_unique<ArrayList<A>>(capacity());
+        sorted->appendAll(*this);
+        quickSort<A>(sorted, 0, sorted->length()-1, comparator);
+        return sorted;
+    }
+
+    unique_ptr<ArrayList<A>> intersection(ArrayList<A> const& list) const {
+        unique_ptr<ArrayList<A>> res = make_unique<ArrayList<A>>();
+        if(length() >= list.length()){
+            for(int i = 0; i < length(); i++){
+                if(list.contains(get(i))) res->append(get(i));
+            }
+            return res;
+        }else{
+            return list.intersection(*this);
+        }
+    }
+
+    unique_ptr<ArrayList<A>> difference(ArrayList<A> const& list) const {
+        unique_ptr<ArrayList<A>> res = make_unique<ArrayList<A>>();
+        if(length() >= list.length()){
+            for(int i = 0; i < length(); i++){
+                if(!list.contains(get(i))) res->append(get(i));
+            }
+            for(int i = 0; i < list.length(); i++){
+                if(!contains(list.get(i)) && !res->contains(list.get(i)))
+                    res->append(list.get(i));
+            }
+            return res;
+        }else{
+            return list.difference(*this);
         }
     }
 
