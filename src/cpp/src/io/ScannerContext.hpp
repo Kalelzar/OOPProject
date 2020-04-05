@@ -8,6 +8,7 @@
 enum class ScannerContext {
     CONSOLE = 0,
     FILE,
+    ALL,
     UNDEFINED = -1
 };
 

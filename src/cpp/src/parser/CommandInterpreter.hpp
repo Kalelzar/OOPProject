@@ -15,8 +15,6 @@ namespace Hotel {
     private:
     public:
 
-        static void parse(HotelState &state, Command *commands);
-
         static void parse(HotelState &state, std::istream &input);
 
     };

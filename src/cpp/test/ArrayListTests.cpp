@@ -25,6 +25,192 @@ TEST(ArrayList, Clear) {
     EXPECT_THROW(rl[0]->get(), NoValueException);
 }
 
+TEST(ArrayList, Filter){
+    ArrayList<int> list;
+
+    for(int i = 0; i < 10; i++){
+        list.append(i);
+    }
+
+    unique_ptr<ArrayList<int>> filtered = list
+        .filter([](int const& i){return i%2==0;});
+
+    ASSERT_EQ(filtered->length(), 5);
+    for(int i = 0; i < 5; i++){
+        EXPECT_EQ(filtered->get(i), i*2);
+    }
+}
+
+TEST(ArrayList, Map){
+    ArrayList<int> list;
+
+    for(int i = 0; i < 10; i++){
+        list.append(i);
+    }
+
+    unique_ptr<ArrayList<int>> mapped = list
+        .map<int>([](int const& i){return i*2;});
+
+    ASSERT_EQ(mapped->length(), 10);
+    for(int i = 0; i < 10; i++){
+        EXPECT_EQ(mapped->get(i), i*2);
+    }
+}
+
+TEST(ArrayList, Foreach){
+    ArrayList<int> list;
+
+    for(int i = 0; i < 10; i++){
+        list.append(i);
+    }
+
+    int i = 0;
+    list.foreach([i](int const& elem) mutable {
+                     EXPECT_EQ(elem, i);
+                     i++;
+                 });
+}
+
+TEST(ArrayList, Sort){
+    ArrayList<int> list;
+
+    for(int i = 0; i < 10; i++){
+        list.append(i);
+    }
+
+    unique_ptr<ArrayList<int>> sorted = list
+        .sort([](int const& i1, int const& i2){
+                  return i1 > i2;
+              });
+
+    ASSERT_EQ(list.length(), sorted->length());
+    for(unsigned i = 0; i < list.length(); i++){
+        EXPECT_EQ(list.get(i),sorted->get(sorted->length()-1-i));
+    }
+}
+
+TEST(ArrayList, intersectionSame){
+    ArrayList<int> list1;
+
+    for(int i = 0; i < 10; i++){
+        list1.append(i);
+    }
+
+    ArrayList<int> list2;
+
+    for(int i = 0; i < 10; i++){
+        list2.append(i);
+    }
+
+    unique_ptr<ArrayList<int>> intersection = list1.intersection(list2);
+
+    ASSERT_EQ(intersection->length(), list1.length());
+    for(unsigned i = 0; i < list1.length(); i++){
+        EXPECT_EQ(intersection->get(i), list1.get(i));
+    }
+
+}
+
+TEST(ArrayList, intersectionHalf){
+    ArrayList<int> list1;
+
+    for(int i = 0; i < 10; i++){
+        list1.append(i);
+    }
+
+    ArrayList<int> list2;
+
+    for(int i = 6; i < 15; i++){
+        list2.append(i);
+    }
+
+    unique_ptr<ArrayList<int>> intersection = list1.intersection(list2);
+
+    ASSERT_EQ(intersection->length(), 4);
+    for(unsigned i = 0; i < 4; i++){
+        EXPECT_EQ(intersection->get(i), i+6);
+    }
+
+}
+
+TEST(ArrayList, intersectionNone){
+    ArrayList<int> list1;
+
+    for(int i = 0; i < 10; i++){
+        list1.append(i);
+    }
+
+    ArrayList<int> list2;
+
+    for(int i = 11; i < 20; i++){
+        list2.append(i);
+    }
+
+    unique_ptr<ArrayList<int>> intersection = list1.intersection(list2);
+
+    ASSERT_EQ(intersection->length(), 0);
+}
+
+TEST(ArrayList, differenceSame){
+    ArrayList<int> list1;
+
+    for(int i = 0; i < 10; i++){
+        list1.append(i);
+    }
+
+    ArrayList<int> list2;
+
+    for(int i = 0; i < 10; i++){
+        list2.append(i);
+    }
+
+    unique_ptr<ArrayList<int>> difference = list1.difference(list2);
+
+    ASSERT_EQ(difference->length(), 0);
+
+}
+
+TEST(ArrayList, differenceHalf){
+    ArrayList<int> list1;
+
+    for(int i = 0; i < 10; i++){
+        list1.append(i);
+    }
+
+    ArrayList<int> list2;
+
+    for(int i = 6; i < 15; i++){
+        list2.append(i);
+    }
+
+    unique_ptr<ArrayList<int>> difference = list1.difference(list2);
+
+    ASSERT_EQ(difference->length(), 11);
+
+}
+
+TEST(ArrayList, differenceNone){
+    ArrayList<int> list1;
+
+    for(int i = 0; i < 10; i++){
+        list1.append(i);
+    }
+
+    ArrayList<int> list2;
+
+    for(int i = 10; i < 20; i++){
+        list2.append(i);
+    }
+
+    unique_ptr<ArrayList<int>> difference = list1.difference(list2);
+
+    ASSERT_EQ(difference->length(), 20);
+
+    for(int i = 0; i < 20; i++){
+        EXPECT_EQ(difference->get(i), i);
+    }
+}
+
 TEST(ArrayList, Subscript) {
     ArrayList<int> rl;
     EXPECT_THROW(rl[0]->get(), NoValueException);

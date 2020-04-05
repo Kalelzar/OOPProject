@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./build.bash && valgrind -s --leak-check=full cmake-build-debug/OOPProject_run
+./build.bash && valgrind -s --show-leak-kinds=all --leak-check=full cmake-build-debug/OOPProject_run
