@@ -24,7 +24,7 @@ public:
             push(stack.get(i));
     }
 
-    unique_ptr<ArrayList<A>> asList(){
+    unique_ptr<ArrayList<A>> asList() {
         unique_ptr<ArrayList<A>> list = make_unique<ArrayList<A>>(ArrayList<A>::capacity());
         list.appendAll(this);
     }

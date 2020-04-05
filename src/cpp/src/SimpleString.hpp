@@ -1,78 +1,82 @@
 #ifndef OOPPROJECT_SIMPLESTRING_HPP
 #define OOPPROJECT_SIMPLESTRING_HPP
+
 #include<cstring>
 #include<iostream>
+
 class SimpleString {
 
 private:
-    char* inner;
+    char *inner;
     size_t len;
-    void init(const char* str){
+
+    void init(const char *str) {
         len = strlen(str);
-        inner = new char[len+1];
+        inner = new char[len + 1];
         strcpy(inner, str);
     }
+
 public:
 
-    SimpleString(){
+    SimpleString() {
         init("");
     }
 
-    ~SimpleString(){
-        delete [] inner;
+    ~SimpleString() {
+        delete[] inner;
     }
 
-    SimpleString(const char* str){
+    SimpleString(const char *str) {
         init(str);
     }
 
-    SimpleString(SimpleString const& str){
+    SimpleString(SimpleString const &str) {
         init(str.inner);
     }
 
-    SimpleString& operator=(SimpleString const& str){
-        if(&str != inner){
-            delete [] inner;
+    SimpleString &operator=(SimpleString const &str) {
+        if (&str != inner) {
+            delete[] inner;
             init(str.inner);
         }
         return *this;
     }
 
-    SimpleString& operator=(const char* str){
-        delete [] inner;
+    SimpleString &operator=(const char *str) {
+        delete[] inner;
         init(str);
         return *this;
     }
 
-    bool operator==(SimpleString const& str) const {
-        if(length() != str.length()) return false;
+    bool operator==(SimpleString const &str) const {
+        if (length() != str.length()) return false;
         return strcmp(inner, str.inner) == 0;
     }
 
-    bool operator==(const char* str) const {
-        if(length() != strlen(str)) return false;
+    bool operator==(const char *str) const {
+        if (length() != strlen(str)) return false;
         return strcmp(inner, str) == 0;
     }
 
-    bool operator!=(SimpleString const& str) const {
+    bool operator!=(SimpleString const &str) const {
         return !(*this == str);
     }
 
-    bool operator!=(const char* str) const {
+    bool operator!=(const char *str) const {
         return !(*this == str);
     }
 
 
-    char* operator&(){
+    char *operator&() {
         return inner;
     }
 
-    const char* operator&() const {
+    const char *operator&() const {
         return inner;
     }
 
-    friend std::ostream& operator<<(std::ostream& out, SimpleString str){
-        return out<<str.inner;
+    friend std::ostream &operator<<(std::ostream &out, SimpleString str) {
+        return out << str.inner;
     }
 
     size_t length() const {

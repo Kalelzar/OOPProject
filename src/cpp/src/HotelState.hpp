@@ -23,7 +23,7 @@ namespace Hotel {
         void copy(HotelState const &state);
 
         void setRoomState(RoomState state, int roomid,
-                Hotel::Date from, Hotel::Date to, const char *note);
+                          Hotel::Date from, Hotel::Date to, const char *note);
 
         unique_ptr<ArrayList<RoomStateEvent>> roomEventsCovering(Date d) const;
 
@@ -55,7 +55,7 @@ namespace Hotel {
 
         void available() const { available(Date::today()); }
 
-        void available (Date date) const;
+        void available(Date date) const;
 
         void checkout(int roomid);
 

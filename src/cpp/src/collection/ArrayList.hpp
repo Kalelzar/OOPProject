@@ -32,15 +32,15 @@ private:
         appendAll(other);
     }
 
-    template <typename B>
-    unsigned static partition(unique_ptr<ArrayList<B>> const& array,
-                       unsigned from,
-                       unsigned to,
-                       std::function<bool(const B&, const B&)> comparator){
+    template<typename B>
+    unsigned static partition(unique_ptr<ArrayList<B>> const &array,
+                              unsigned from,
+                              unsigned to,
+                              std::function<bool(const B &, const B &)> comparator) {
         B pivot = array->get(to);
         unsigned i = from;
-        for(unsigned j = from; j <= to; j++){
-            if(comparator(array->get(j), pivot)){
+        for (unsigned j = from; j <= to; j++) {
+            if (comparator(array->get(j), pivot)) {
                 swap(array->elems[j], array->elems[i]);
                 i++;
             }
@@ -49,17 +49,17 @@ private:
         return i;
     }
 
-    template <typename B>
-    void static quickSort(unique_ptr<ArrayList<B>> const& array,
-                   unsigned from,
-                   unsigned to,
-                   std::function<bool(const B&, const B&)> comparator){
-        if(from <= to){
+    template<typename B>
+    void static quickSort(unique_ptr<ArrayList<B>> const &array,
+                          unsigned from,
+                          unsigned to,
+                          std::function<bool(const B &, const B &)> comparator) {
+        if (from <= to) {
             unsigned part = partition<B>(array, from, to, comparator);
-            if(part != 0) quickSort<B>(array, from, part-1, comparator);
-            quickSort<B>(array, part+1, to, comparator);
+            if (part != 0) quickSort<B>(array, from, part - 1, comparator);
+            quickSort<B>(array, part + 1, to, comparator);
         }
-     }
+    }
 
 protected:
 
@@ -100,12 +100,12 @@ public:
     void insert(A const &elem, unsigned at) override {
         if (elemCount + 1 > capacity()) {
             expand();   // Expand the list if inserting one more element would
-                        // exceed the dynamic array's current capacity
+            // exceed the dynamic array's current capacity
         }
 
         if (at >= length()) { // Assume that indexes greater or equal to the
-                              // list's length mean an insertion at the end of
-                              // the list.
+            // list's length mean an insertion at the end of
+            // the list.
             elems[elemCount] = elem;
             elemCount++;
             return;
@@ -113,8 +113,8 @@ public:
 
         for (int i = length(); i > at; i--) {
             elems[i] = elems[i - 1]; // Shift all elements from index at to
-                                     // length() left by one to make space for
-                                     // the new element
+            // length() left by one to make space for
+            // the new element
         }
 
         elems[at] = elem;
@@ -154,8 +154,8 @@ public:
     }
 
     bool contains(A const &elem) const override {
-        for(int i = 0; i < length(); i++){
-            if(get(i) == elem) return true;
+        for (int i = 0; i < length(); i++) {
+            if (get(i) == elem) return true;
         }
         return false;
     }
@@ -179,7 +179,7 @@ public:
 
     unique_ptr<Nullable<A>> removeAt(unsigned ind) override {
         if (length() == 0) return std::make_unique<Null<A>>(); // No element to remove
-                                                               // so just return null
+        // so just return null
 
         A ret = elems[ind >= length() ? length() - 1 : ind]; // Save the element that will be removed
 
@@ -221,10 +221,10 @@ public:
      * @param predicate the condition that elements need to satisfy
      * @return the filtered list
      */
-    unique_ptr<ArrayList<A>> filter(std::function<bool(const A&)> predicate) const {
+    unique_ptr<ArrayList<A>> filter(std::function<bool(const A &)> predicate) const {
         unique_ptr<ArrayList<A>> filtered = make_unique<ArrayList<A>>();
-        for(int i = 0; i < length(); i++){
-            if(predicate(get(i))){
+        for (int i = 0; i < length(); i++) {
+            if (predicate(get(i))) {
                 filtered->append(get(i));
             }
         }
@@ -235,8 +235,8 @@ public:
      * Applies the provided function to each element of the list in order.
      * @param consumer the function to apply
      */
-    void foreach(std::function<void(const A&)> consumer) const {
-        for(int i = 0; i < length(); i++){
+    void foreach(std::function<void(const A &)> consumer) const {
+        for (int i = 0; i < length(); i++) {
             consumer(get(i));
         }
     }
@@ -249,10 +249,10 @@ public:
      * @param mapper the mapping function
      * @return the new ArrayList
      */
-    template <typename B>
-    unique_ptr<ArrayList<B>> map(std::function<B(const A&)> mapper) const {
+    template<typename B>
+    unique_ptr<ArrayList<B>> map(std::function<B(const A &)> mapper) const {
         unique_ptr<ArrayList<B>> mapped = make_unique<ArrayList<B>>(capacity());
-        for(int i = 0; i < length(); i++){
+        for (int i = 0; i < length(); i++) {
             mapped->append(mapper(get(i)));
         }
         return mapped;
@@ -266,10 +266,10 @@ public:
      * @return the sorted list
      */
     unique_ptr<ArrayList<A>> sort(
-        std::function<bool(const A&, const A&)> comparator) const {
+            std::function<bool(const A &, const A &)> comparator) const {
         unique_ptr<ArrayList<A>> sorted = make_unique<ArrayList<A>>(capacity());
         sorted->appendAll(*this);
-        quickSort<A>(sorted, 0, sorted->length()-1, comparator);
+        quickSort<A>(sorted, 0, sorted->length() - 1, comparator);
         return sorted;
     }
 
@@ -278,14 +278,14 @@ public:
      * @param list the other list
      * @return the set intersection of the two lists
      */
-    unique_ptr<ArrayList<A>> intersection(ArrayList<A> const& list) const {
+    unique_ptr<ArrayList<A>> intersection(ArrayList<A> const &list) const {
         unique_ptr<ArrayList<A>> res = make_unique<ArrayList<A>>();
-        if(length() >= list.length()){
-            for(int i = 0; i < length(); i++){
-                if(list.contains(get(i))) res->append(get(i));
+        if (length() >= list.length()) {
+            for (int i = 0; i < length(); i++) {
+                if (list.contains(get(i))) res->append(get(i));
             }
             return res;
-        }else{
+        } else {
             return list.intersection(*this);
         }
     }
@@ -295,18 +295,18 @@ public:
      * @param list the other list
      * @return the set difference of the two lists
      */
-    unique_ptr<ArrayList<A>> difference(ArrayList<A> const& list) const {
+    unique_ptr<ArrayList<A>> difference(ArrayList<A> const &list) const {
         unique_ptr<ArrayList<A>> res = make_unique<ArrayList<A>>();
-        if(length() >= list.length()){
-            for(int i = 0; i < length(); i++){
-                if(!list.contains(get(i))) res->append(get(i));
+        if (length() >= list.length()) {
+            for (int i = 0; i < length(); i++) {
+                if (!list.contains(get(i))) res->append(get(i));
             }
-            for(int i = 0; i < list.length(); i++){
-                if(!contains(list.get(i)) && !res->contains(list.get(i)))
+            for (int i = 0; i < list.length(); i++) {
+                if (!contains(list.get(i)) && !res->contains(list.get(i)))
                     res->append(list.get(i));
             }
             return res;
-        }else{
+        } else {
             return list.difference(*this);
         }
     }

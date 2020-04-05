@@ -2,6 +2,7 @@
 #include<cstdlib>
 #include<ctime>
 #include "src/HotelState.hpp"
+#include <fstream>
 #include "src/io/CommandScanner.hpp"
 
 int main() {
@@ -33,20 +34,38 @@ int main() {
 
     Hotel::CommandList cl;
     cl.registerCommand("add", TokenType::TOKEN_ADD, ScannerContext::FILE);
+    cl.registerCommand("remove", TokenType::TOKEN_REMOVE, ScannerContext::FILE);
+
     cl.registerCommand("checkin", TokenType::TOKEN_CHECKIN, ScannerContext::ALL);
+    cl.registerCommand("checkout", TokenType::TOKEN_CHECKOUT, ScannerContext::ALL);
+    cl.registerCommand("unavailable", TokenType::TOKEN_UNAVAILABLE, ScannerContext::ALL);
 
-    cl.printCommands();
+    cl.registerCommand("report", TokenType::TOKEN_REPORT, ScannerContext::CONSOLE);
+    cl.registerCommand("find", TokenType::TOKEN_FIND, ScannerContext::CONSOLE);
+    cl.registerCommand("find!", TokenType::TOKEN_FIND_F, ScannerContext::CONSOLE);
+    cl.registerCommand("availability", TokenType::TOKEN_AVAILABILITY, ScannerContext::CONSOLE);
 
-    Hotel::CommandScanner scanner {ScannerContext::CONSOLE, &std::cin, cl};
+    cl.registerCommand("open", TokenType::TOKEN_OPEN, ScannerContext::CONSOLE);
+    cl.registerCommand("close", TokenType::TOKEN_CLOSE, ScannerContext::CONSOLE);
+    cl.registerCommand("help", TokenType::TOKEN_HELP, ScannerContext::CONSOLE);
+    cl.registerCommand("exit", TokenType::TOKEN_EXIT, ScannerContext::CONSOLE);
+    cl.registerCommand("save", TokenType::TOKEN_SAVE, ScannerContext::CONSOLE);
+    cl.registerCommand("saveas", TokenType::TOKEN_SAVE_AS, ScannerContext::CONSOLE);
 
-    unique_ptr<ArrayList<Token>> tokens = scanner.scanNext();
+    ifstream file("test.htl");
+
+    if(file.is_open()) {
+
+        Hotel::CommandScanner scanner{ScannerContext::FILE, &file, cl};
+        unique_ptr<ArrayList<Token>> tokens = scanner.scan();
 
 
+        tokens->foreach([](Token const &token) mutable {
+            std::cout << token << std::endl;
+        });
 
-    tokens->foreach([](Token const& token){
-                      std::cout<<token<<std::endl;
-                 });
-
+        file.close();
+    }
 
     return 0;
 }

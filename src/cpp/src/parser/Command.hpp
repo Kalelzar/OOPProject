@@ -8,5 +8,4 @@
 #include "../io/ScannerContext.hpp"
 
 
-
 #endif //OOPPROJECT_COMMAND_HPP

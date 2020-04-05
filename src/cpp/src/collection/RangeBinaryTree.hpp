@@ -68,7 +68,7 @@ public:
         return root->allInRange(lower, upper);
     }
 
-    template <typename C>
+    template<typename C>
     unique_ptr<ArrayList<A>> inRangeT(C const &lower, C const &upper) const {
         if (root == nullptr) return nullptr;
         return root->template allInRangeT<C>(lower, upper);

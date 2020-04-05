@@ -120,7 +120,7 @@ public:
     }
 
     unique_ptr<Stack<BinaryNode<B, A> *>> collect() {
-        unique_ptr <Stack<BinaryNode<B, A> *>> stack = make_unique<Stack<BinaryNode<B, A> *>>();
+        unique_ptr<Stack<BinaryNode<B, A> *>> stack = make_unique<Stack<BinaryNode<B, A> *>>();
         stack->push(this);
         if (left) stack->pushAll(*left->collect());
         if (right) stack->pushAll(*right->collect());
@@ -128,7 +128,7 @@ public:
     }
 
     void repopulate(BinaryNode<B, A> *node) {
-        unique_ptr <Stack<BinaryNode<B, A> *>> nodes = node->collect();
+        unique_ptr<Stack<BinaryNode<B, A> *>> nodes = node->collect();
         while (nodes->length()) {
             BinaryNode<B, A> *n = nodes->pop()->get();
             n->left = nullptr;
@@ -166,7 +166,7 @@ public:
 
 
     unique_ptr<ArrayList<A>> allInRange(B const &lower, B const &upper) const {
-        unique_ptr <ArrayList<A>> range = make_unique<ArrayList<A>>();
+        unique_ptr<ArrayList<A>> range = make_unique<ArrayList<A>>();
 
         if (tag >= lower && tag <= upper) {
             range->appendAll(value);
@@ -186,27 +186,25 @@ public:
 
     template<typename C>
     unique_ptr<ArrayList<A>> allInRangeT(C const &lower, C const &upper) const {
-        unique_ptr <ArrayList<A>> range = make_unique<ArrayList<A>>();
+        unique_ptr<ArrayList<A>> range = make_unique<ArrayList<A>>();
         //std::cout<<"All in range "<<lower<<" to " <<upper<<std::endl;
         if (tag >= lower && tag <= upper) {
             //std::cout<<tag<<" is between "<<lower<<" and "<<upper<<std::endl;
             range->appendAll(value);
             if (tag != upper && right != nullptr) range->appendAll(*right->allInRangeT<C>(lower, upper));
             if (tag != lower && left != nullptr) range->appendAll(*left->allInRangeT<C>(lower, upper));
-        }
-        else if (tag > upper) {
+        } else if (tag > upper) {
             //std::cout<<tag<<" is greater than "<<upper<<std::endl;
             if (left != nullptr) range->appendAll(*left->allInRangeT<C>(lower, upper));
-        }else if (tag < lower) {
+        } else if (tag < lower) {
             //std::cout<<tag<<" is less than "<<lower<<std::endl;
             if (right != nullptr) range->appendAll(*right->allInRangeT<C>(lower, upper));
-        }else{
-            std::cout<<"Maldefined comparison operators"<<std::endl;
+        } else {
+            std::cout << "Maldefined comparison operators" << std::endl;
         }
 
         return range;
     }
-
 
 
 };

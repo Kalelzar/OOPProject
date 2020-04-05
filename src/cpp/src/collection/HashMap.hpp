@@ -31,7 +31,7 @@ private:
     unsigned elemCount{};
 
     //32-bit FNV-1a hash function
-    template<typename T, typename std::enable_if_t<!std::is_pointer<T>::value>* = nullptr>
+    template<typename T, typename std::enable_if_t<!std::is_pointer<T>::value> * = nullptr>
     uint32_t hash(const T *key) const {
 
         unsigned char *bytes = (unsigned char *) key;
@@ -45,7 +45,7 @@ private:
         return hash;
     };
 
-    template<typename T, typename std::enable_if_t<std::is_pointer<T>::value>* = nullptr>
+    template<typename T, typename std::enable_if_t<std::is_pointer<T>::value> * = nullptr>
     uint32_t hash(const T *key) const {
 
         unsigned char *bytes = (unsigned char *) *key;
@@ -116,7 +116,7 @@ private:
         delete[] oldarray;
     }
 
-    void putAll(const SpecEntry* other, unsigned size) {
+    void putAll(const SpecEntry *other, unsigned size) {
         for (unsigned i = 0; i < size; i++) {
             if (other[i].uninit) continue;
             put(other[i].key, other[i].value);
@@ -149,7 +149,7 @@ public:
     }
 
     HashMap<Key, Value> &operator=(HashMap<Key, Value> const &other) {
-        if (this != &other){
+        if (this != &other) {
             free();
             copy(other);
         }
@@ -167,11 +167,10 @@ public:
         if (array[hsh].uninit) {
 
             return std::make_unique<Null<Value>>();
-        }
-        else return std::make_unique<NotNull<Value>>(array[hsh].value);
+        } else return std::make_unique<NotNull<Value>>(array[hsh].value);
     }
 
-    bool contains(Key const& k){
+    bool contains(Key const &k) {
         unsigned hsh = findEntry(k);
         if (array[hsh].uninit) return false;
         else return true;
@@ -217,14 +216,14 @@ public:
      * for the purposes of iteration
      * @return the entries
      */
-    const SpecEntry* underlying() const {
+    const SpecEntry *underlying() const {
         return array;
     }
 
     unique_ptr<ArrayList<Value>> values() const {
         unique_ptr<ArrayList<Value>> list = make_unique<ArrayList<Value>>(length());
-        for(int i = 0; i < capacity(); i++){
-            if(!array[i].uninit){
+        for (int i = 0; i < capacity(); i++) {
+            if (!array[i].uninit) {
                 list->append(array[i].value);
             }
         }
@@ -234,8 +233,8 @@ public:
 
     unique_ptr<ArrayList<Key>> keys() const {
         unique_ptr<ArrayList<Key>> list = make_unique<ArrayList<Key>>(length());
-        for(int i = 0; i < capacity(); i++){
-            if(!array[i].uninit){
+        for (int i = 0; i < capacity(); i++) {
+            if (!array[i].uninit) {
                 list->append(array[i].key);
             }
         }
@@ -249,8 +248,8 @@ public:
     void clear() {
         free();
         init(DEFAULT_SIZE);
-    }};
-
+    }
+};
 
 
 #endif //#define OOPPROJECT_HASHMAP_HPP

@@ -48,7 +48,7 @@ public:
         return length() == 0;
     }
 
-    virtual bool contains(A const& elem) const = 0;
+    virtual bool contains(A const &elem) const = 0;
 
     virtual unsigned length() const = 0;
 };

@@ -107,9 +107,9 @@ public:
     }
 
     bool contains(A const &elem) const override {
-        Node<A>* cur = _head;
-        while(cur != nullptr){
-            if(cur->elem == elem) return true;
+        Node<A> *cur = _head;
+        while (cur != nullptr) {
+            if (cur->elem == elem) return true;
             cur = cur->next;
         }
         return false;
