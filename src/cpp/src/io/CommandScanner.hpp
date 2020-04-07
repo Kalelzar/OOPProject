@@ -47,12 +47,12 @@ namespace Hotel {
             char sline[513];
             input->getline(sline, 512);
             if (input->eof()) {
-                list->append(Token{TokenType::TOKEN_EOF, "EOF", 3, line});
+                list->append(Token{TokenType::TOKEN_EOF, "", 0, line});
                 return list;
             }
             list->appendAll(*scanLine(sline));
             line++;
-            list->append(Token{TokenType::TOKEN_EOF, "EOF", 3, line});
+            list->append(Token{TokenType::TOKEN_EOF, "", 0, line});
             return list;
         }
 
@@ -146,8 +146,18 @@ namespace Hotel {
                     strncpy(lexeme, line + start, index - start);
                     lexeme[index - start] = '\0';
                     unique_ptr<Nullable<TokenType>> tt = cl.tokenFor(lexeme);
-                    if (tt->isDefined()) {
-                        list->append({tt->get(), lexeme, (int) strlen(lexeme), this->line});
+                    if (tt->isDefined())
+                    {
+                        ScannerContext tctx = cl.contextFor(tt->get())
+                            ->getOrElse(ScannerContext::UNDEFINED);
+                        if(tctx == ScannerContext::ALL || tctx == sc){
+                            list->append({tt->get(), lexeme, (int) strlen(lexeme), this->line});
+                        }else{
+                            const char errorMsg[] = "Command used in the wrong context.";
+                            list->append({TokenType::TOKEN_ERROR,
+                                          errorMsg, (int) strlen(errorMsg), this->line});
+                            return list;
+                        }
                     } else {
                         list->append({TokenType::TOKEN_STRING,
                                       lexeme, (int) strlen(lexeme), this->line});

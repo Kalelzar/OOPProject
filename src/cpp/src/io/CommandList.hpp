@@ -9,17 +9,19 @@
 namespace Hotel {
     class CommandList {
     private:
-        //HashMap<TokenType, ScannerContext> commandMap;
+        HashMap<TokenType, ScannerContext> commandMap;
         HashMap<SimpleString, TokenType> nameToToken;
 
         void copy(CommandList const &other) {
             nameToToken = other.nameToToken;
+            commandMap = other.commandMap;
         }
 
     public:
 
         CommandList() {
             nameToToken = {};
+            commandMap = {};
         }
 
         CommandList(CommandList const &other) {
@@ -36,7 +38,7 @@ namespace Hotel {
         }
 
         void registerCommand(SimpleString name, TokenType tokenType, ScannerContext ctx) {
-            // commandMap.put(tokenType, ctx);
+            commandMap.put(tokenType, ctx);
             nameToToken.put(name, tokenType);
         }
 
@@ -48,7 +50,7 @@ namespace Hotel {
         };
 
         bool isCommand(TokenType tokenType) {
-            return false; //commandMap.contains(tokenType);
+            return commandMap.contains(tokenType);
         }
 
         bool isCommand(SimpleString name) {
@@ -56,7 +58,7 @@ namespace Hotel {
         }
 
         unique_ptr<Nullable<ScannerContext>> contextFor(TokenType tokenType) {
-            return make_unique<Null<ScannerContext>>();//commandMap.get(tokenType);
+            return commandMap.get(tokenType);
         }
 
         unique_ptr<Nullable<TokenType>> tokenFor(SimpleString name) {
