@@ -103,6 +103,26 @@ namespace Hotel {
 
         bool operator<=(RoomStateEvent const &other) const;
 
+        friend std::ostream& operator<<(std::ostream& out,
+                                        RoomStateEvent const& rse) {
+            switch(rse.state){
+            case RoomState::FREE:
+                out<<"free ";
+                break;
+            case RoomState::TAKEN:
+                out<<"checkin ";
+                break;
+            case RoomState::UNAVAILABLE:
+                out<<"unavailable ";
+                break;
+            case RoomState::UNKNOWN:
+                out<<"unknown ";
+                break;
+            }
+
+            return out<<rse.from<<" "<<rse.to<<" \""<<rse.getNote()<<"\""<<std::endl;
+        }
+
     };
 
 
