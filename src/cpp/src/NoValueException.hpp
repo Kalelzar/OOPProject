@@ -11,13 +11,14 @@ class NoValueException : public exception {
 private:
     static const char *DEFAULT_MESSAGE;
 
+    char *msg;
+
+public:
+
     virtual const char *what() const throw() {
         return msg;
     }
 
-    char *msg;
-
-public:
     NoValueException(const char *_msg) {
         msg = new char[strlen(_msg) + 1];
         strcpy(msg, _msg);

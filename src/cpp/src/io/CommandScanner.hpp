@@ -23,14 +23,18 @@ namespace Hotel {
         std::istream *input;
         int line = 1;
     public:
+
+        bool error = false;
+
         CommandScanner(ScannerContext sc, std::istream *input, CommandList const &cl) {
             this->sc = sc;
             this->input = input;
             this->cl = cl;
         }
 
-        unique_ptr<ArrayList<Token>> scan() {
-            unique_ptr<ArrayList<Token>> list = make_unique<ArrayList<Token>>();
+        shared_ptr<ArrayList<Token>> scan() {
+            error = false;
+            shared_ptr<ArrayList<Token>> list = make_shared<ArrayList<Token>>();
             while (!input->eof()) {
                 char sline[513];
                 input->getline(sline, 512);
@@ -42,8 +46,9 @@ namespace Hotel {
             return list;
         }
 
-        unique_ptr<ArrayList<Token>> scanNext() {
-            unique_ptr<ArrayList<Token>> list = make_unique<ArrayList<Token>>();
+        shared_ptr<ArrayList<Token>> scanNext() {
+            error = false;
+            shared_ptr<ArrayList<Token>> list = make_shared<ArrayList<Token>>();
             char sline[513];
             input->getline(sline, 512);
             if (input->eof()) {
@@ -56,8 +61,8 @@ namespace Hotel {
             return list;
         }
 
-        unique_ptr<ArrayList<Token>> scanLine(const char *line) {
-            unique_ptr<ArrayList<Token>> list = make_unique<ArrayList<Token>>();
+        shared_ptr<ArrayList<Token>> scanLine(const char *line) {
+            shared_ptr<ArrayList<Token>> list = make_shared<ArrayList<Token>>();
             int linelen = strlen(line);
 
             int index = 0;
@@ -74,6 +79,7 @@ namespace Hotel {
                             const char errorMsg[] = "Unterminated string.";
                             list->append({TokenType::TOKEN_ERROR,
                                           errorMsg, (int) strlen(errorMsg), this->line});
+                            error = true;
                             return list;
                         }
                     }
@@ -82,6 +88,7 @@ namespace Hotel {
                         const char errorMsg[] = "Expected whitespace or EOL after string.";
                         list->append({TokenType::TOKEN_ERROR,
                                       errorMsg, (int) strlen(errorMsg), this->line});
+                        error = true;
                         return list;
                     }
 
@@ -107,9 +114,10 @@ namespace Hotel {
                             tt = TokenType::TOKEN_DATE;
                             index++;
                         } else if (line[index] == '-') {
-                            const char errorMsg[] = "Malformed numeric range.";
+                            const char errorMsg[] = "Malformed date.";
                             list->append({TokenType::TOKEN_ERROR,
                                           errorMsg, (int) strlen(errorMsg), this->line});
+                            error = true;
                             return list;
                         }
                     }
@@ -119,6 +127,7 @@ namespace Hotel {
                         const char errorMsg[] = "Malformed number or numeric range.";
                         list->append({TokenType::TOKEN_ERROR,
                                       errorMsg, (int) strlen(errorMsg), this->line});
+                        error = true;
                         return list;
                     }
                     char lexeme[index - start];
@@ -139,23 +148,25 @@ namespace Hotel {
                         const char errorMsg[] = "Expected whitespace or EOL after identifier.";
                         list->append({TokenType::TOKEN_ERROR,
                                       errorMsg, (int) strlen(errorMsg), this->line});
+                        error = true;
                         return list;
                     }
 
                     char lexeme[index - start];
                     strncpy(lexeme, line + start, index - start);
                     lexeme[index - start] = '\0';
-                    unique_ptr<Nullable<TokenType>> tt = cl.tokenFor(lexeme);
+                    shared_ptr<Nullable<TokenType>> tt = cl.tokenFor(lexeme);
                     if (tt->isDefined())
                     {
                         ScannerContext tctx = cl.contextFor(tt->get())
                             ->getOrElse(ScannerContext::UNDEFINED);
-                        if(tctx == ScannerContext::ALL || tctx == sc){
+                        if(tctx == ScannerContext::ALL || tctx == sc || sc == ScannerContext::ALL){
                             list->append({tt->get(), lexeme, (int) strlen(lexeme), this->line});
                         }else{
                             const char errorMsg[] = "Command used in the wrong context.";
                             list->append({TokenType::TOKEN_ERROR,
                                           errorMsg, (int) strlen(errorMsg), this->line});
+                            error = true;
                             return list;
                         }
                     } else {

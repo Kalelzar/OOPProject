@@ -170,8 +170,8 @@ public:
 
         if (tag >= lower && tag <= upper) {
             range->appendAll(value);
-            if (tag != upper && right != nullptr) range->appendAll(*right->allInRange(lower, upper));
-            if (tag != lower && left != nullptr) range->appendAll(*left->allInRange(lower, upper));
+            if (right != nullptr) range->appendAll(*right->allInRange(lower, upper));
+            if (left != nullptr) range->appendAll(*left->allInRange(lower, upper));
         }
 
         if (tag > upper) {
@@ -191,8 +191,8 @@ public:
         if (tag >= lower && tag <= upper) {
             //std::cout<<tag<<" is between "<<lower<<" and "<<upper<<std::endl;
             range->appendAll(value);
-            if (tag != upper && right != nullptr) range->appendAll(*right->allInRangeT<C>(lower, upper));
-            if (tag != lower && left != nullptr) range->appendAll(*left->allInRangeT<C>(lower, upper));
+            if (right != nullptr) range->appendAll(*right->allInRangeT<C>(lower, upper));
+            if (left != nullptr) range->appendAll(*left->allInRangeT<C>(lower, upper));
         } else if (tag > upper) {
             //std::cout<<tag<<" is greater than "<<upper<<std::endl;
             if (left != nullptr) range->appendAll(*left->allInRangeT<C>(lower, upper));

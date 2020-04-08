@@ -11,17 +11,30 @@ namespace Hotel {
     private:
         HashMap<TokenType, ScannerContext> commandMap;
         HashMap<SimpleString, TokenType> nameToToken;
+        HashMap<SimpleString, SimpleString> nameToDescr;
+
+        static CommandList globalCommandList;
 
         void copy(CommandList const &other) {
             nameToToken = other.nameToToken;
             commandMap = other.commandMap;
+            nameToDescr = other.nameToDescr;
         }
 
     public:
 
+        static CommandList getCommandList() {
+            return globalCommandList;
+        }
+
+        static void setCommandList(CommandList const& cl){
+            globalCommandList = cl;
+        }
+
         CommandList() {
             nameToToken = {};
             commandMap = {};
+            nameToDescr = {};
         }
 
         CommandList(CommandList const &other) {
@@ -37,9 +50,11 @@ namespace Hotel {
             return *this;
         }
 
-        void registerCommand(SimpleString name, TokenType tokenType, ScannerContext ctx) {
+        void registerCommand(SimpleString name, TokenType tokenType, ScannerContext ctx,
+            SimpleString descr) {
             commandMap.put(tokenType, ctx);
             nameToToken.put(name, tokenType);
+            nameToDescr.put(name, descr);
         }
 
         void printCommands() {
@@ -48,6 +63,15 @@ namespace Hotel {
                 std::cout << "K: " << str << std::endl;
             });
         };
+
+        void printCommandsWithDescription(){
+            std::cout<<"Simple Command-line interface for Hotel Management"<<std::endl;
+            unique_ptr<ArrayList<SimpleString>> keys = nameToDescr.keys();
+            unique_ptr<ArrayList<SimpleString>> values = nameToDescr.values();
+            for(int i = 0; i < keys->length(); i++){
+                std::cout<<keys->get(i)<<" "<<values->get(i)<<std::endl;
+            }
+        }
 
         bool isCommand(TokenType tokenType) {
             return commandMap.contains(tokenType);

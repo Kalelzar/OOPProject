@@ -4,68 +4,65 @@
 #include "src/HotelState.hpp"
 #include <fstream>
 #include "src/io/CommandScanner.hpp"
-
+#include  "src/parser/CommandInterpreter.hpp"
 int main() {
 
-    // srand(time(nullptr));
-    // Hotel::HotelState state;
-    // state.add({1,1});
-    // state.add({2,2});
-    // state.add({3,3});
-    // state.checkin(1, {2020, 1, 1}, {2020, 1, 10}, "The Simpsons" );
-    // state.unavailable(1, {2020, 1, 12}, {2020, 1, 24}, "Wut");
-    // state.checkin(2, {2020, 1, 6}, {2020, 1, 6}, "d");
-    // state.find(1, {2020, 1, 11}, {2020, 1, 11});
-    // state.available({2020, 1, 12});
-    // state.available({2020, 1, 6});
-    // state.available();
-    // state.report({2020, 1, 1}, {2020, 2, 1});
-     // ArrayList<int> list;
-     // for(int i = 0; i < 100000; i++){
-     //     list.append(rand() % 100000);
-     // }
-     // unique_ptr<ArrayList<int>> slist = list.sort([](int const& a, int const& b){
-     //               return a > b;
-     //           });
-     // for(unsigned i = 0; i < slist->length(); i++){
-     //     std::cout<<slist->get(i)<<" ";
-     // }
-     // std::cout<<std::endl;
-
     Hotel::CommandList cl;
-    cl.registerCommand("add", TokenType::TOKEN_ADD, ScannerContext::FILE);
-    cl.registerCommand("remove", TokenType::TOKEN_REMOVE, ScannerContext::FILE);
 
-    cl.registerCommand("checkin", TokenType::TOKEN_CHECKIN, ScannerContext::ALL);
-    cl.registerCommand("checkout", TokenType::TOKEN_CHECKOUT, ScannerContext::ALL);
-    cl.registerCommand("unavailable", TokenType::TOKEN_UNAVAILABLE, ScannerContext::ALL);
+    cl.registerCommand("add", TokenType::TOKEN_ADD, ScannerContext::FILE,
+                       " <room> <beds> : Add a new room to the database. (File only)" );
+    cl.registerCommand("remove", TokenType::TOKEN_REMOVE, ScannerContext::FILE,
+                       " <room> : Remove room from database. (File only)" );
 
-    cl.registerCommand("report", TokenType::TOKEN_REPORT, ScannerContext::CONSOLE);
-    cl.registerCommand("find", TokenType::TOKEN_FIND, ScannerContext::CONSOLE);
-    cl.registerCommand("find!", TokenType::TOKEN_FIND_F, ScannerContext::CONSOLE);
-    cl.registerCommand("availability", TokenType::TOKEN_AVAILABILITY, ScannerContext::CONSOLE);
+    cl.registerCommand("checkin", TokenType::TOKEN_CHECKIN, ScannerContext::ALL,
+                       " <room> <from> <to> <note> : Marks <room> as taken for the period <from> <to>. Also attaches a <note> to the check-in event." );
+    cl.registerCommand("checkout", TokenType::TOKEN_CHECKOUT, ScannerContext::ALL,
+                       " <room> [date]: If the room is marked taken for a period that includes [date] (defaults to today)\n"
+                       " then mark the room as free from <date> until the end of the period.");
+    cl.registerCommand("unavailable", TokenType::TOKEN_UNAVAILABLE, ScannerContext::ALL,
+                       " <room> <from> <to> <note> : Marks <room> as unavailable for the period <from> <to>. Also attaches a <note> to the unavailable event." );
 
-    cl.registerCommand("open", TokenType::TOKEN_OPEN, ScannerContext::CONSOLE);
-    cl.registerCommand("close", TokenType::TOKEN_CLOSE, ScannerContext::CONSOLE);
-    cl.registerCommand("help", TokenType::TOKEN_HELP, ScannerContext::CONSOLE);
-    cl.registerCommand("exit", TokenType::TOKEN_EXIT, ScannerContext::CONSOLE);
-    cl.registerCommand("save", TokenType::TOKEN_SAVE, ScannerContext::CONSOLE);
-    cl.registerCommand("saveas", TokenType::TOKEN_SAVE_AS, ScannerContext::CONSOLE);
+    cl.registerCommand("report", TokenType::TOKEN_REPORT, ScannerContext::CONSOLE,
+                       " <from> <to> : Display when rooms are taken or unavailable for the period <from> <to> (Console only)" );
+    cl.registerCommand("find", TokenType::TOKEN_FIND, ScannerContext::CONSOLE,
+                       " <beds> <from> <to> : Find a room with at least <beds> beds that is free <from> <to> (Console only)" );
+    cl.registerCommand("find!", TokenType::TOKEN_FIND_F, ScannerContext::CONSOLE,
+                       " <beds> <from> <to> : Find a room with at least <beds> beds that can be free <from> <to> if the occupants of at most two rooms are moved (Console only)" );
+    cl.registerCommand("availability", TokenType::TOKEN_AVAILABILITY, ScannerContext::CONSOLE,
+                       " [date] : show all rooms that are free on [date] (defaults to today) (Console only)" );
 
-    ifstream file("test.htl");
+    cl.registerCommand("open", TokenType::TOKEN_OPEN, ScannerContext::CONSOLE,
+                       " <filepath> : Open file at <filepath> (Console only)" );
+    cl.registerCommand("close", TokenType::TOKEN_CLOSE, ScannerContext::CONSOLE,
+                       " : Close currently opened file. Does not save the file. (Console only)" );
+    cl.registerCommand("help", TokenType::TOKEN_HELP, ScannerContext::CONSOLE,
+                       " : Displays this message (Console only)" );
+    cl.registerCommand("exit", TokenType::TOKEN_EXIT, ScannerContext::CONSOLE,
+                       " : Exits the program. (Console only)" );
+    cl.registerCommand("save", TokenType::TOKEN_SAVE, ScannerContext::CONSOLE,
+                       " : Saves the file if necessary. (Console only)" );
+    cl.registerCommand("saveas", TokenType::TOKEN_SAVE_AS, ScannerContext::CONSOLE,
+                       " <filepath> : Saves the file to <filepath>. Also sets the currently active file to <filepath>" );
 
-    if(file.is_open()) {
+    Hotel::CommandList::setCommandList(cl);
 
-        Hotel::CommandScanner scanner{ScannerContext::FILE, &file, cl};
-        unique_ptr<ArrayList<Token>> tokens = scanner.scan();
+    Hotel::HotelState state;
 
-
-        tokens->foreach([](Token const &token) mutable {
-            std::cout << token << std::endl;
-        });
-
-        file.close();
+    Hotel::CommandScanner scanner{ScannerContext::CONSOLE, &std::cin, cl};
+    bool run = true;
+    while(run){
+        if(strlen(state.getFile()) != 0){
+            std::cout<<"["<<state.getFile()<<"]";
+        }
+        std::cout<<"$ ";
+        shared_ptr<ArrayList<Token>> tokens = scanner.scanNext();
+        // tokens->foreach([](Token const &token) mutable {
+        //                     std::cout << token << std::endl;
+        //                 });
+        Hotel::CommandInterpreter ci(tokens);
+        run = ci.parse(state);
     }
+
 
     return 0;
 }

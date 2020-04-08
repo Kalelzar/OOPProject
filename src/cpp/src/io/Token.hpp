@@ -19,6 +19,74 @@ enum class TokenType {
     TOKEN_ERROR, TOKEN_EOF
 };
 
+static std::ostream& operator<<(std::ostream& out, TokenType const& type){
+   switch(type){
+   case TokenType::TOKEN_AVAILABILITY:
+       out<<"(AVAILABILITY)";
+   case TokenType::TOKEN_ADD:
+       out<<"(ADD)";
+       break;
+   case TokenType::TOKEN_REMOVE:
+       out<<"(REMOVE)";
+       break;
+   case TokenType::TOKEN_OPEN:
+       out<<"(OPEN)";
+       break;
+   case TokenType::TOKEN_CLOSE:
+       out<<"(CLOSE)";
+       break;
+   case TokenType::TOKEN_SAVE:
+       out<<"(SAVE)";
+       break;
+   case TokenType::TOKEN_SAVE_AS:
+       out<<"(SAVE AS)";
+       break;
+   case TokenType::TOKEN_HELP:
+       out<<"(HELP)";
+       break;
+   case TokenType::TOKEN_EXIT:
+       out<<"(EXIT)";
+       break;
+   case TokenType::TOKEN_CHECKIN:
+       out<<"(CHECK IN)";
+       break;
+   case TokenType::TOKEN_CHECKOUT:
+       out<<"(CHECK OUT)";
+       break;
+   case TokenType::TOKEN_REPORT:
+       out<<"(REPORT)";
+       break;
+   case TokenType::TOKEN_FIND:
+       out<<"(FIND)";
+       break;
+   case TokenType::TOKEN_FIND_F:
+       out<<"(FIND!)";
+       break;
+   case TokenType::TOKEN_UNAVAILABLE:
+       out<<"(UNAVAILABLE)";
+       break;
+   case TokenType::TOKEN_STRING:
+       out<<"(STRING)";
+       break;
+   case TokenType::TOKEN_NUMBER:
+       out<<"(NUMBER)";
+       break;
+   case TokenType::TOKEN_DATE:
+       out<<"(DATE)";
+       break;
+   case TokenType::TOKEN_NUMERIC_RANGE:
+       out<<"(NUMERIC RANGE)";
+       break;
+   case TokenType::TOKEN_ERROR:
+       out<<"(ERROR)";
+       break;
+   case TokenType::TOKEN_EOF:
+       out<<"(EOF)";
+       break;
+   }
+   return out;
+}
+
 struct Token {
 private:
     void create(TokenType _t, const char *_lexeme, int length, int _line) {
@@ -70,71 +138,8 @@ public:
 
     friend std::ostream &operator<<(std::ostream &out, Token const &token) {
 
-        switch(token.t){
 
-            case TokenType::TOKEN_ADD:
-                out<<"(ADD)";
-                break;
-            case TokenType::TOKEN_REMOVE:
-                out<<"(REMOVE)";
-                break;
-            case TokenType::TOKEN_OPEN:
-                out<<"(OPEN)";
-                break;
-            case TokenType::TOKEN_CLOSE:
-                out<<"(CLOSE)";
-                break;
-            case TokenType::TOKEN_SAVE:
-                out<<"(SAVE)";
-                break;
-            case TokenType::TOKEN_SAVE_AS:
-                out<<"(SAVE AS)";
-                break;
-            case TokenType::TOKEN_HELP:
-                out<<"(HELP)";
-                break;
-            case TokenType::TOKEN_EXIT:
-                out<<"(EXIT)";
-                break;
-            case TokenType::TOKEN_CHECKIN:
-                out<<"(CHECK IN)";
-                break;
-            case TokenType::TOKEN_CHECKOUT:
-                out<<"(CHECK OUT)";
-                break;
-            case TokenType::TOKEN_REPORT:
-                out<<"(REPORT)";
-                break;
-            case TokenType::TOKEN_FIND:
-                out<<"(FIND)";
-                break;
-            case TokenType::TOKEN_FIND_F:
-                out<<"(FIND!)";
-                break;
-            case TokenType::TOKEN_UNAVAILABLE:
-                out<<"(UNAVAILABLE)";
-                break;
-            case TokenType::TOKEN_STRING:
-                out<<"(STRING)";
-                break;
-            case TokenType::TOKEN_NUMBER:
-                out<<"(NUMBER)";
-                break;
-            case TokenType::TOKEN_DATE:
-                out<<"(DATE)";
-                break;
-            case TokenType::TOKEN_NUMERIC_RANGE:
-                out<<"(NUMERIC RANGE)";
-                break;
-            case TokenType::TOKEN_ERROR:
-                out<<"(ERROR)";
-                break;
-            case TokenType::TOKEN_EOF:
-                out<<"(EOF)";
-                break;
-        }
-
-        out << token.line << ": " << token.lexeme;
+        out << token.t << " " << token.line << ": " << token.lexeme;
         return out;
     }
 };

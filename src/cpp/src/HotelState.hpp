@@ -20,6 +20,7 @@ namespace Hotel {
         char *filepath;
         bool modified;
 
+        bool open = false;
         void copy(HotelState const &state);
 
         void setRoomState(RoomState state, int roomid,
@@ -29,9 +30,21 @@ namespace Hotel {
 
         unique_ptr<ArrayList<Room>> roomsAvailableFrom(Date from, Date to) const;
 
+        void free();
+
     public:
 
-        explicit HotelState(const char *filepath);
+        bool isOpen() const {
+            return open;
+        }
+
+        bool checkOpen() const {
+            if(isOpen()) return true;
+            std::cerr<<"You must open a file first!"<<std::endl;
+            return false;
+        }
+
+        HotelState(const char *filepath);
 
         HotelState();
 
@@ -41,11 +54,18 @@ namespace Hotel {
 
         ~HotelState();
 
+        void clear();
+
+        void setFile(const char* path);
+        const char* getFile() const;
+
         void load();
 
-        void save() const;
+        void close();
 
-        void saveAs(const char *path) const;
+        void save();
+
+        void saveAs(const char *path);
 
         void add(Room r);
 

@@ -185,7 +185,6 @@ public:
             expand();
         }
         unsigned hsh = findEntry(k);
-
         if (array[hsh].uninit) {
 
             array[hsh].key = k;

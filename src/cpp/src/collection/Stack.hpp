@@ -26,7 +26,10 @@ public:
 
     unique_ptr<ArrayList<A>> asList() {
         unique_ptr<ArrayList<A>> list = make_unique<ArrayList<A>>(ArrayList<A>::capacity());
-        list.appendAll(this);
+        for(int i = 0; i < length(); i++){
+            list->append(ArrayList<A>::get(i));
+        }
+        return list;
     }
 
     unique_ptr<Nullable<A>> peek() const {

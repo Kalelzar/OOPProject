@@ -120,7 +120,7 @@ namespace Hotel {
                 break;
             }
 
-            return out<<rse.from<<" "<<rse.to<<" \""<<rse.getNote()<<"\""<<std::endl;
+            return out<<rse.room.id<<" "<<rse.from<<" "<<rse.to<<" \""<<rse.getNote()<<"\""<<std::endl;
         }
 
     };

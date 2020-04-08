@@ -268,9 +268,19 @@ public:
     unique_ptr<ArrayList<A>> sort(
             std::function<bool(const A &, const A &)> comparator) const {
         unique_ptr<ArrayList<A>> sorted = make_unique<ArrayList<A>>(capacity());
+        if(length() == 0) return sorted;
         sorted->appendAll(*this);
         quickSort<A>(sorted, 0, sorted->length() - 1, comparator);
         return sorted;
+    }
+
+    template<typename B, typename = enable_if_t<is_base_of<IList<B>, A>::value>>
+    unique_ptr<ArrayList<B>> flatten(){
+        unique_ptr<ArrayList<B>> res = make_unique<ArrayList<B>>();
+        for(int i = 0; i < length(); i++){
+            res->appendAll(get(i));
+        }
+        return res;
     }
 
     /**
@@ -309,6 +319,14 @@ public:
         } else {
             return list.difference(*this);
         }
+    }
+
+    bool operator==(ArrayList<A> const& other){
+        if(length() != other.length()) return false;
+        for(int i = 0; i < length(); i++){
+            if(!other.contains(get(i)) || !contains(other.get(i))) return false;
+        }
+        return true;
     }
 
     static unsigned getDefaultReservedSpace() { return DEFAULT_RESERVED_SPACE; };

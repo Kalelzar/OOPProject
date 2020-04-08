@@ -23,13 +23,13 @@ namespace Hotel {
             do {
                 int nid = sorted->get(ind).id;
                 int beds = sorted->get(ind).beds;
-                std::cout<<"Checking room " << nid << " with " << beds << " beds"<<std::endl;
+
                 ind++;
                 if(abs(curid-nid) <= 1 && beds == cbeds){
-                    std::cout<<"Appending to sequence"<<std::endl;
+
                     curid=nid;
                 }else{
-                    std::cout<<"Breaking sequence"<<std::endl;
+
                     if(startid == curid) {
                         *to<<"add "<<curid<<" "<<cbeds<<std::endl;
                     }else{
@@ -40,7 +40,7 @@ namespace Hotel {
                     curid = nid;
                 }
                 if(ind >= sorted->length()){
-                    std::cout<<"Checked all rooms"<<std::endl;
+
                     if(startid == curid) {
                         *to<<"add "<<curid<<" "<<cbeds<<std::endl;
                     }else{
@@ -59,9 +59,6 @@ namespace Hotel {
                               *to<<rse;
                           });
        }
-
     };
-
 }
-
 #endif //OOPPROJECT_PRETTYPRINTER_HPP

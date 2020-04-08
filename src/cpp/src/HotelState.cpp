@@ -4,17 +4,29 @@
 
 #include "HotelState.hpp"
 #include "InvalidArgumentException.hpp"
-
+#include "io/PrettyPrinter.hpp"
+#include "io/CommandList.hpp"
+#include "io/CommandScanner.hpp"
+#include "parser/CommandInterpreter.hpp"
+#include <fstream>
 
 void Hotel::HotelState::add(Room r) {
+    if(!checkOpen()) return;
+    modified = true;
     rl.put(r.id, r);
 }
 
 void Hotel::HotelState::remove(Room r) {
-    rl.remove(r.id);
+    if(!checkOpen()) return;
+    modified = true;
+    if(!rl.contains(r.id)){
+        std::cerr<<"Room with id "<<r.id<<" does not exist."<<std::endl;
+    }else rl.remove(r.id);
 }
 
 void Hotel::HotelState::checkin(int roomid, Date start, Date end, const char *note) {
+    if(!checkOpen()) return;
+    modified = true;
     setRoomState(RoomState::TAKEN, roomid, start, end, note);
 }
 
@@ -34,6 +46,29 @@ Hotel::HotelState::HotelState() {
     strcpy(filepath, "");
 }
 
+void Hotel::HotelState::free(){
+    //Save a back-up of the current state
+
+    if (isOpen() && modified) {
+        int len = strlen(filepath);
+        char *path = new char[len + 2];
+        strcpy(path, filepath);
+        path[len] = '~';
+        path[len + 1] = '\0';
+        saveAs(path);
+        delete[] path;
+    }
+
+    delete[] filepath;
+}
+
+void Hotel::HotelState::clear(){
+    rl = {};
+    tree = {};
+    modified = false;
+    open = false;
+}
+
 Hotel::HotelState::HotelState(const Hotel::HotelState &other) {
     if (this != &other)
         copy(other);
@@ -46,31 +81,54 @@ Hotel::HotelState &Hotel::HotelState::operator=(const Hotel::HotelState &other) 
 }
 
 Hotel::HotelState::~HotelState() {
-
-    //Save a back-up of the current state
-    if (modified) {
-        int len = strlen(filepath);
-        char *path = new char[len + 2];
-        strcpy(path, filepath);
-        path[len - 2] = '~';
-        path[len - 1] = '\0';
-        saveAs(path);
-        delete[] path;
-    }
-
-    delete[] filepath;
+    free();
 }
 
 void Hotel::HotelState::load() {
-
+    if(strcmp(filepath, "") == 0){
+        std::cerr<<"Open called with empty path."<<std::endl;
+    }else{
+        ifstream file(filepath);
+        if(file.is_open()){
+            clear();
+            CommandScanner fileScanner{ScannerContext::FILE, &file,
+                                       CommandList::getCommandList()};
+            shared_ptr<ArrayList<Token>> fileTokens = fileScanner.scan();
+            if(fileScanner.error) {
+                std::cerr<<"File '"<<filepath<<"' contains errors: "<<std::endl;
+                fileTokens->filter([](Token const& token){
+                                       return token.t == TokenType::TOKEN_ERROR;
+                                   })
+                    ->foreach([](Token const& token){
+                                  std::cerr<<"Error("<<token.line<<") : " << token.lexeme << std::endl;
+                              });
+                setFile("");
+                return;
+            }
+            CommandInterpreter interpreter(fileTokens);
+            open = true;
+            interpreter.parse(*this);
+            if(interpreter.errorflag){
+                std::cerr<<"File could not be opened because it contained errors. "<<std::endl;
+                clear();
+                setFile("");
+                open = false;
+            }
+            modified = false;
+        }else{
+            std::cerr<<"Failed to open the file for read."<<std::endl;
+        }
+    }
 }
 
 void Hotel::HotelState::unavailable(int roomid, Hotel::Date from, Hotel::Date to, const char *note) {
+    if(!checkOpen()) return;
+    modified = true;
     setRoomState(RoomState::UNAVAILABLE, roomid, from, to, note);
 }
 
 void Hotel::HotelState::findForce(int beds, Hotel::Date from, Hotel::Date to) {
-
+    if(!checkOpen()) return;
 }
 
 unique_ptr<ArrayList<Hotel::Room>> Hotel::HotelState::roomsAvailableFrom(Date from, Date to) const {
@@ -84,6 +142,7 @@ unique_ptr<ArrayList<Hotel::Room>> Hotel::HotelState::roomsAvailableFrom(Date fr
         unique_ptr<ArrayList<Room>> rse = filtered
                 ->map<Room>([](RoomStateEvent const &rse) { return rse.room; });
 
+
         unique_ptr<ArrayList<Room>> freeRooms = rse->difference(*rl.values());
         return freeRooms;
 
@@ -93,7 +152,7 @@ unique_ptr<ArrayList<Hotel::Room>> Hotel::HotelState::roomsAvailableFrom(Date fr
 }
 
 void Hotel::HotelState::find(int beds, Hotel::Date from, Hotel::Date to) const {
-
+    if(!checkOpen()) return;
     unique_ptr<ArrayList<Room>> list = roomsAvailableFrom(from, to)
             ->filter([beds](Room const &r) { return r.beds >= beds; });
 
@@ -128,19 +187,20 @@ void reportPrint(Hotel::RoomStateEvent const &rse) {
 }
 
 void Hotel::HotelState::report(Hotel::Date from, Hotel::Date to) {
+    if(!checkOpen()) return;
     unique_ptr<ArrayList<RoomStateEvent>> range = tree.inRangeT<Hotel::Date>(from, to);
 
     if (range) {
 
         unique_ptr<ArrayList<RoomStateEvent>> filtered = range
-                ->filter([](RoomStateEvent const &rse) { return rse.state != RoomState::FREE; })
+            ->filter([this](RoomStateEvent const &rse) { return rse.state != RoomState::FREE && rl.contains(rse.room.id); })
                 ->sort([](RoomStateEvent const &rse1, RoomStateEvent const &rse2) {
                     if (rse1.room.id != rse2.room.id) return rse1.room.id < rse2.room.id;
                     else return rse1.from < rse2.from;
                 });
 
         if (filtered->length() == 0) {
-            std::cout << "No rooms are in use for the time period from " << from << " to " << to << ".";
+            std::cout << "No rooms are in use for the time period from " << from << " to " << to << "."<<std::endl;
             return;
         }
 
@@ -150,16 +210,25 @@ void Hotel::HotelState::report(Hotel::Date from, Hotel::Date to) {
         filtered->foreach(reportPrint);
 
     } else {
-        std::cout << "No rooms are in use for the time period from " << from << " to " << to << ".";
+        std::cout << "No rooms are in use for the time period from " << from << " to " << to << "."<<std::endl;
     }
 }
 
 void Hotel::HotelState::checkout(int roomid) {
-
+    if(!checkOpen()) return;
+    modified = true;
 }
 
+void Hotel::HotelState::close(){
+    if(!checkOpen()) return;
+    free();
+    filepath = new char[1];
+    filepath[0]='\0';
+    open = false;
+}
 
 void Hotel::HotelState::available(Hotel::Date date) const {
+    if(!checkOpen()) return;
     unique_ptr<ArrayList<Room>> list = roomsAvailableFrom(date, date)
             ->sort([](Room const &r1, Room const &r2) { return r1.id < r2.id; });
     if (list->length() > 0) {
@@ -171,16 +240,63 @@ void Hotel::HotelState::available(Hotel::Date date) const {
     }
 }
 
-void Hotel::HotelState::saveAs(const char *path) const {
-
+void Hotel::HotelState::saveAs(const char *path) {
+    if(!checkOpen()) return;
+    std::cout<<"Saving to "<<path<<std::endl;
+    std::cout<<".";
+    ofstream file(path);
+    std::cout<<".";
+    if(file.is_open()){
+        Hotel::PrettyPrinter::printRooms(rl.values(), &file);
+        std::cout<<".";
+        Hotel::PrettyPrinter::printState(tree
+                                         .getHead()
+                                         ->collect()
+                                         ->asList()
+                                         ->map<ArrayList<RoomStateEvent>>(
+                                             [](BinaryNode<DateRange, RoomStateEvent>
+                                                *node ){
+                                                 return node->value;
+                                             })
+                                         ->flatten<RoomStateEvent>()
+                                         , &file);
+        std::cout<<".";
+        file.close();
+        std::cout<<std::endl;
+        std::cout<<"File saved sucessfully"<<std::endl;
+        modified=false;
+        setFile(path);
+    }else{
+        std::cout<<std::endl;
+        std::cout<<"Failed to open file for write."<<std::endl;
+    }
 }
 
-void Hotel::HotelState::save() const {
-
+void Hotel::HotelState::save(){
+    if(!checkOpen()) return;
+    if(!modified) {
+        std::cout<<"No changes need to be saved."<<std::endl;
+        return;
+    }
+    saveAs(filepath);
 }
 
-void Hotel::HotelState::copy(const Hotel::HotelState &state) {
+void Hotel::HotelState::setFile(const char* path){
+    if(filepath == path) return;
+    delete [] filepath;
+    filepath = new char[strlen(path)+1];
+    strcpy(filepath, path);
+}
 
+const char* Hotel::HotelState::getFile() const {
+    return filepath;
+}
+
+void Hotel::HotelState::copy(const Hotel::HotelState &other) {
+    rl = other.rl;
+    tree = other.tree;
+    setFile(other.filepath);
+    modified = other.modified;
 }
 
 void Hotel::HotelState::setRoomState(Hotel::RoomState state, int roomid,
@@ -188,7 +304,7 @@ void Hotel::HotelState::setRoomState(Hotel::RoomState state, int roomid,
                                      const char *note) {
     unique_ptr<Nullable<Room>> room = rl.get(roomid);
     if (room->isEmpty()) {
-        throw NoValueException("Room with the provided number, does not exist!");
+        throw NoValueException("Room with the provided number does not exist!");
     }
 
     unique_ptr<ArrayList<RoomStateEvent>> events = tree.inRangeT<Hotel::Date>(start, end);
@@ -198,7 +314,7 @@ void Hotel::HotelState::setRoomState(Hotel::RoomState state, int roomid,
             ->contains(room->get());
 
     if (cannotCheckIn) {
-        throw InvalidArgumentException("Room with the provided number, is taken or unavailable.");
+        throw InvalidArgumentException("Room with the provided number is taken or unavailable.");
     }
 
     tree.populate({start, end},
