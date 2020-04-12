@@ -44,55 +44,63 @@ namespace Hotel {
         Date(const char str[11]);
 
         /**
-         * Prints the date in the ISO 8601 format ( <year>-<month>-<day> )
+         * Prints the date in the ISO 8601 format ( [year]-[month]-[day] )
          */
-        void print() const {
-            char str[11];
-            getString(str);
-            std::cout << str;
-        }
+        void print() const;
 
         friend std::ostream &operator<<(std::ostream &out, const Date &date);
 
         friend std::istream &operator>>(std::istream &in, Date &date);
 
-        bool operator>(Date const &other) const {
-            return daysSince1900() > other.daysSince1900();
-        }
-
-        bool operator>=(Date const &other) const {
-            return *this > other || *this == other;
-        }
-
-        bool operator<(Date const &other) const {
-            return !(*this >= other);
-        }
-
-        bool operator<=(Date const &other) const {
-            return !(*this > other);
-        }
-
-        bool operator!=(Date const &other) const {
-            return !(*this == other);
-        }
-
-        bool operator==(Date const &other) const {
-            return other.getYear() == getYear()
-                   && other.getMonth() == getMonth()
-                   && other.getDay() == getDay();
-        }
-
-        int operator-(Date const &other) const {
-            return daysSince1900() - other.daysSince1900();
-        }
+        /**
+         * @param other the other date
+         * @return is this date greater than the other date
+         */
+        bool operator>(Date const &other) const;
 
         /**
-         * Prints the date in the ISO 8601 format ( <year>-<month>-<day> ) and a newline
+         * @param other the other date
+         * @return is this date greater than or equal to the other date
          */
-        void println() const {
-            print();
-            std::cout << std::endl;
-        }
+        bool operator>=(Date const &other) const;
+
+        /**
+         * @param other the other date
+         * @return is this date less than the other date
+         */
+        bool operator<(Date const &other) const;
+
+        /**
+         * @param other the other date
+         * @return is this date less than or equal to the other date
+         */
+        bool operator<=(Date const &other) const;
+
+        /**
+         * @param other the other date
+         * @return are the two dates different
+         */
+        bool operator!=(Date const &other) const;
+
+        /**
+         * @param other the other date
+         * @return are the two dates equal
+         */
+        bool operator==(Date const &other) const;
+
+        // Needed for Binary Node
+        /**
+         * returns the signed difference in days between this
+         * date and another
+         * @param other the other date
+         * @return the unsigned difference in days
+         */
+        int operator-(Date const &other) const;
+
+        /**
+         * Prints the date in the ISO 8601 format ( [year]-[month]-[day] ) and a newline
+         */
+        void println() const;
 
         /**
          * Converts this date to the ISO 8601 format

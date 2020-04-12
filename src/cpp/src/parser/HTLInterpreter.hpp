@@ -2,14 +2,14 @@
 // Created by Kalelzar on 25/03/2020.
 //
 
-#ifndef OOPPROJECT_COMMANDINTERPRETER_HPP
-#define OOPPROJECT_COMMANDINTERPRETER_HPP
+#ifndef OOPPROJECT_HTLINTERPRETER_HPP
+#define OOPPROJECT_HTLINTERPRETER_HPP
 
-#include "../io/Token.hpp"
+#include "Token.hpp"
 #include "../HotelState.hpp"
 #include "../ReachedEndOfStreamException.hpp"
 #include "../WrongTokenTypeException.hpp"
-#include "../io/CommandList.hpp"
+#include "CommandList.hpp"
 
 #include <iostream>
 #include <cstring>
@@ -17,7 +17,7 @@
 
 namespace Hotel {
 
-    class CommandInterpreter {
+    class HTLInterpreter {
     private:
         shared_ptr<ArrayList<Token>> tokens;
         unsigned index = 0;
@@ -71,17 +71,17 @@ namespace Hotel {
 
 
         void add(HotelState &state){
-            if(matches(TokenType::TOKEN_NUMBER)){
+            if(matches(TokenType::NUMBER)){
 
                 Token roomid = next();
 
-                Token beds = consume(TokenType::TOKEN_NUMBER,
+                Token beds = consume(TokenType::NUMBER,
                                      "add <room> <beds> : <beds> should be a number");
 
                 Room r {atoi(roomid.lexeme), atoi(beds.lexeme)};
                 state.add(r);
 
-            }else if(matches(TokenType::TOKEN_NUMERIC_RANGE)){
+            }else if(matches(TokenType::NUMERIC_RANGE)){
                 error(peek().line, "Not implemented!");
             }else{
                 error(peek().line, "add <room> <beds> : <room> should be a number or a numeric range");
@@ -89,14 +89,14 @@ namespace Hotel {
         }
 
         void remove(HotelState &state){
-            if(matches(TokenType::TOKEN_NUMBER)){
+            if(matches(TokenType::NUMBER)){
 
                 Token roomid = next();
 
                 Room r {atoi(roomid.lexeme), 0};
                 state.remove(r);
 
-            }else if(matches(TokenType::TOKEN_NUMERIC_RANGE)){
+            }else if(matches(TokenType::NUMERIC_RANGE)){
                 error(peek().line, "Not implemented!");
             }else{
                 error(peek().line, "remove <room> : <room> should be a number or a numeric range");
@@ -104,29 +104,29 @@ namespace Hotel {
         }
 
         void checkout(HotelState &state){
-            Token roomid = consume(TokenType::TOKEN_NUMBER,
+            Token roomid = consume(TokenType::NUMBER,
                                    "checkout <room>: <room> should be a number or a numeric range");
             state.checkout(atoi(roomid.lexeme));
         }
 
         void checkin(HotelState &state){
-            if(matches(TokenType::TOKEN_NUMBER)){
+            if(matches(TokenType::NUMBER)){
 
                 Token roomid = next();
 
-                Token from = consume(TokenType::TOKEN_DATE,
+                Token from = consume(TokenType::DATE,
                   "checkin <room> <from> <to> <note> : <from> should be date.");
 
-                Token to = consume(TokenType::TOKEN_DATE,
+                Token to = consume(TokenType::DATE,
                     "checkin <room> <from> <to> <note> : <to> should be date.");
 
-                Token note = consume(TokenType::TOKEN_STRING,
+                Token note = consume(TokenType::STRING,
                   "checkin <room> <from> <to> <note> : <note> should be string.");
 
                 state.checkin(atoi(roomid.lexeme), Date(from.lexeme), Date(to.lexeme),
                               note.lexeme);
 
-            }else if(matches(TokenType::TOKEN_NUMERIC_RANGE)){
+            }else if(matches(TokenType::NUMERIC_RANGE)){
                 error(peek().line, "Not implemented!");
             }else{
                 error(peek().line, "checkin <room> <from> <to> <note> : <room> should be a number or a numeric range");
@@ -134,23 +134,23 @@ namespace Hotel {
         }
 
         void unavailable(HotelState &state){
-            if(matches(TokenType::TOKEN_NUMBER)){
+            if(matches(TokenType::NUMBER)){
 
                 Token roomid = next();
 
-                Token from = consume(TokenType::TOKEN_DATE,
+                Token from = consume(TokenType::DATE,
                                      "unavailable <room> <from> <to> <note> : <from> should be date.");
 
-                Token to = consume(TokenType::TOKEN_DATE,
+                Token to = consume(TokenType::DATE,
                                    "unavailable <room> <from> <to> <note> : <to> should be date.");
 
-                Token note = consume(TokenType::TOKEN_STRING,
+                Token note = consume(TokenType::STRING,
                                      "unavailable <room> <from> <to> <note> : <note> should be string.");
 
                 state.unavailable(atoi(roomid.lexeme), Date(from.lexeme), Date(to.lexeme),
                               note.lexeme);
 
-            }else if(matches(TokenType::TOKEN_NUMERIC_RANGE)){
+            }else if(matches(TokenType::NUMERIC_RANGE)){
                 error(peek().line, "Not implemented!");
             }else{
                 error(peek().line, "unavailable <room> <from> <to> <note> : <room> should be a number or a numeric range");
@@ -158,43 +158,43 @@ namespace Hotel {
         }
 
         void report(HotelState &state){
-            Token from = consume(TokenType::TOKEN_DATE,
+            Token from = consume(TokenType::DATE,
                                  "report <from> <to> : <from> should be a date");
 
-            Token to = consume(TokenType::TOKEN_DATE,
+            Token to = consume(TokenType::DATE,
                                  "report <from> <to> : <to> should be a date");
 
             state.report(Date(from.lexeme), Date(to.lexeme));
         }
 
         void find(HotelState &state){
-            Token beds = consume(TokenType::TOKEN_NUMBER,
+            Token beds = consume(TokenType::NUMBER,
                                  "find <beds> <from> <to> : <beds> should be a number");
 
-            Token from = consume(TokenType::TOKEN_DATE,
+            Token from = consume(TokenType::DATE,
                                  "find <beds> <from> <to> : <from> should be a date");
 
-            Token to = consume(TokenType::TOKEN_DATE,
+            Token to = consume(TokenType::DATE,
                                "find <beds> <from> <to> : <to> should be a date");
 
             state.find(atoi(beds.lexeme), Date(from.lexeme), Date(to.lexeme));
         }
 
         void find_f(HotelState &state){
-            Token beds = consume(TokenType::TOKEN_NUMBER,
+            Token beds = consume(TokenType::NUMBER,
                                  "find! <beds> <from> <to> : <beds> should be a number");
 
-            Token from = consume(TokenType::TOKEN_DATE,
+            Token from = consume(TokenType::DATE,
                                  "find! <beds> <from> <to> : <from> should be a date");
 
-            Token to = consume(TokenType::TOKEN_DATE,
+            Token to = consume(TokenType::DATE,
                                "find! <beds> <from> <to> : <to> should be a date");
 
             state.findForce(atoi(beds.lexeme), Date(from.lexeme), Date(to.lexeme));
         }
 
         void available(HotelState &state){
-            if(matches(TokenType::TOKEN_DATE)){
+            if(matches(TokenType::DATE)){
                 Token date = next();
                 state.available(Date(date.lexeme));
             }else{
@@ -207,12 +207,12 @@ namespace Hotel {
         }
 
         void saveAs(HotelState &state){
-            Token path = consume(TokenType::TOKEN_STRING, "saveas <path> : <path> should be string");
+            Token path = consume(TokenType::STRING, "saveas <path> : <path> should be string");
             state.saveAs(path.lexeme);
         }
 
         void open(HotelState &state){
-            Token path = consume(TokenType::TOKEN_STRING, "open <path> : <path> should be string");
+            Token path = consume(TokenType::STRING, "open <path> : <path> should be string");
             state.setFile(path.lexeme);
             state.load();
         }
@@ -225,7 +225,7 @@ namespace Hotel {
 
         bool errorflag = false;
 
-        CommandInterpreter(shared_ptr<ArrayList<Token>> _tokens){
+        HTLInterpreter(shared_ptr<ArrayList<Token>> _tokens){
             tokens = _tokens;
         }
 
@@ -234,72 +234,72 @@ namespace Hotel {
             while(!isAtEnd()){
                 try{
                     switch(next().t){
-                    case TokenType::TOKEN_ADD:
+                    case TokenType::ADD:
                         add(state);
                         break;
-                    case TokenType::TOKEN_REMOVE:
+                    case TokenType::REMOVE:
                         remove(state);
                         break;
-                    case TokenType::TOKEN_OPEN:
+                    case TokenType::OPEN:
                         open(state);
                         break;
-                    case TokenType::TOKEN_CLOSE:
+                    case TokenType::CLOSE:
                         close(state);
                         break;
-                    case TokenType::TOKEN_SAVE:
+                    case TokenType::SAVE:
                         save(state);
                         break;
-                    case TokenType::TOKEN_SAVE_AS:
+                    case TokenType::SAVE_AS:
                         saveAs(state);
                         break;
-                    case TokenType::TOKEN_HELP:
+                    case TokenType::HELP:
                         CommandList::getCommandList().printCommandsWithDescription ();
                         break;
-                    case TokenType::TOKEN_EXIT:
+                    case TokenType::EXIT:
                         return false;
                         break;
-                    case TokenType::TOKEN_CHECKIN:
+                    case TokenType::CHECKIN:
                         checkin(state);
                         break;
-                    case TokenType::TOKEN_CHECKOUT:
+                    case TokenType::CHECKOUT:
                         checkout(state);
                         break;
-                    case TokenType::TOKEN_REPORT:
+                    case TokenType::REPORT:
                         report(state);
                         break;
-                    case TokenType::TOKEN_FIND:
+                    case TokenType::FIND:
                         find(state);
                         break;
-                    case TokenType::TOKEN_FIND_F:
+                    case TokenType::FIND_F:
                         find_f(state);
                         break;
-                    case TokenType::TOKEN_UNAVAILABLE:
+                    case TokenType::UNAVAILABLE:
                         unavailable(state);
                         break;
-                    case TokenType::TOKEN_STRING:
+                    case TokenType::STRING:
                         errorflag = true;
                         std::cerr<<"(Line "<<prev().line<<") "<<"Unexpected String -> " << prev().lexeme <<std::endl;
                         break;
-                    case TokenType::TOKEN_NUMBER:
+                    case TokenType::NUMBER:
                         errorflag = true;
                         std::cerr<<"(Line "<<prev().line<<") "<<"Unexpected Number -> " << prev().lexeme <<std::endl;
                         break;
-                    case TokenType::TOKEN_DATE:
+                    case TokenType::DATE:
                         errorflag = true;
                         std::cerr<<"(Line "<<prev().line<<") "<<"Unexpected Date -> " << prev().lexeme <<std::endl;
                         break;
-                    case TokenType::TOKEN_NUMERIC_RANGE:
+                    case TokenType::NUMERIC_RANGE:
                         errorflag = true;
                         std::cerr<<"(Line "<<prev().line<<") "<<"Unexpected Numeric Range -> " << prev().lexeme <<std::endl;
                         break;
-                    case TokenType::TOKEN_ERROR:
+                    case TokenType::ERROR:
                         errorflag = true;
                         std::cerr<<"(Line "<<prev().line<<") "<<"Parsing error: " << prev().lexeme << std::endl;
                         break;
-                    case TokenType::TOKEN_AVAILABILITY:
+                    case TokenType::AVAILABILITY:
                         available(state);
                         break;
-                    case TokenType::TOKEN_EOF:
+                    case TokenType::EOF_T:
                         return true;
                         break;
                     }
@@ -313,13 +313,13 @@ namespace Hotel {
                 }catch(WrongTokenTypeException& e){
                     errorflag = true;
                     std::cerr<<e.what()<<std::endl;
-                    while(peek().t == TokenType::TOKEN_STRING ||
-                          peek().t == TokenType::TOKEN_NUMBER ||
-                          peek().t == TokenType::TOKEN_DATE ||
-                          peek().t == TokenType::TOKEN_NUMERIC_RANGE ||
-                          peek().t == TokenType::TOKEN_ERROR){
+                    while(peek().t == TokenType::STRING ||
+                          peek().t == TokenType::NUMBER ||
+                          peek().t == TokenType::DATE ||
+                          peek().t == TokenType::NUMERIC_RANGE ||
+                          peek().t == TokenType::ERROR){
                         Token n = next();
-                        if(n.t == TokenType::TOKEN_ERROR){
+                        if(n.t == TokenType::ERROR){
                             std::cerr<<n.lexeme<<std::endl;
                         }
                     }
@@ -331,4 +331,4 @@ namespace Hotel {
     };
 
 }
-#endif //OOPPROJECT_COMMANDINTERPRETER_HPP
+#endif //OOPPROJECT_HTLINTERPRETER_HPP

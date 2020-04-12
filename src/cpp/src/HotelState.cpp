@@ -4,10 +4,10 @@
 
 #include "HotelState.hpp"
 #include "InvalidArgumentException.hpp"
-#include "io/PrettyPrinter.hpp"
-#include "io/CommandList.hpp"
-#include "io/CommandScanner.hpp"
-#include "parser/CommandInterpreter.hpp"
+#include "io/HTLPrettyPrinter.hpp"
+#include "parser/CommandList.hpp"
+#include "parser/Scanner.hpp"
+#include "parser/HTLInterpreter.hpp"
 #include <fstream>
 
 void Hotel::HotelState::add(Room r) {
@@ -91,13 +91,13 @@ void Hotel::HotelState::load() {
         ifstream file(filepath);
         if(file.is_open()){
             clear();
-            CommandScanner fileScanner{ScannerContext::FILE, &file,
-                                       CommandList::getCommandList()};
+            Scanner fileScanner{ScannerContext::FILE, &file,
+                                CommandList::getCommandList()};
             shared_ptr<ArrayList<Token>> fileTokens = fileScanner.scan();
             if(fileScanner.error) {
                 std::cerr<<"File '"<<filepath<<"' contains errors: "<<std::endl;
                 fileTokens->filter([](Token const& token){
-                                       return token.t == TokenType::TOKEN_ERROR;
+                                       return token.t == TokenType::ERROR;
                                    })
                     ->foreach([](Token const& token){
                                   std::cerr<<"Error("<<token.line<<") : " << token.lexeme << std::endl;
@@ -105,7 +105,7 @@ void Hotel::HotelState::load() {
                 setFile("");
                 return;
             }
-            CommandInterpreter interpreter(fileTokens);
+            HTLInterpreter interpreter(fileTokens);
             open = true;
             interpreter.parse(*this);
             if(interpreter.errorflag){
@@ -247,9 +247,9 @@ void Hotel::HotelState::saveAs(const char *path) {
     ofstream file(path);
     std::cout<<".";
     if(file.is_open()){
-        Hotel::PrettyPrinter::printRooms(rl.values(), &file);
+        Hotel::HTLPrettyPrinter::printRooms(rl.values(), &file);
         std::cout<<".";
-        Hotel::PrettyPrinter::printState(tree
+        Hotel::HTLPrettyPrinter::printState(tree
                                          .getHead()
                                          ->collect()
                                          ->asList()

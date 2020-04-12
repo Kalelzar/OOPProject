@@ -1,0 +1,149 @@
+#+AUTHOR Borislav Atanasov
+#+DESCRIPTION: Keep track of which files are formatted properly
+
+
+* DONE cpp [1/1]
+  CLOSED: [2020-04-10 Fri 21:04]
+** DONE main.cpp
+   CLOSED: [2020-04-10 Fri 20:37]
+* TODO cpp/src [0/15]
+** TODO Date [3/4]
+*** DONE Format
+    CLOSED: [2020-04-10 Fri 21:59]
+*** DONE Comments
+    CLOSED: [2020-04-10 Fri 22:00]
+*** DONE Tests
+    CLOSED: [2020-04-10 Fri 22:00]
+*** TODO Optimization / Refactoring opportunities
+** TODO DateRange [3/4]
+*** DONE Format
+    CLOSED: [2020-04-10 Fri 22:55]
+*** DONE Comments
+    CLOSED: [2020-04-10 Fri 22:55]
+*** DONE Tests
+    CLOSED: [2020-04-10 Fri 22:55]
+*** TODO Optimization / Refactoring opportunities
+** TODO HotelState
+*** TODO Format
+*** TODO Comments
+*** TODO Tests
+*** TODO Optimization / Refactoring opportunities
+** TODO InvalidArgumentException
+*** TODO Format
+*** TODO Comments
+*** TODO Tests
+*** TODO Optimization / Refactoring opportunities
+** TODO NoValueExceptin
+*** TODO Format
+*** TODO Comments
+*** TODO Tests
+*** TODO Optimization / Refactoring opportunities
+** TODO Nullable
+*** TODO Format
+*** TODO Comments
+*** TODO Tests
+*** TODO Optimization / Refactoring opportunities
+** TODO ReachedEndOfStreamException
+*** TODO Format
+*** TODO Comments
+*** TODO Tests
+*** TODO Optimization / Refactoring opportunities
+** TODO Room
+*** TODO Format
+*** TODO Comments
+*** TODO Tests
+*** TODO Optimization / Refactoring opportunities
+** TODO RoomStateEvent
+*** TODO Format
+*** TODO Comments
+*** TODO Tests
+*** TODO Optimization / Refactoring opportunities
+** TODO SimpleString
+*** TODO Format
+*** TODO Comments
+*** TODO Tests
+*** TODO Optimization / Refactoring opportunities
+** TODO WrongTokenTypeException
+*** TODO Format
+*** TODO Comments
+*** TODO Tests
+*** TODO Optimization / Refactoring opportunities
+** TODO cpp/src/collection [0/9]
+*** TODO ArrayList
+**** TODO Format
+**** TODO Comments
+**** TODO Tests
+**** TODO Optimization / Refactoring opportunities
+*** TODO ArraySet
+**** TODO Format
+**** TODO Comments
+**** TODO Tests
+**** TODO Optimization / Refactoring opportunities
+*** TODO BinaryNode
+**** TODO Format
+**** TODO Comments
+**** TODO Tests
+**** TODO Optimization / Refactoring opportunities
+*** TODO HashMap
+**** TODO Format
+**** TODO Comments
+**** TODO Tests
+**** TODO Optimization / Refactoring opportunities
+*** TODO IList
+**** TODO Format
+**** TODO Comments
+**** TODO Tests
+**** TODO Optimization / Refactoring opportunities
+*** TODO LinkedList
+**** TODO Format
+**** TODO Comments
+**** TODO Tests
+**** TODO Optimization / Refactoring opportunities
+*** TODO RangeBinaryTree
+**** TODO Format
+**** TODO Comments
+**** TODO Tests
+**** TODO Optimization / Refactoring opportunities
+*** TODO SortedArrayList
+**** TODO Format
+**** TODO Comments
+**** TODO Tests
+**** TODO Optimization / Refactoring opportunities
+*** TODO Stack
+**** TODO Format
+**** TODO Comments
+**** TODO Tests
+**** TODO Optimization / Refactoring opportunities
+** TODO cpp/src/io [0/1]
+*** TODO HTLPrettyPrinter
+**** TODO Format
+**** TODO Comments
+**** TODO Tests
+**** TODO Optimization / Refactoring opportunities
+** TODO cpp/src/parser [0/5]
+*** TODO CommandList
+**** TODO Format
+**** TODO Comments
+**** TODO Tests
+**** TODO Optimization / Refactoring opportunities
+*** TODO Scanner
+**** TODO Format
+**** TODO Comments
+**** TODO Tests
+**** TODO Optimization / Refactoring opportunities
+*** TODO HTLInterpreter
+**** TODO Format
+**** TODO Comments
+**** TODO Tests
+**** TODO Optimization / Refactoring opportunities
+*** TODO ScannerContext
+**** TODO Format
+**** TODO Comments
+**** TODO Tests
+**** TODO Optimization / Refactoring opportunities
+*** TODO Token
+**** DONE Format
+     CLOSED: [2020-04-10 Fri 20:50]
+**** TODO Comments
+**** TODO Tests
+**** TODO Optimization / Refactoring opportunities

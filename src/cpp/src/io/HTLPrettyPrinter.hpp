@@ -1,12 +1,12 @@
-#ifndef OOPPROJECT_PRETTYPRINTER_HPP
-#define OOPPROJECT_PRETTYPRINTER_HPP
+#ifndef OOPPROJECT_HTLPRETTYPRINTER_HPP
+#define OOPPROJECT_HTLPRETTYPRINTER_HPP
 
 #include "../collection/ArrayList.hpp"
 #include "../Room.hpp"
 #include "../RoomStateEvent.hpp"
 
 namespace Hotel {
-    class PrettyPrinter {
+    class HTLPrettyPrinter {
 
     private:
 
@@ -61,4 +61,4 @@ namespace Hotel {
        }
     };
 }
-#endif //OOPPROJECT_PRETTYPRINTER_HPP
+#endif //OOPPROJECT_HTLPRETTYPRINTER_HPP

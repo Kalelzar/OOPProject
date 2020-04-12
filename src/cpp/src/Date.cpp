@@ -11,73 +11,20 @@
 #endif //_MSC_VER
 
 namespace Hotel {
+
     Date::Date(int year, int month, int day) {
         if (month > 12) {
-#ifdef PRINT
-            std::clog << "A date with a month above 12 is assumed to mean the appropriate month n years later.\n";
-#endif
-            year += month / 12;
-            month = month % 12;
-            if (month == 0) {
-                month = 12;
-                year -= 1;
-            }
+            std::cout<<"Month cannot be greater than 12."<<std::endl;
         } else if (month < 1) {
-#ifdef PRINT
-            std::clog << "A date with a month under 1 is assumed to mean the appropriate month n years earlier.\n";
-#endif
-            while (month < 1) {
-                month += 12;
-                year -= 1;
-            }
+            std::cout<<"Month cannot be late than 1."<<std::endl;
         }
 
+        int dm = daysOfMonth(month, year);
+
         if (day < 1) {
-#ifdef PRINT
-            std::clog << "A date with a day under 1 is assumed to mean the appropriate day n months earlier.\n";
-#endif
-            while (day < 1) {
-                month -= 1;
-
-                //FIX: Remove code duplication
-                if (month > 12) {
-                    year += month / 12;
-                    month = month % 12;
-                    if (month == 0) {
-                        month = 12;
-                        year -= 1;
-                    }
-                } else if (month < 1) {
-                    while (month < 1) {
-                        month += 12;
-                        year -= 1;
-                    }
-                }
-
-                day += daysOfMonth(month, year);
-            }
-        } else if (day > daysOfMonth(month, year)) {
-#ifdef PRINT
-            std::clog << "A date with a day above the max days of the month is assumed to mean the appropriate day n months later.\n";
-#endif
-            while (day > daysOfMonth(month, year)) {
-                day -= daysOfMonth(month, year);
-                month += 1;
-                //FIX: Remove code duplication
-                if (month > 12) {
-                    year += month / 12;
-                    month = month % 12;
-                    if (month == 0) {
-                        month = 12;
-                        year -= 1;
-                    }
-                } else if (month < 1) {
-                    while (month < 1) {
-                        month += 12;
-                        year -= 1;
-                    }
-                }
-            }
+            std::cout<<"Day cannot be less than 1."<<std::endl;
+        } else if (day > dm) {
+            std::cout<<"Month "<<month<<" cannot have more than " << dm << " days"<<std::endl;
         }
 
         this->day = day;
@@ -241,4 +188,44 @@ namespace Hotel {
         return in;
     }
 
+    bool Date::operator>(Date const &other) const {
+        return daysSince1900() > other.daysSince1900();
+    }
+
+    bool Date::operator>=(Date const &other) const {
+        return *this > other || *this == other;
+    }
+
+    bool Date::operator<(Date const &other) const {
+        return !(*this >= other);
+    }
+
+    bool Date::operator<=(Date const &other) const {
+        return !(*this > other);
+    }
+
+    bool Date::operator!=(Date const &other) const {
+        return !(*this == other);
+    }
+
+    bool Date::operator==(Date const &other) const {
+        return other.getYear() == getYear()
+            && other.getMonth() == getMonth()
+            && other.getDay() == getDay();
+    }
+
+    int Date::operator-(Date const &other) const {
+        return daysSince1900() - other.daysSince1900();
+    }
+
+    void Date::print() const {
+        char str[11];
+        getString(str);
+        std::cout << str;
+    }
+
+    void Date::println() const {
+        print();
+        std::cout << std::endl;
+    }
 }

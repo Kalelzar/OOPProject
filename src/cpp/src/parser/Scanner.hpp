@@ -2,8 +2,8 @@
 // Created by Kalelzar on 25/03/2020.
 //
 
-#ifndef OOPPROJECT_COMMANDSCANNER_HPP
-#define OOPPROJECT_COMMANDSCANNER_HPP
+#ifndef OOPPROJECT_SCANNER_HPP
+#define OOPPROJECT_SCANNER_HPP
 
 #include<iostream>
 #include<cstring>
@@ -16,7 +16,7 @@
 namespace Hotel {
 
 
-    class CommandScanner {
+    class Scanner {
     private:
         ScannerContext sc;
         CommandList cl;
@@ -26,7 +26,7 @@ namespace Hotel {
 
         bool error = false;
 
-        CommandScanner(ScannerContext sc, std::istream *input, CommandList const &cl) {
+        Scanner(ScannerContext sc, std::istream *input, CommandList const &cl) {
             this->sc = sc;
             this->input = input;
             this->cl = cl;
@@ -42,7 +42,7 @@ namespace Hotel {
                 list->appendAll(*scanLine(sline));
                 line++;
             }
-            list->append(Token{TokenType::TOKEN_EOF, "", 0, line});
+            list->append(Token{TokenType::EOF_T, "", line});
             return list;
         }
 
@@ -52,12 +52,12 @@ namespace Hotel {
             char sline[513];
             input->getline(sline, 512);
             if (input->eof()) {
-                list->append(Token{TokenType::TOKEN_EOF, "", 0, line});
+                list->append(Token{TokenType::EOF_T, "", line});
                 return list;
             }
             list->appendAll(*scanLine(sline));
             line++;
-            list->append(Token{TokenType::TOKEN_EOF, "", 0, line});
+            list->append(Token{TokenType::EOF_T, "", line});
             return list;
         }
 
@@ -77,8 +77,8 @@ namespace Hotel {
                         if (index >= linelen) {
 
                             const char errorMsg[] = "Unterminated string.";
-                            list->append({TokenType::TOKEN_ERROR,
-                                          errorMsg, (int) strlen(errorMsg), this->line});
+                            list->append({TokenType::ERROR,
+                                          errorMsg, this->line});
                             error = true;
                             return list;
                         }
@@ -86,8 +86,8 @@ namespace Hotel {
 
                     if (index + 1 != linelen && line[index + 1] != ' ') {
                         const char errorMsg[] = "Expected whitespace or EOL after string.";
-                        list->append({TokenType::TOKEN_ERROR,
-                                      errorMsg, (int) strlen(errorMsg), this->line});
+                        list->append({TokenType::ERROR,
+                                      errorMsg, this->line});
                         error = true;
                         return list;
                     }
@@ -95,28 +95,28 @@ namespace Hotel {
                     char lexeme[index - start];
                     strncpy(lexeme, line + start, index - start);
                     lexeme[index - start] = '\0';
-                    list->append({TokenType::TOKEN_STRING, lexeme, (int) strlen(lexeme), this->line});
+                    list->append({TokenType::STRING, lexeme, this->line});
                     index++;
                 } else if (isdigit(line[index]) ||
                            (line[index] == '-' && index + 1 < linelen && isdigit(line[index + 1]))) {
 
                     int start = index;
                     if(line[index] == '-') index++;
-                    TokenType tt = TokenType::TOKEN_NUMBER;
+                    TokenType tt = TokenType::NUMBER;
                     while (isdigit(line[index])) {
 
                         index++;
-                        if (line[index] == '-' && tt == TokenType::TOKEN_NUMBER) {
+                        if (line[index] == '-' && tt == TokenType::NUMBER) {
 
-                            tt = TokenType::TOKEN_NUMERIC_RANGE;
+                            tt = TokenType::NUMERIC_RANGE;
                             index++;
-                        } else if (line[index] == '-' && tt == TokenType::TOKEN_NUMERIC_RANGE) {
-                            tt = TokenType::TOKEN_DATE;
+                        } else if (line[index] == '-' && tt == TokenType::NUMERIC_RANGE) {
+                            tt = TokenType::DATE;
                             index++;
                         } else if (line[index] == '-') {
                             const char errorMsg[] = "Malformed date.";
-                            list->append({TokenType::TOKEN_ERROR,
-                                          errorMsg, (int) strlen(errorMsg), this->line});
+                            list->append({TokenType::ERROR,
+                                          errorMsg, this->line});
                             error = true;
                             return list;
                         }
@@ -125,15 +125,15 @@ namespace Hotel {
 
                     if (line[index - 1] == '-' || (index != linelen && line[index] != ' ')) {
                         const char errorMsg[] = "Malformed number or numeric range.";
-                        list->append({TokenType::TOKEN_ERROR,
-                                      errorMsg, (int) strlen(errorMsg), this->line});
+                        list->append({TokenType::ERROR,
+                                      errorMsg, this->line});
                         error = true;
                         return list;
                     }
                     char lexeme[index - start];
                     strncpy(lexeme, line + start, index - start);
                     lexeme[index - start] = '\0';
-                    list->append({tt, lexeme, (int) strlen(lexeme), this->line});
+                    list->append({tt, lexeme, this->line});
                     index++;
                 } else if (line[index] == ' ') {
                     index++;
@@ -146,8 +146,8 @@ namespace Hotel {
 
                     if (index != linelen && line[index] != ' ') {
                         const char errorMsg[] = "Expected whitespace or EOL after identifier.";
-                        list->append({TokenType::TOKEN_ERROR,
-                                      errorMsg, (int) strlen(errorMsg), this->line});
+                        list->append({TokenType::ERROR,
+                                      errorMsg, this->line});
                         error = true;
                         return list;
                     }
@@ -161,17 +161,17 @@ namespace Hotel {
                         ScannerContext tctx = cl.contextFor(tt->get())
                             ->getOrElse(ScannerContext::UNDEFINED);
                         if(tctx == ScannerContext::ALL || tctx == sc || sc == ScannerContext::ALL){
-                            list->append({tt->get(), lexeme, (int) strlen(lexeme), this->line});
+                            list->append({tt->get(), lexeme, this->line});
                         }else{
                             const char errorMsg[] = "Command used in the wrong context.";
-                            list->append({TokenType::TOKEN_ERROR,
-                                          errorMsg, (int) strlen(errorMsg), this->line});
+                            list->append({TokenType::ERROR,
+                                          errorMsg, this->line});
                             error = true;
                             return list;
                         }
                     } else {
-                        list->append({TokenType::TOKEN_STRING,
-                                      lexeme, (int) strlen(lexeme), this->line});
+                        list->append({TokenType::STRING,
+                                      lexeme, this->line});
                         return list;
                     }
                     index++;
@@ -185,4 +185,4 @@ namespace Hotel {
 }
 
 
-#endif //OOPPROJECT_COMMANDSCANNER_HPP
+#endif //OOPPROJECT_SCANNER_HPP
