@@ -12,6 +12,8 @@
 
 void Hotel::HotelState::add(Room r){
     if(!checkOpen()) return;
+    modified = true;
+    rl.put(r.id, r);
 }
 
 void Hotel::HotelState::remove(Room r) {
@@ -73,8 +75,10 @@ Hotel::HotelState::HotelState(const Hotel::HotelState &other) {
 }
 
 Hotel::HotelState &Hotel::HotelState::operator=(const Hotel::HotelState &other) {
-    if (this != &other)
+    if (this != &other){
+        delete [] filepath;
         copy(other);
+    }
     return *this;
 }
 
@@ -304,7 +308,7 @@ void Hotel::HotelState::save(){
 
 void Hotel::HotelState::setFile(const char* path){
     if(filepath == path) return;
-    delete [] filepath;
+    if(filepath) delete [] filepath;
     filepath = new char[strlen(path)+1];
     strcpy(filepath, path);
 }
@@ -316,7 +320,8 @@ const char* Hotel::HotelState::getFile() const {
 void Hotel::HotelState::copy(const Hotel::HotelState &other) {
     rl = other.rl;
     tree = other.tree;
-    setFile(other.filepath);
+    filepath = new char[strlen(other.getFile())+1];
+    strcpy(filepath, other.getFile());
     modified = other.modified;
 }
 

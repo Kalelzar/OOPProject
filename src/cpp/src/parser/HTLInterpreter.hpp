@@ -6,6 +6,7 @@
 #define OOPPROJECT_HTLINTERPRETER_HPP
 
 #include <filesystem>
+#include "../NumericRange.hpp"
 #include "Token.hpp"
 #include "../HotelState.hpp"
 #include "../ReachedEndOfStreamException.hpp"
@@ -83,6 +84,7 @@ namespace Hotel {
         }
 
 
+
         void add(HotelState &state){
             if(matches(TokenType::NUMBER)){
 
@@ -95,13 +97,27 @@ namespace Hotel {
                 state.add(r);
 
             }else if(matches(TokenType::NUMERIC_RANGE)){
-                error(peek().line, "Not implemented!");
+                Token roomids = next();
+
+                int lower, upper;
+                sscanf(roomids.lexeme, "%d-%d", &lower, &upper);
+                if(lower > upper){
+                    error(roomids.line, "Numeric range must start before it ends.");
+                }
+
+                Token beds = consume(TokenType::NUMBER,
+                                     "add <room> <beds> : <beds> should be a number");
+
+                NumericRange range(lower, upper);
+                int bedCount = atoi(beds.lexeme);
+                range.iterate([&state, bedCount](int i) mutable {
+                                  Room r{i, bedCount};
+                                  state.add(r);
+                              });
             }else{
                 error(peek().line, "add <room> <beds> : <room> should be a number or a numeric range");
             }
         }
-
-
 
         void remove(HotelState &state){
             if(matches(TokenType::NUMBER)){
@@ -112,7 +128,19 @@ namespace Hotel {
                 state.remove(r);
 
             }else if(matches(TokenType::NUMERIC_RANGE)){
-                error(peek().line, "Not implemented!");
+                Token roomids = next();
+
+                int lower, upper;
+                sscanf(roomids.lexeme, "%d-%d", &lower, &upper);
+                if(lower > upper){
+                    error(roomids.line, "Numeric range must start before it ends.");
+                }
+
+                NumericRange range(lower, upper);
+                range.iterate([&state](int i) mutable {
+                                  Room r{i, 0};
+                                  state.remove(r);
+                              });
             }else{
                 error(peek().line, "remove <room> : <room> should be a number or a numeric range");
             }
@@ -142,7 +170,34 @@ namespace Hotel {
                               note.lexeme);
 
             }else if(matches(TokenType::NUMERIC_RANGE)){
-                error(peek().line, "Not implemented!");
+                Token roomids = next();
+
+
+
+                int lower, upper;
+                sscanf(roomids.lexeme, "%d-%d", &lower, &upper);
+                if(lower > upper){
+                    error(roomids.line, "Numeric range must start before it ends.");
+                }
+
+                Token fromT = consume(TokenType::DATE,
+                                     "checkin <room> <from> <to> <note> : <from> should be date.");
+
+                Date from{fromT.lexeme};
+
+                Token toT = consume(TokenType::DATE,
+                                   "checkin <room> <from> <to> <note> : <to> should be date.");
+                Date to{toT.lexeme};
+                Token noteT = consume(TokenType::STRING,
+                                     "checkin <room> <from> <to> <note> : <note> should be string.");
+                char* note = noteT.lexeme;
+
+
+
+                NumericRange range(lower, upper);
+                range.iterate([&state, from, to, note](int i) mutable {
+                                  state.checkin(i, from, to, note );
+                              });
             }else{
                 error(peek().line, "checkin <room> <from> <to> <note> : <room> should be a number or a numeric range");
             }
@@ -166,11 +221,41 @@ namespace Hotel {
                               note.lexeme);
 
             }else if(matches(TokenType::NUMERIC_RANGE)){
-                error(peek().line, "Not implemented!");
+                Token roomids = next();
+
+
+
+                int lower, upper;
+                sscanf(roomids.lexeme, "%d-%d", &lower, &upper);
+                if(lower > upper){
+                    error(roomids.line, "Numeric range must start before it ends.");
+                }
+
+                Token fromT = consume(TokenType::DATE,
+                                      "unavailable <room> <from> <to> <note> : <from> should be date.");
+
+
+                Date from{fromT.lexeme};
+
+                Token toT = consume(TokenType::DATE,
+                                    "unavailable <room> <from> <to> <note> : <to> should be date.");
+                Date to{toT.lexeme};
+                Token noteT = consume(TokenType::STRING,
+                                      "unavailable <room> <from> <to> <note> : <note> should be string.");
+
+                char* note = noteT.lexeme;
+
+
+
+                NumericRange range(lower, upper);
+                range.iterate([&state, from, to, note](int i) mutable {
+                                  state.checkin(i, from, to, note );
+                              });
             }else{
                 error(peek().line, "unavailable <room> <from> <to> <note> : <room> should be a number or a numeric range");
             }
         }
+
 
         void report(HotelState &state){
             Token from = consume(TokenType::DATE,
