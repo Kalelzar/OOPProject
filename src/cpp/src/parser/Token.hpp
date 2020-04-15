@@ -9,6 +9,8 @@ enum class TokenType {
     OPEN, CLOSE, SAVE, SAVE_AS,
     HELP, EXIT, // All projects - Console only
 
+    LIST, // Extensions - Console only
+
     CHECKIN, CHECKOUT, // HTL tokens - All contexts
     REPORT, FIND, FIND_F, UNAVAILABLE, AVAILABILITY, // HTL tokens - Console only
 

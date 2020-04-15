@@ -10,10 +10,8 @@
 #include "parser/HTLInterpreter.hpp"
 #include <fstream>
 
-void Hotel::HotelState::add(Room r) {
+void Hotel::HotelState::add(Room r){
     if(!checkOpen()) return;
-    modified = true;
-    rl.put(r.id, r);
 }
 
 void Hotel::HotelState::remove(Room r) {
@@ -116,6 +114,9 @@ void Hotel::HotelState::load() {
             }
             modified = false;
         }else{
+            clear();
+            setFile("");
+            open = false;
             std::cerr<<"Failed to open the file for read."<<std::endl;
         }
     }
@@ -129,9 +130,19 @@ void Hotel::HotelState::unavailable(int roomid, Hotel::Date from, Hotel::Date to
 
 void Hotel::HotelState::findForce(int beds, Hotel::Date from, Hotel::Date to) {
     if(!checkOpen()) return;
+    if(from > to){
+        Date t = to;
+        to = from;
+        from = t;
+    }
 }
 
 unique_ptr<ArrayList<Hotel::Room>> Hotel::HotelState::roomsAvailableFrom(Date from, Date to) const {
+    if(from > to){
+        Date t = to;
+        to = from;
+        from = t;
+    }
     unique_ptr<ArrayList<RoomStateEvent>> range = tree.inRangeT<Hotel::Date>(from, to);
 
     if (range) {
@@ -153,6 +164,11 @@ unique_ptr<ArrayList<Hotel::Room>> Hotel::HotelState::roomsAvailableFrom(Date fr
 
 void Hotel::HotelState::find(int beds, Hotel::Date from, Hotel::Date to) const {
     if(!checkOpen()) return;
+    if(from > to){
+        Date t = to;
+        to = from;
+        from = t;
+    }
     unique_ptr<ArrayList<Room>> list = roomsAvailableFrom(from, to)
             ->filter([beds](Room const &r) { return r.beds >= beds; });
 
@@ -188,6 +204,11 @@ void reportPrint(Hotel::RoomStateEvent const &rse) {
 
 void Hotel::HotelState::report(Hotel::Date from, Hotel::Date to) {
     if(!checkOpen()) return;
+    if(from > to){
+        Date t = to;
+        to = from;
+        from = t;
+    }
     unique_ptr<ArrayList<RoomStateEvent>> range = tree.inRangeT<Hotel::Date>(from, to);
 
     if (range) {
@@ -302,6 +323,11 @@ void Hotel::HotelState::copy(const Hotel::HotelState &other) {
 void Hotel::HotelState::setRoomState(Hotel::RoomState state, int roomid,
                                      Hotel::Date start, Hotel::Date end,
                                      const char *note) {
+    if(start > end){
+        Date t = end;
+        end = start;
+        start = t;
+    }
     unique_ptr<Nullable<Room>> room = rl.get(roomid);
     if (room->isEmpty()) {
         throw NoValueException("Room with the provided number does not exist!");

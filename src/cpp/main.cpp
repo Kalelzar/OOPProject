@@ -31,6 +31,8 @@ int main() {
     const char* saveHelp= " : Saves the file if necessary. (Console only)";
     const char* saveasHelp=" <filepath> : Saves the file to <filepath>. Also sets the currently active file to <filepath>";
 
+    const char* listHelp =" [filepath] : lists all .htl files in the provided directory or the working directory if none is provided.";
+
     Hotel::CommandList cl;
 
     cl.registerCommand("add", TokenType::ADD, ScannerContext::FILE, addHelp);
@@ -39,6 +41,9 @@ int main() {
     cl.registerCommand("checkin", TokenType::CHECKIN, ScannerContext::ALL, checkinHelp);
     cl.registerCommand("checkout", TokenType::CHECKOUT, ScannerContext::ALL, checkoutHelp);
     cl.registerCommand("unavailable", TokenType::UNAVAILABLE, ScannerContext::ALL, unavailableHelp );
+
+    cl.registerCommand("list", TokenType::LIST, ScannerContext::CONSOLE, listHelp);
+
 
     cl.registerCommand("report", TokenType::REPORT, ScannerContext::CONSOLE, reportHelp);
     cl.registerCommand("find", TokenType::FIND, ScannerContext::CONSOLE, findHelp );

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 # Source
 project(OOPProject VERSION 0.0.1)
@@ -12,4 +12,4 @@ file(GLOB_RECURSE ALL_SRC CONFIGURE_DEPENDS
 add_executable(OOPProject_run src/cpp/main.cpp ${ALL_SRC})
 
 
-add_subdirectory(src/cpp/src)
+add_subdirectory(src/cpp/test)

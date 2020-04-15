@@ -5,11 +5,22 @@
 #ifndef OOPPROJECT_HTLINTERPRETER_HPP
 #define OOPPROJECT_HTLINTERPRETER_HPP
 
+#include <filesystem>
 #include "Token.hpp"
 #include "../HotelState.hpp"
 #include "../ReachedEndOfStreamException.hpp"
 #include "../WrongTokenTypeException.hpp"
 #include "CommandList.hpp"
+
+#include <stdio.h>
+#ifdef WINDOWS
+#include <winbase.h>
+//I still have no idea why Windows dislikes being POSIX-compliant
+#define workingDirectory(PATH, LENGTH) GetCurrentDirectory(LENGTH, PATH)
+#else
+#include <unistd.h>
+#define workingDirectory(PATH, LENGTH) getcwd(PATH, LENGTH)
+#endif
 
 #include <iostream>
 #include <cstring>
@@ -59,6 +70,8 @@ namespace Hotel {
             }else{
                 return next();
             }
+            // Never used. Just here to suppress a compiler warning
+            return {TokenType::EOF_T, "", 0};
         }
 
         bool matches(TokenType type) const {
@@ -87,6 +100,8 @@ namespace Hotel {
                 error(peek().line, "add <room> <beds> : <room> should be a number or a numeric range");
             }
         }
+
+
 
         void remove(HotelState &state){
             if(matches(TokenType::NUMBER)){
@@ -221,6 +236,30 @@ namespace Hotel {
             state.close();
         }
 
+        void list(){
+
+            char* path;
+            if(matches(TokenType::STRING)){
+                Token pathT = next();
+                path = new char[strlen(pathT.lexeme)+1];
+                strcpy(path, pathT.lexeme);
+            }else{
+                path = new char[FILENAME_MAX+1];
+                if(!workingDirectory(path, FILENAME_MAX)){
+                    std::cerr<<"Failed to read current working directory"<<std::endl;
+                }
+            }
+
+            for (const auto & entry : std::filesystem::directory_iterator(path)){
+                auto epath = entry.path();
+                if(strcmp(epath.extension().c_str(), ".htl")!=0 && strcmp(epath.extension().c_str(), ".htl~")) continue;
+                std::cout << epath.filename().string() << std::endl;
+            }
+
+            delete [] path;
+        }
+
+
     public:
 
         bool errorflag = false;
@@ -228,6 +267,7 @@ namespace Hotel {
         HTLInterpreter(shared_ptr<ArrayList<Token>> _tokens){
             tokens = _tokens;
         }
+
 
         bool parse(HotelState &state){
             errorflag = false;
@@ -295,6 +335,9 @@ namespace Hotel {
                     case TokenType::ERROR:
                         errorflag = true;
                         std::cerr<<"(Line "<<prev().line<<") "<<"Parsing error: " << prev().lexeme << std::endl;
+                        break;
+                    case TokenType::LIST:
+                        list();
                         break;
                     case TokenType::AVAILABILITY:
                         available(state);

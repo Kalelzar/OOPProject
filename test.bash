@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./build.bash && ./cmake-build-debug/src/cpp/src/OOPProject_tests_run
+./build.bash && ./cmake-build-debug/src/cpp/test/OOPProject_tests_run
