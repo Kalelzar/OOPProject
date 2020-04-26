@@ -26,6 +26,18 @@ public:
         delete[] msg;
     }
 
+	WrongTokenTypeException(WrongTokenTypeException const& other) {
+		msg = new char[strlen(other.msg) + 1];
+		strcpy(msg, other.msg);
+	}
+
+	WrongTokenTypeException& operator=(WrongTokenTypeException const& other) {
+		if (this == &other) return *this;
+		msg = new char[strlen(other.msg) + 1];
+		strcpy(msg, other.msg);
+		return *this;
+	}
+
 };
 
 

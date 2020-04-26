@@ -72,10 +72,11 @@ shared_ptr<ArrayList<Token>> Hotel::Scanner::scanLine(const char *line){
                 return list;
             }
 
-            char lexeme[index - start];
+            char* lexeme = new char[index - start + 1];
             strncpy(lexeme, line + start, index - start);
             lexeme[index - start] = '\0';
             list->append({TokenType::STRING, lexeme, this->line});
+			delete[] lexeme;
             index++;
         } else if (isdigit(line[index]) ||
                    (line[index] == '-' && index + 1 < linelen && isdigit(line[index + 1]))) {
@@ -110,10 +111,11 @@ shared_ptr<ArrayList<Token>> Hotel::Scanner::scanLine(const char *line){
                 error = true;
                 return list;
             }
-            char lexeme[index - start];
+			char* lexeme = new char[index - start + 1];
             strncpy(lexeme, line + start, index - start);
             lexeme[index - start] = '\0';
             list->append({tt, lexeme, this->line});
+			delete[] lexeme;
             index++;
         } else if (line[index] == ' ') {
             index++;
@@ -132,7 +134,7 @@ shared_ptr<ArrayList<Token>> Hotel::Scanner::scanLine(const char *line){
                 return list;
             }
 
-            char lexeme[index - start];
+			char* lexeme = new char[index - start + 1];
             strncpy(lexeme, line + start, index - start);
             lexeme[index - start] = '\0';
             shared_ptr<Nullable<TokenType>> tt = cl.tokenFor(lexeme);
@@ -147,12 +149,14 @@ shared_ptr<ArrayList<Token>> Hotel::Scanner::scanLine(const char *line){
                     list->append({TokenType::ERROR,
                                   errorMsg, this->line});
                     error = true;
+					delete[] lexeme;
                     return list;
                 }
             } else {
                 list->append({TokenType::STRING,
                               lexeme, this->line});
             }
+			delete[] lexeme;
             index++;
         }
     }

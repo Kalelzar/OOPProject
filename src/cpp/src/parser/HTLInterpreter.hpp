@@ -12,20 +12,22 @@
 #include "../ReachedEndOfStreamException.hpp"
 #include "../WrongTokenTypeException.hpp"
 #include "CommandList.hpp"
+#include <cstring>
+#include <iostream>
+#include <cstdlib>
 
 #include <stdio.h>
-#ifdef WINDOWS
-#include <winbase.h>
-//I still have no idea why Windows dislikes being POSIX-compliant
-#define workingDirectory(PATH, LENGTH) GetCurrentDirectory(LENGTH, PATH)
-#else
+#ifdef __linux__
 #include <unistd.h>
 #define workingDirectory(PATH, LENGTH) getcwd(PATH, LENGTH)
+#else
+#undef _HAS_STD_BYTE 
+#include <direct.h>
+//I still have no idea why Windows dislikes being POSIX-compliant
+#define workingDirectory(PATH, LENGTH) _getcwd(PATH, LENGTH)
 #endif
 
-#include <iostream>
-#include <cstring>
-#include <cstdlib>
+
 
 namespace Hotel {
 
@@ -56,13 +58,15 @@ namespace Hotel {
         void error(int line, const char* msg) const {
             char sline[32];
             sprintf(sline, "%d", line);
-            char nmsg[6 + strlen(sline)+ 3 + strlen(msg) + 1];
+            char* nmsg = new char[6 + strlen(sline)+ 3 + strlen(msg) + 1];
             strcpy(nmsg, "Line: ");
             strcpy(nmsg+6, sline);
             strcpy(nmsg+6+strlen(sline), " - ");
             strcpy(nmsg+6+strlen(sline)+3, msg);
             //std::cerr<<nmsg<<std::endl;
-            throw WrongTokenTypeException(msg);
+			WrongTokenTypeException e(nmsg);
+			delete[] nmsg;
+			throw e;
         }
 
         Token consume(TokenType type, const char* msg){
@@ -154,7 +158,6 @@ namespace Hotel {
 
         void checkin(HotelState &state){
             if(matches(TokenType::NUMBER)){
-
                 Token roomid = next();
 
                 Token from = consume(TokenType::DATE,
@@ -337,7 +340,7 @@ namespace Hotel {
 
             for (const auto & entry : std::filesystem::directory_iterator(path)){
                 auto epath = entry.path();
-                if(strcmp(epath.extension().c_str(), ".htl")!=0 && strcmp(epath.extension().c_str(), ".htl~")) continue;
+                if(epath.extension().string().compare(".htl") != 0 && epath.extension().string().compare(".htl~") != 0) continue;
                 std::cout << epath.filename().string() << std::endl;
             }
 
@@ -448,7 +451,7 @@ namespace Hotel {
                           peek().t == TokenType::ERROR){
                         Token n = next();
                         if(n.t == TokenType::ERROR){
-                            std::cerr<<n.lexeme<<std::endl;
+                            std::cerr<<"Error: "<<n.lexeme<<std::endl;
                         }
                     }
                 }
