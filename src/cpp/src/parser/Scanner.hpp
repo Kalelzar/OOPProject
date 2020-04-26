@@ -172,7 +172,6 @@ namespace Hotel {
                     } else {
                         list->append({TokenType::STRING,
                                       lexeme, this->line});
-                        return list;
                     }
                     index++;
                 }

@@ -44,7 +44,6 @@ int main() {
 
     cl.registerCommand("list", TokenType::LIST, ScannerContext::CONSOLE, listHelp);
 
-
     cl.registerCommand("report", TokenType::REPORT, ScannerContext::CONSOLE, reportHelp);
     cl.registerCommand("find", TokenType::FIND, ScannerContext::CONSOLE, findHelp );
     cl.registerCommand("find!", TokenType::FIND_F, ScannerContext::CONSOLE, findFHelp);
