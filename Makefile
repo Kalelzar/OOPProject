@@ -10,8 +10,11 @@ vrun :
 test :
 	./test.bash
 
-vtest:
+vtest :
 	./vtest.bash
 
-clean:
+clean :
 	./clean.sh
+
+docs :
+	doxygen doxygen

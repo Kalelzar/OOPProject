@@ -83,8 +83,14 @@ public:
     }
 
     void appendAll(LinkedList<A> const &l) {
-        for (int i = 0; i < l->length(); i++) {
-            append(l->get(i));
+        for (int i = 0; i < l.length(); i++) {
+            append(l.get(i));
+        }
+    }
+
+    void prependAll(LinkedList<A> const &l) {
+        for (int i = 0; i < l.length(); i++) {
+            prepend(l.get(i));
         }
     }
 

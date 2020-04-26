@@ -15,170 +15,86 @@
 
 namespace Hotel {
 
+    /**
+     * A general-purpose scanner that can be adopted to scan most forms of
+     * structured text files.
+     *
+     * It can scan text from any input stream implemented through
+     * <code>std::istream</code> regardless if it is a file, standard input
+     * or, potentially, a remote source.
 
+     * This class provides methods for scanning the entire stream at once
+     * as well as scanning the stream line-by-line for cases such as accepting
+     * from the user rather than a static source (file, remote resource, etc).
+     *
+     * The scanner is not reusable. Rather they are meant to read a single input
+     * stream once and consequently be disposed of.
+     *
+     * You can provide a list of reserved keywords with {@link Hotel::CommandList CommandList}.
+     * Some keywords may only be provided in a certain context (File, Command-line or all)
+     * as such the scanner needs to know it's own context which is provided at instantiation
+     * through {@link ScannerContext}
+     *
+     */
     class Scanner {
     private:
         ScannerContext sc;
         CommandList cl;
         std::istream *input;
         int line = 1;
+
+        /**
+         * Tokenizes the provided line
+         *
+         * @param line the line to tokenize
+         * @return a shared pointer to a list containing the resulting tokens
+         */
+        shared_ptr<ArrayList<Token>> scanLine(const char *line) ;
+
     public:
 
+        /**
+         * Set to true only if the scanner encounters an error during scanning
+         * i.e a token of type {@link TokenType::ERROR ERROR} is generated.
+         * This is done so more than one error can be detected in a single scan.
+         */
         bool error = false;
 
-        Scanner(ScannerContext sc, std::istream *input, CommandList const &cl) {
-            this->sc = sc;
-            this->input = input;
-            this->cl = cl;
-        }
+        /**
+         * Constructs a scanner for the provided input stream using the
+         * specified context and command list.
+         *
+         * @param sc the context of the scanner
+         * @param input the input stream to scan
+         * @param cl the list of reserved keywords
+         */
+        Scanner(ScannerContext sc, std::istream *input, CommandList const &cl);
 
-        shared_ptr<ArrayList<Token>> scan() {
-            error = false;
-            shared_ptr<ArrayList<Token>> list = make_shared<ArrayList<Token>>();
-            while (!input->eof()) {
-                char sline[513];
-                input->getline(sline, 512);
-                if (input->eof()) break;
-                list->appendAll(*scanLine(sline));
-                line++;
-            }
-            list->append(Token{TokenType::EOF_T, "", line});
-            return list;
-        }
+        /**
+         * Scans the entire input stream.
+         *
+         * This is done by reading from the stream line-by-line
+         * until the end of the stream is reached.
+         * Due to technical limitations the lines are assumed to be of
+         * 512 characters or less.
+         *
+         * The last token of the returned list is always of type {@link TokenType::EOF_T EOF}
+         *
+         * @return a shared pointer to a list containing the resulting tokens
+         */
+        shared_ptr<ArrayList<Token>> scan();
 
-        shared_ptr<ArrayList<Token>> scanNext() {
-            error = false;
-            shared_ptr<ArrayList<Token>> list = make_shared<ArrayList<Token>>();
-            char sline[513];
-            input->getline(sline, 512);
-            if (input->eof()) {
-                list->append(Token{TokenType::EOF_T, "", line});
-                return list;
-            }
-            list->appendAll(*scanLine(sline));
-            line++;
-            list->append(Token{TokenType::EOF_T, "", line});
-            return list;
-        }
-
-        shared_ptr<ArrayList<Token>> scanLine(const char *line) {
-            shared_ptr<ArrayList<Token>> list = make_shared<ArrayList<Token>>();
-            int linelen = strlen(line);
-
-            int index = 0;
-            while (index < linelen) {
-                if (line[index] == '"') {
-
-                    index++;
-                    int start = index;
-                    while (line[index] != '"') {
-
-                        index++;
-                        if (index >= linelen) {
-
-                            const char errorMsg[] = "Unterminated string.";
-                            list->append({TokenType::ERROR,
-                                          errorMsg, this->line});
-                            error = true;
-                            return list;
-                        }
-                    }
-
-                    if (index + 1 != linelen && line[index + 1] != ' ') {
-                        const char errorMsg[] = "Expected whitespace or EOL after string.";
-                        list->append({TokenType::ERROR,
-                                      errorMsg, this->line});
-                        error = true;
-                        return list;
-                    }
-
-                    char lexeme[index - start];
-                    strncpy(lexeme, line + start, index - start);
-                    lexeme[index - start] = '\0';
-                    list->append({TokenType::STRING, lexeme, this->line});
-                    index++;
-                } else if (isdigit(line[index]) ||
-                           (line[index] == '-' && index + 1 < linelen && isdigit(line[index + 1]))) {
-
-                    int start = index;
-                    if(line[index] == '-') index++;
-                    TokenType tt = TokenType::NUMBER;
-                    while (isdigit(line[index])) {
-
-                        index++;
-                        if (line[index] == '-' && tt == TokenType::NUMBER) {
-
-                            tt = TokenType::NUMERIC_RANGE;
-                            index++;
-                        } else if (line[index] == '-' && tt == TokenType::NUMERIC_RANGE) {
-                            tt = TokenType::DATE;
-                            index++;
-                        } else if (line[index] == '-') {
-                            const char errorMsg[] = "Malformed date.";
-                            list->append({TokenType::ERROR,
-                                          errorMsg, this->line});
-                            error = true;
-                            return list;
-                        }
-                    }
-
-
-                    if (line[index - 1] == '-' || (index != linelen && line[index] != ' ')) {
-                        const char errorMsg[] = "Malformed number or numeric range.";
-                        list->append({TokenType::ERROR,
-                                      errorMsg, this->line});
-                        error = true;
-                        return list;
-                    }
-                    char lexeme[index - start];
-                    strncpy(lexeme, line + start, index - start);
-                    lexeme[index - start] = '\0';
-                    list->append({tt, lexeme, this->line});
-                    index++;
-                } else if (line[index] == ' ') {
-                    index++;
-                } else{
-                    int start = index;
-                    index++;
-                    while (index < linelen && line[index] != ' ') {
-                        index++;
-                    }
-
-                    if (index != linelen && line[index] != ' ') {
-                        const char errorMsg[] = "Expected whitespace or EOL after identifier.";
-                        list->append({TokenType::ERROR,
-                                      errorMsg, this->line});
-                        error = true;
-                        return list;
-                    }
-
-                    char lexeme[index - start];
-                    strncpy(lexeme, line + start, index - start);
-                    lexeme[index - start] = '\0';
-                    shared_ptr<Nullable<TokenType>> tt = cl.tokenFor(lexeme);
-                    if (tt->isDefined())
-                    {
-                        ScannerContext tctx = cl.contextFor(tt->get())
-                            ->getOrElse(ScannerContext::UNDEFINED);
-                        if(tctx == ScannerContext::ALL || tctx == sc || sc == ScannerContext::ALL){
-                            list->append({tt->get(), lexeme, this->line});
-                        }else{
-                            const char errorMsg[] = "Command used in the wrong context.";
-                            list->append({TokenType::ERROR,
-                                          errorMsg, this->line});
-                            error = true;
-                            return list;
-                        }
-                    } else {
-                        list->append({TokenType::STRING,
-                                      lexeme, this->line});
-                    }
-                    index++;
-                }
-            }
-
-            return list;
-        }
+        /**
+         * Scans the next line in the input stream.
+         *
+         * Due to technical limitations the lines are assumed to be of
+         * 512 characters or less.
+         *
+         * The last token of the returned list is always of type {@link TokenType::EOF_T EOF}
+         *
+         * @return a shared pointer to a list containing the resulting tokens
+         */
+        shared_ptr<ArrayList<Token>> scanNext() ;
     };
 
 }

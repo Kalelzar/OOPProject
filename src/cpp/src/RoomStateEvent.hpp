@@ -9,15 +9,17 @@
 
 #include "Room.hpp"
 #include "Date.hpp"
-/**
- * Describes the state a room is in.
- * A room is either free, taken or unavailable.
- * Only a free room can be checked-into.
- * Only a taken room can be checked-out of.
- * Only a free room may be marked unavailable.
- * If state is unknown then something went horribly wrong.
- */
+
 namespace Hotel {
+
+    /**
+     * Describes the state a room is in.
+     * A room is either free, taken or unavailable.
+     * Only a free room can be checked-into.
+     * Only a taken room can be checked-out of.
+     * Only a free room may be marked unavailable.
+     * If state is unknown then something went horribly wrong.
+     */
     enum class RoomState {
         FREE,
         TAKEN,

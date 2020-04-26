@@ -7,87 +7,103 @@
 #include "../SimpleString.hpp"
 
 namespace Hotel {
+    /**
+     * This class represents a list of unique, reserved keywords for the scanner.
+     * It stores their text representation,
+     * their corresponding {@link TokenType} and {@link ScannerContext},
+     * as well as a description for the <code> help </code> command
+     */
     class CommandList {
     private:
         HashMap<TokenType, ScannerContext> commandMap;
         HashMap<SimpleString, TokenType> nameToToken;
         HashMap<SimpleString, SimpleString> nameToDescr;
 
+        /**
+         * A convenience value so CommandList doesn't need
+         * to be passed around as much.
+         */
         static CommandList globalCommandList;
 
-        void copy(CommandList const &other) {
-            nameToToken = other.nameToToken;
-            commandMap = other.commandMap;
-            nameToDescr = other.nameToDescr;
-        }
+        /**
+         * Convenience method for copying another CommandList to this one.
+         */
+        void copy(CommandList const &other) ;
 
     public:
 
+        /**
+         * Returns the global command list.
+         * @return the global command list
+         */
         static CommandList getCommandList() {
             return globalCommandList;
         }
 
+        /**
+         * Sets the global command list.
+         * @param cl the new command list
+         */
         static void setCommandList(CommandList const& cl){
             globalCommandList = cl;
         }
 
-        CommandList() {
-            nameToToken = {};
-            commandMap = {};
-            nameToDescr = {};
-        }
 
-        CommandList(CommandList const &other) {
-            if (&other != this) {
-                copy(other);
-            }
-        }
 
-        CommandList &operator=(CommandList const &other) {
-            if (&other != this) {
-                copy(other);
-            }
-            return *this;
-        }
+        CommandList() ;
 
-        void registerCommand(SimpleString name, TokenType tokenType, ScannerContext ctx,
-            SimpleString descr) {
-            commandMap.put(tokenType, ctx);
-            nameToToken.put(name, tokenType);
-            nameToDescr.put(name, descr);
-        }
+        CommandList(CommandList const &other) ;
 
-        void printCommands() {
-            std::cout << "Commands!" << std::endl;
-            nameToToken.keys()->foreach([](SimpleString str) {
-                std::cout << "K: " << str << std::endl;
-            });
-        };
+        CommandList &operator=(CommandList const &other) ;
 
-        void printCommandsWithDescription(){
-            std::cout<<"Simple Command-line interface for Hotel Management"<<std::endl;
-            unique_ptr<ArrayList<SimpleString>> keys = nameToDescr.keys();
-            unique_ptr<ArrayList<SimpleString>> values = nameToDescr.values();
-            for(int i = 0; i < keys->length(); i++){
-                std::cout<<keys->get(i)<<" "<<values->get(i)<<std::endl;
-            }
-        }
+        /**
+         * Registers the command with the given information.
+         * A second call to registerCommand with different parameters
+         * but the same command name will overwrite the previous one.
+         */
+        void registerCommand(SimpleString name, TokenType tokenType,
+                             ScannerContext ctx,
+                             SimpleString descr) ;
 
-        bool isCommand(TokenType tokenType) {
-            return commandMap.contains(tokenType);
-        }
+        /**
+         * Prints the registered commands along with their description.
+         * No promises are made in regards to the order they are printed in.
+         * Meant to be used as a  documentation for the registered commands.
+         */
+        void printCommandsWithDescription();
 
-        bool isCommand(SimpleString name) {
-            return nameToToken.contains(name);
-        }
+        /**
+         * Returns true if there is a registered command with the provided
+         * {@link TokenType}
+         * @param tokenType the TokenType to check for
+         * @return is there a registered command with that TokenType
+         */
+        bool isCommand(TokenType tokenType);
 
-        unique_ptr<Nullable<ScannerContext>> contextFor(TokenType tokenType) {
-            return commandMap.get(tokenType);
-        }
+        /**
+         * Returns true if there is a registered command with the provided name
+         * @param name the name to check for
+         * @return is there a registered command with that name
+         */
+        bool isCommand(SimpleString name) ;
 
-        unique_ptr<Nullable<TokenType>> tokenFor(SimpleString name) {
-            return nameToToken.get(name);
-        }
+        /**
+         * Returns a pointer to a {@link NotNull} of the {@link ScannerContext}
+         * associated with the given {@link TokenType} if such exists
+         * and {@link Null} otherwise.
+         * @param tokenType the tokenType to find the context for
+         * @returns the context
+         */
+        unique_ptr<Nullable<ScannerContext>> contextFor(TokenType tokenType) ;
+
+        /**
+         * Returns a pointer to a {@link NotNull} of the {@link TokenType}
+         * associated with the given name if such exists
+         * and {@link Null} otherwise.
+         * @param name the name to find the token type for
+         * @returns the token type
+         */
+        unique_ptr<Nullable<TokenType>> tokenFor(SimpleString name) ;
     };
 }
 

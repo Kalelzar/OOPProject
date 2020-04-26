@@ -9,21 +9,37 @@
 #include<iostream>
 #include<functional>
 
+/**
+ * An implementation of a list backed by a resizable array.
+ * Due to some quirks of the implementation, type A
+ * must implement operator==.
+ */
 template<class A>
 class ArrayList : public IList<A> {
 private:
     static const unsigned DEFAULT_RESERVED_SPACE = 4;
 
+    /**
+     * Frees the resizable array.
+     */
     void free() {
         delete[] elems;
     }
 
+    /**
+     * Initializes the list with the given size.
+     * @param reserve the starting size to allocate for the resizable array
+     */
     void create(unsigned reserve) {
         elems = new A[reserve];
         reserved = reserve;
         elemCount = 0;
     }
 
+    /**
+     * Copies another list into this one.
+     * @param other the other list.
+     */
     void copy(ArrayList<A> const &other) {
         delete[] elems;
         elems = new A[other.capacity()];
@@ -32,6 +48,17 @@ private:
         appendAll(other);
     }
 
+
+    /**
+     * The partition function of the quicksort algorithm.
+     *
+     * @tparam B the type of the elements in the list
+     * @param array the list to sort
+     * @param from the start of the range to partition in
+     * @param to the end of the range to partition in
+     * @param comparator the function with which to compare elements
+     * @return the pivot
+     */
     template<typename B>
     unsigned static partition(unique_ptr<ArrayList<B>> const &array,
                               unsigned from,
@@ -49,6 +76,15 @@ private:
         return i;
     }
 
+    /**
+     * An implementation of the quicksort algorithm that allows for the use
+     * of an arbitrary comparison function.
+     * @tparam B the type of the elements in the list
+     * @param array the list to sort
+     * @param from the start of the range to sort in
+     * @param to the end of the range to sort in
+     * @param comparator the function with which to compare elements
+     */
     template<typename B>
     void static quickSort(unique_ptr<ArrayList<B>> const &array,
                           unsigned from,
@@ -72,6 +108,21 @@ public:
         create(getDefaultReservedSpace());
     }
 
+    /**
+     * Prepend all elements of the given list to this one.
+     * Very slow for large lists.
+     * @param l the list to prepend
+     */
+    void prependAll(ArrayList<A> const &l) {
+        for (int i = 0; i < l.length(); i++) {
+            prepend(l.get(i));
+        }
+    }
+
+    /**
+     * Append all elements of the given list to this one.
+     * @param l the list to append
+     */
     void appendAll(ArrayList<A> const &l) {
         for (int i = 0; i < l.length(); i++) {
             append(l.get(i));
@@ -120,6 +171,7 @@ public:
         elems[at] = elem;
         elemCount++;
     }
+
 
     void expand() {
         unsigned newCapacity = capacity() * 2;
@@ -245,7 +297,7 @@ public:
      * Return a new ArrayList containing the result of applying
      * the provided mapping function to each element of the list
      * in order
-     * @typeparam B the type of elements in the new list
+     * @tparam B the type of elements in the new list
      * @param mapper the mapping function
      * @return the new ArrayList
      */

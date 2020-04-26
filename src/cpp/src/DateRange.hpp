@@ -4,6 +4,12 @@
 #include "Date.hpp"
 
 namespace Hotel {
+    /**
+     * A DateRange describes a continous range of time.
+     * On it's own it provides no guarantee that the range starts
+     * before it ends. If this behaviour is expected, then a check must be
+     * implemented by the user of this class.
+     */
     struct DateRange {
         Date from;
         Date to;
