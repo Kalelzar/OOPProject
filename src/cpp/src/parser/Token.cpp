@@ -105,6 +105,9 @@ static std::ostream& operator<<(std::ostream& out, TokenType const& type){
     case TokenType::DATE:
         out<<"(DATE)";
         break;
+    case TokenType::LIST:
+        out<<"(LIST)";
+        break;
     case TokenType::NUMERIC_RANGE:
         out<<"(NUMERIC RANGE)";
         break;

@@ -352,6 +352,11 @@ void reportPrint(shared_ptr<Hotel::RoomStateEvent> const &_rse) {
     case Hotel::RoomState::UNAVAILABLE:
         std::cout<<" is unavailable";
         break;
+    case Hotel::RoomState::FREE:
+    case Hotel::RoomState::UNKNOWN:
+    default:
+        std::cout<<" is an error ";
+        break;
     }
     if (delta == 1) {
         std::cout << " on " << rse.from << " for a single day";

@@ -197,7 +197,7 @@ public:
         }
     }
 
-    void append(A const &elem) {
+    void append(A const &elem) override {
         insert(elem, length());
     }
 
@@ -212,7 +212,7 @@ public:
         return false;
     }
 
-    unsigned remove(const A &elem) {
+    unsigned remove(const A &elem) override {
         unsigned foundAt = 0;
         unsigned index = 0;
         for (unsigned i = 0; i < length(); i++) {
@@ -253,7 +253,7 @@ public:
     }
 
 
-    A get(unsigned index) const {
+    A get(unsigned index) const override {
         if (index >= length()) return elems[length() - 1];
         return elems[index];
     }
