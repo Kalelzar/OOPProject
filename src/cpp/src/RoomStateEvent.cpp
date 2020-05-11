@@ -40,7 +40,7 @@ void Hotel::RoomStateEvent::setNote(const char *note) {
 }
 
 Hotel::RoomStateEvent::RoomStateEvent() {
-    init(RoomState::UNKNOWN, {}, {}, {}, "");
+    init(RoomState::UNKNOWN, {}, {}, {}, "", -1);
 }
 
 Hotel::RoomStateEvent &Hotel::RoomStateEvent::operator=(const Hotel::RoomStateEvent &other) {
@@ -56,18 +56,21 @@ Hotel::RoomStateEvent::RoomStateEvent(const Hotel::RoomStateEvent &other) {
 
 void Hotel::RoomStateEvent::copy(const Hotel::RoomStateEvent &other) {
     freeNote();
-    init(other.state, other.room, other.from, other.to, other.getNote());
+    init(other.state, other.room, other.from, other.to, other.getNote(),
+         other.extra);
 }
 
 void Hotel::RoomStateEvent::init(RoomState const &_state,
                                  Room const &_room,
                                  Date const &_from,
                                  Date const &_to,
-                                 const char *_note) {
+                                 const char *_note,
+                                 int _extra) {
     state = _state;
     room = _room;
     from = _from;
     to = _to;
+    extra = _extra;
     note = new char[strlen(_note) + 1];
     strcpy(note, _note);
 }
@@ -76,13 +79,14 @@ Hotel::RoomStateEvent::RoomStateEvent(RoomState const &_state,
                                       Room const &_room,
                                       Date const &_from,
                                       Date const &_to) {
-    init(_state, _room, _from, _to, "");
+    init(_state, _room, _from, _to, "", -1);
 }
 
 Hotel::RoomStateEvent::RoomStateEvent(RoomState const &_state,
                                       Room const &_room,
                                       Date const &_from,
                                       Date const &_to,
-                                      const char *_note) {
-    init(_state, _room, _from, _to, _note);
+                                      const char *_note,
+                                      int extra) {
+    init(_state, _room, _from, _to, _note, extra);
 }

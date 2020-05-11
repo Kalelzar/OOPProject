@@ -23,6 +23,7 @@ namespace Hotel {
     enum class RoomState {
         FREE,
         TAKEN,
+        WAS_TAKEN,
         UNAVAILABLE,
         UNKNOWN = -1
     };
@@ -48,7 +49,8 @@ namespace Hotel {
                   Room const &_room,
                   Date const &_from,
                   Date const &_to,
-                  const char *_note);
+                  const char *_note,
+                  int _extra);
 
     public:
 
@@ -57,6 +59,7 @@ namespace Hotel {
         Room room;
         Date from;
         Date to;
+        int extra;
 
         RoomStateEvent();
 
@@ -69,7 +72,8 @@ namespace Hotel {
                        Room const &_room,
                        Date const &_from,
                        Date const &_to,
-                       const char *_note);
+                       const char *_note,
+                       int extra);
 
 
         RoomStateEvent(RoomStateEvent const &other);
@@ -112,6 +116,7 @@ namespace Hotel {
                 out<<"free ";
                 break;
             case RoomState::TAKEN:
+            case RoomState::WAS_TAKEN:
                 out<<"checkin ";
                 break;
             case RoomState::UNAVAILABLE:
@@ -122,7 +127,18 @@ namespace Hotel {
                 break;
             }
 
-            return out<<rse.room.id<<" "<<rse.from<<" "<<rse.to<<" \""<<rse.getNote()<<"\""<<std::endl;
+            out<<rse.room.id<<" "<<rse.from<<" "
+               <<rse.to<<" \""<<rse.getNote()<<"\"";
+
+            if(rse.extra != -1){
+                out<<" "<<rse.extra;
+            }
+
+            out<<std::endl;
+            if(rse.state == RoomState::WAS_TAKEN){
+                out<<"checkout "<<rse.room.id<<std::endl;
+            }
+            return out;
         }
 
     };

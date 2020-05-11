@@ -16,19 +16,23 @@ namespace Hotel {
     class HotelState {
     private:
         HashMap<int, Room> rl{};
-        RangeBinaryTree<DateRange, RoomStateEvent> tree{};
+        RangeBinaryTree<DateRange, shared_ptr<RoomStateEvent>> tree{};
         char *filepath;
         bool modified;
 
         bool open = false;
         void copy(HotelState const &state);
 
-        void setRoomState(RoomState state, int roomid,
-                          Hotel::Date from, Hotel::Date to, const char *note);
+        shared_ptr<Hotel::RoomStateEvent> setRoomState(RoomState state, int roomid,
+                          Hotel::Date from, Hotel::Date to,
+                          const char *note, int extra = -1);
 
-        unique_ptr<ArrayList<RoomStateEvent>> roomEventsCovering(Date d) const;
+        unique_ptr<ArrayList<shared_ptr<RoomStateEvent>>> roomEventsCovering(Date d) const;
 
         unique_ptr<ArrayList<Room>> roomsAvailableFrom(Date from, Date to) const;
+
+        unique_ptr<Nullable<Hotel::Room>> findBackend(int beds, Date from,
+                                                      Date to) const;
 
         void free();
 
@@ -71,7 +75,7 @@ namespace Hotel {
 
         void remove(Room r);
 
-        void checkin(int roomid, Date start, Date end, const char *note);
+        void checkin(int roomid, Date start, Date end, const char *note, int people);
 
         void available() const { available(Date::today()); }
 
@@ -81,7 +85,7 @@ namespace Hotel {
 
         void report(Date from, Date to);
 
-        void find(int beds, Date from, Date to) const;
+        bool find(int beds, Date from, Date to) const;
 
         void findForce(int beds, Date from, Date to);
 

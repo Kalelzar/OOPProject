@@ -5,8 +5,12 @@
 #ifndef OOPPROJECT_ROOM_HPP
 #define OOPPROJECT_ROOM_HPP
 
-namespace Hotel {
+#include <memory>
 
+
+namespace Hotel {
+    class RoomStateEvent; // Forward definition of RoomStateEvent
+                          // Needed to resolve a circular dependency
     /**
      * A room described by a number.
      * It also has a specific amount of beds.
@@ -17,15 +21,19 @@ namespace Hotel {
     struct Room {
         int id{};
         int beds{};
+        bool checkedIn{};
+        std::shared_ptr<RoomStateEvent> rse;
 
         Room(int _id, int _beds) {
             id = _id;
             beds = _beds;
+            checkedIn=false;
         }
 
         Room() {
             id = -1;
             beds = 0;
+            checkedIn=false;
         }
 
         /**

@@ -24,10 +24,34 @@ void Hotel::HotelState::remove(Room r) {
     }else rl.remove(r.id);
 }
 
-void Hotel::HotelState::checkin(int roomid, Date start, Date end, const char *note) {
+void Hotel::HotelState::checkin(int roomid, Date start, Date end,
+                                const char *note, int people) {
     if(!checkOpen()) return;
     modified = true;
-    setRoomState(RoomState::TAKEN, roomid, start, end, note);
+    if(people == -1) {
+        people = rl.get(roomid)->getOrElse(Room{0, 0}).beds;
+    }else{
+        int bedCount = rl.get(roomid)->getOrElse(Room{0, 0}).beds;
+        if( people > bedCount ){
+            std::cerr<<"Cannot fit " << people << " people in a room with "
+                     << bedCount << " beds. " << std::endl;
+            return;
+        }
+    }
+    unique_ptr<Nullable<Room>> room = rl.get(roomid);
+    if (room->isEmpty()) {
+        throw NoValueException("Room with the provided number does not exist!");
+    }
+    if(room->get().checkedIn){
+        std::cerr<<"Room "<<roomid<<" is already checked into."<<std::endl;
+        return;
+    }
+    auto rse= setRoomState(RoomState::TAKEN, roomid, start, end, note, people);
+
+    auto rroom = room->get();
+    rroom.checkedIn = true;
+    rroom.rse = rse;
+    rl.put(roomid, rroom);
 }
 
 Hotel::HotelState::HotelState(const char *_filepath) {
@@ -139,6 +163,110 @@ void Hotel::HotelState::findForce(int beds, Hotel::Date from, Hotel::Date to) {
         to = from;
         from = t;
     }
+
+    auto res = findBackend(beds, from, to);
+
+    if(res->isDefined()){
+        Room room = res->get();
+        std::cout << "Room " << room.id << " has " << room.beds <<
+            " beds and is available in the time period from " << from <<
+            " to " << to << "." << std::endl;
+        return;
+    }
+
+    auto range = tree.inRangeT<Hotel::Date>(from, to);
+
+    if (range) {
+        // Find all taken rooms that are not at full capacity
+        auto notFull = range
+            ->filter([](shared_ptr<RoomStateEvent> const &rse)
+                         { return rse->state == RoomState::TAKEN; })
+            ->filter([](shared_ptr<RoomStateEvent> const &rse)
+                         { return   rse->extra     < rse->room.beds
+                                 && rse->extra     != -1; })
+            ->sort([](shared_ptr<RoomStateEvent> const &rse1,
+                      shared_ptr<RoomStateEvent> const &rse2) {
+                       if (rse1->room.beds == rse2->room.beds)
+                           return rse1->extra < rse2->extra;
+                       else return rse1->room.beds < rse2->room.beds;
+                   });
+
+        // Find all rooms not at full capacity whose occupants
+        // Can be moved to a free room that can full accomodate them
+        auto directMovable = notFull
+            ->filter([this, from, to](shared_ptr<RoomStateEvent> const &rse){
+                         return findBackend(rse->extra, from, to)->isDefined();
+                     });
+
+        if(directMovable->length() == 0){
+            std::cerr<< "Cannot find a way to fit " << beds
+                     << " people in a room. " << std::endl;
+            return;
+        }
+
+        // Is there a directly movable room that is big enough
+
+        auto largeEnoughDirectMovable = directMovable
+            ->filter([beds](shared_ptr<RoomStateEvent> const& rse){
+                         return rse->room.beds >= beds;
+                     });
+
+        if(largeEnoughDirectMovable->length() > 0){
+            RoomStateEvent rse = *largeEnoughDirectMovable->get(0);
+            Room r = rse.room;
+            // No need to check if the result is Null since we already
+            // know that all items in the list pass that check
+            Room room = findBackend(rse.extra, from,to)->get();
+            std::cout<< "The occupants of room " << r.id
+                     << " need to be moved to room " << room.id <<"."
+                     << std::endl << "Then room "
+                     << r.id << " with " << r.beds
+                     << " beds, will be available in the time period from "
+                     << from << " to " << to << "." << std::endl;
+            return;
+        }
+
+        // Is there a notFull room that is big enough?
+        auto largeEnoughNotFull = notFull
+            ->filter([beds](shared_ptr<RoomStateEvent> const& rse){
+                         return rse->room.beds >= beds;
+                     });
+
+        // Is there a largeEnoughNotFull room whose occupants
+        // can be moved to a directMovableRoom
+        for(unsigned i = 0; i < largeEnoughNotFull->length(); i++){
+            auto nfrse = *largeEnoughNotFull->get(i);
+            int people = nfrse.extra;
+            auto directMovableLargeEnoughForNotFull =
+                directMovable
+                ->filter([people](shared_ptr<RoomStateEvent> const& rse){
+                             return rse->room.beds >= people;
+                         });
+            if(directMovableLargeEnoughForNotFull->length() > 0){
+                RoomStateEvent rse = *directMovableLargeEnoughForNotFull->get(0);
+                Room r = rse.room;
+                // No need to check if the result is Null since we already
+                // know that all items in the list pass that check
+                Room room = findBackend(rse.extra, from,to)->get();
+                std::cout<< "The occupants of room " << r.id
+                         << " need to be moved to room " << room.id <<"."
+                         << std::endl << "Then the occupants of room "
+                         << nfrse.room.id
+                         << " need to be moved to room " << r.id
+                         << "." << std::endl
+                         << "Then room "
+                         << nfrse.room.id << " with " << nfrse.room.beds
+                         << " beds, will be available in the time period from "
+                         << from << " to " << to << "." << std::endl;
+                return;
+            }
+        }
+
+    }
+
+    std::cerr<< "Cannot find a way to fit " << beds
+             << " people in a room. " << std::endl;
+
 }
 
 unique_ptr<ArrayList<Hotel::Room>> Hotel::HotelState::roomsAvailableFrom(Date from, Date to) const {
@@ -147,15 +275,15 @@ unique_ptr<ArrayList<Hotel::Room>> Hotel::HotelState::roomsAvailableFrom(Date fr
         to = from;
         from = t;
     }
-    unique_ptr<ArrayList<RoomStateEvent>> range = tree.inRangeT<Hotel::Date>(from, to);
+    unique_ptr<ArrayList<shared_ptr<RoomStateEvent>>> range = tree.inRangeT<Hotel::Date>(from, to);
 
     if (range) {
 
-        unique_ptr<ArrayList<RoomStateEvent>> filtered = range->filter(
-                [](RoomStateEvent const &rse) { return rse.state != RoomState::FREE; });
+        unique_ptr<ArrayList<shared_ptr<RoomStateEvent>>> filtered = range->filter(
+            [](shared_ptr<RoomStateEvent> const &rse) { return rse->state != RoomState::FREE; });
 
         unique_ptr<ArrayList<Room>> rse = filtered
-                ->map<Room>([](RoomStateEvent const &rse) { return rse.room; });
+            ->map<Room>([](shared_ptr<RoomStateEvent> const &rse) { return rse->room; });
 
 
         unique_ptr<ArrayList<Room>> freeRooms = rse->difference(*rl.values());
@@ -166,41 +294,75 @@ unique_ptr<ArrayList<Hotel::Room>> Hotel::HotelState::roomsAvailableFrom(Date fr
     }
 }
 
-void Hotel::HotelState::find(int beds, Hotel::Date from, Hotel::Date to) const {
-    if(!checkOpen()) return;
+
+unique_ptr<Nullable<Hotel::Room>>
+Hotel::HotelState::findBackend(int beds, Hotel::Date from,
+                               Hotel::Date to) const {
+
+    unique_ptr<ArrayList<Room>> list = roomsAvailableFrom(from, to)
+        ->filter([beds](Room const &r) { return r.beds >= beds; });
+
+    if (list->length() == 0) {
+        return make_unique<Null<Room>>();
+    } else {
+        unique_ptr<ArrayList<Room>> slist =
+            list->sort([](Room r1, Room r2) {
+                           return r1.beds < r2.beds;
+                       });
+
+        Room room = slist->get(0);
+        return make_unique<NotNull<Room>>(room);
+    }
+}
+
+bool Hotel::HotelState::find(int beds, Hotel::Date from, Hotel::Date to) const {
+    if(!checkOpen()) return false;
     if(from > to){
         Date t = to;
         to = from;
         from = t;
     }
-    unique_ptr<ArrayList<Room>> list = roomsAvailableFrom(from, to)
-            ->filter([beds](Room const &r) { return r.beds >= beds; });
 
-    if (list->length() == 0) {
+    auto res = findBackend(beds, from, to);
+
+    if (res->isEmpty()) {
         std::cout << "No suitable rooms found in the given time period." << std::endl;
+        return false;
     } else {
-        unique_ptr<ArrayList<Room>> slist =
-                list->sort([](Room r1, Room r2) {
-                    return r1.beds < r2.beds;
-                });
-
-        Room room = slist->get(0);
+        Room room = res->get();
         std::cout << "Room " << room.id << " has " << room.beds <<
-                  " beds and is available in the time period from " << from <<
-                  " to " << to << "." << std::endl;
+            " beds and is available in the time period from " << from <<
+            " to " << to << "." << std::endl;
+        return true;
     }
+
 }
 
-void reportPrint(Hotel::RoomStateEvent const &rse) {
+void reportPrint(shared_ptr<Hotel::RoomStateEvent> const &_rse) {
+    auto rse = *_rse;
     int delta = rse.from.daysBetween(rse.to);
-    std::cout << "  Room " << rse.room.id << " is "
-              << (rse.state == Hotel::RoomState::TAKEN ? "taken" : "unavailable");
+    std::cout << "  Room " << rse.room.id;
+    switch (rse.state){
+    case Hotel::RoomState::TAKEN:
+        std::cout<<" is taken";
+        break;
+    case Hotel::RoomState::WAS_TAKEN:
+        std::cout<<" was taken";
+        break;
+    case Hotel::RoomState::UNAVAILABLE:
+        std::cout<<" is unavailable";
+        break;
+    }
     if (delta == 1) {
         std::cout << " on " << rse.from << " for a single day";
     } else {
         std::cout << " from " << rse.from << " to " << rse.to
                   << " for a total of "
                   << delta << " days";
+        if(rse.extra != -1){
+            std::cout<<" by " << rse.extra << " people out of "
+                     << rse.room.beds << " beds";
+        }
     }
 
     std::cout << ". (" << rse.getNote() << ")" << std::endl;
@@ -213,15 +375,15 @@ void Hotel::HotelState::report(Hotel::Date from, Hotel::Date to) {
         to = from;
         from = t;
     }
-    unique_ptr<ArrayList<RoomStateEvent>> range = tree.inRangeT<Hotel::Date>(from, to);
+    unique_ptr<ArrayList<shared_ptr<RoomStateEvent>>> range = tree.inRangeT<Hotel::Date>(from, to);
 
     if (range) {
 
-        unique_ptr<ArrayList<RoomStateEvent>> filtered = range
-            ->filter([this](RoomStateEvent const &rse) { return rse.state != RoomState::FREE && rl.contains(rse.room.id); })
-                ->sort([](RoomStateEvent const &rse1, RoomStateEvent const &rse2) {
-                    if (rse1.room.id != rse2.room.id) return rse1.room.id < rse2.room.id;
-                    else return rse1.from < rse2.from;
+        unique_ptr<ArrayList<shared_ptr<RoomStateEvent>>> filtered = range
+            ->filter([this](shared_ptr<RoomStateEvent> const &rse) { return rse->state != RoomState::FREE && rl.contains(rse->room.id); })
+            ->sort([](shared_ptr<RoomStateEvent> const &rse1, shared_ptr<RoomStateEvent> const &rse2) {
+                    if (rse1->from == rse2->from) return rse1->room.id < rse2->room.id;
+                    else return rse1->from < rse2->from;
                 });
 
         if (filtered->length() == 0) {
@@ -242,6 +404,24 @@ void Hotel::HotelState::report(Hotel::Date from, Hotel::Date to) {
 void Hotel::HotelState::checkout(int roomid) {
     if(!checkOpen()) return;
     modified = true;
+
+    unique_ptr<Nullable<Room>> room = rl.get(roomid);
+    if (room->isEmpty()) {
+        throw NoValueException("Room with the provided number does not exist!");
+    }
+
+    if(!room->get().checkedIn){
+        std::cerr<<"Room "<<roomid<<" is not checked into."<<std::endl;
+        return;
+    }
+
+
+    auto rroom = room->get();
+    auto rse = rroom.rse;
+    rse->state = RoomState::WAS_TAKEN;
+    rroom.checkedIn = false;
+    rroom.rse = nullptr;
+    rl.put(roomid, rroom);
 }
 
 void Hotel::HotelState::close(){
@@ -278,12 +458,12 @@ void Hotel::HotelState::saveAs(const char *path) {
                                          .getHead()
                                          ->collect()
                                          ->asList()
-                                         ->map<ArrayList<RoomStateEvent>>(
-                                             [](BinaryNode<DateRange, RoomStateEvent>
-                                                *node ){
+                                            ->map<ArrayList<shared_ptr<RoomStateEvent>>>(
+                                                [](BinaryNode<DateRange,
+                                                   shared_ptr<RoomStateEvent>>*node ){
                                                  return node->value;
                                              })
-                                         ->flatten<RoomStateEvent>()
+                                            ->flatten<shared_ptr<RoomStateEvent>>()
                                          , &file);
         std::cout<<".";
         file.close();
@@ -325,9 +505,9 @@ void Hotel::HotelState::copy(const Hotel::HotelState &other) {
     modified = other.modified;
 }
 
-void Hotel::HotelState::setRoomState(Hotel::RoomState state, int roomid,
+shared_ptr<Hotel::RoomStateEvent> Hotel::HotelState::setRoomState(Hotel::RoomState state, int roomid,
                                      Hotel::Date start, Hotel::Date end,
-                                     const char *note) {
+                                     const char *note, int extra) {
     if(start > end){
         Date t = end;
         end = start;
@@ -338,16 +518,18 @@ void Hotel::HotelState::setRoomState(Hotel::RoomState state, int roomid,
         throw NoValueException("Room with the provided number does not exist!");
     }
 
-    unique_ptr<ArrayList<RoomStateEvent>> events = tree.inRangeT<Hotel::Date>(start, end);
+    unique_ptr<ArrayList<shared_ptr<RoomStateEvent>>> events = tree.inRangeT<Hotel::Date>(start, end);
     bool cannotCheckIn = events && events
-            ->filter([](RoomStateEvent const &rse) { return rse.state != RoomState::FREE; })
-            ->map<Room>([](RoomStateEvent const &rse) { return rse.room; })
+            ->filter([](shared_ptr<RoomStateEvent> const &rse) { return rse->state != RoomState::FREE; })
+            ->map<Room>([](shared_ptr<RoomStateEvent> const &rse) { return rse->room; })
             ->contains(room->get());
 
     if (cannotCheckIn) {
         throw InvalidArgumentException("Room with the provided number is taken or unavailable.");
     }
 
-    tree.populate({start, end},
-                  {state, room->get(), start, end, note});
+    auto rse = make_shared<RoomStateEvent>(state, room->get(), start,
+                                           end, note, extra);
+    tree.populate({start, end}, rse);
+    return rse;
 }

@@ -21,7 +21,7 @@
 #include <unistd.h>
 #define workingDirectory(PATH, LENGTH) getcwd(PATH, LENGTH)
 #else
-#undef _HAS_STD_BYTE 
+#undef _HAS_STD_BYTE
 #include <direct.h>
 //I still have no idea why Windows dislikes being POSIX-compliant
 #define workingDirectory(PATH, LENGTH) _getcwd(PATH, LENGTH)
@@ -161,16 +161,22 @@ namespace Hotel {
                 Token roomid = next();
 
                 Token from = consume(TokenType::DATE,
-                  "checkin <room> <from> <to> <note> : <from> should be date.");
+                  "checkin <room> <from> <to> <note> [people] : <from> should be date.");
 
                 Token to = consume(TokenType::DATE,
-                    "checkin <room> <from> <to> <note> : <to> should be date.");
+                    "checkin <room> <from> <to> <note> [people]: <to> should be date.");
 
                 Token note = consume(TokenType::STRING,
-                  "checkin <room> <from> <to> <note> : <note> should be string.");
+                  "checkin <room> <from> <to> <note> [people]: <note> should be string.");
+
+                int people = -1;
+                if(matches(TokenType::NUMBER)){
+                    Token people_t = next();
+                    people = atoi(people_t.lexeme);
+                }
 
                 state.checkin(atoi(roomid.lexeme), Date(from.lexeme), Date(to.lexeme),
-                              note.lexeme);
+                              note.lexeme, people);
 
             }else if(matches(TokenType::NUMERIC_RANGE)){
                 Token roomids = next();
@@ -184,25 +190,30 @@ namespace Hotel {
                 }
 
                 Token fromT = consume(TokenType::DATE,
-                                     "checkin <room> <from> <to> <note> : <from> should be date.");
+                                     "checkin <room> <from> <to> <note> [people] : <from> should be date.");
 
                 Date from{fromT.lexeme};
 
                 Token toT = consume(TokenType::DATE,
-                                   "checkin <room> <from> <to> <note> : <to> should be date.");
+                                   "checkin <room> <from> <to> <note> [people] : <to> should be date.");
                 Date to{toT.lexeme};
                 Token noteT = consume(TokenType::STRING,
-                                     "checkin <room> <from> <to> <note> : <note> should be string.");
+                                     "checkin <room> <from> <to> <note> [people] : <note> should be string.");
                 char* note = noteT.lexeme;
 
+                int people = -1;
+                if(matches(TokenType::NUMBER)){
+                    Token people_t = next();
+                    people = atoi(people_t.lexeme);
+                }
 
 
                 NumericRange range(lower, upper);
-                range.iterate([&state, from, to, note](int i) mutable {
-                                  state.checkin(i, from, to, note );
+                range.iterate([&state, from, to, note, people](int i) mutable {
+                                  state.checkin(i, from, to, note, people );
                               });
             }else{
-                error(peek().line, "checkin <room> <from> <to> <note> : <room> should be a number or a numeric range");
+                error(peek().line, "checkin <room> <from> <to> <note> [people] : <room> should be a number or a numeric range");
             }
         }
 
@@ -252,7 +263,7 @@ namespace Hotel {
 
                 NumericRange range(lower, upper);
                 range.iterate([&state, from, to, note](int i) mutable {
-                                  state.checkin(i, from, to, note );
+                                  state.unavailable(i, from, to, note );
                               });
             }else{
                 error(peek().line, "unavailable <room> <from> <to> <note> : <room> should be a number or a numeric range");

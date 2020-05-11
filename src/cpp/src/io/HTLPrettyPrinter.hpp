@@ -50,13 +50,13 @@ namespace Hotel {
             }while(ind < sorted->length());
         }
 
-       static void printState(unique_ptr<ArrayList<RoomStateEvent>> const& rooms, std::ostream* to){
+        static void printState(unique_ptr<ArrayList<shared_ptr<RoomStateEvent>>> const& rooms, std::ostream* to){
             if(rooms->length()==0) return;
-            unique_ptr<ArrayList<RoomStateEvent>> sorted = rooms
-                ->sort([](RoomStateEvent const& r1, RoomStateEvent const& r2){return r1.to < r2.from;});
+            unique_ptr<ArrayList<shared_ptr<RoomStateEvent>>> sorted = rooms
+                ->sort([](shared_ptr<RoomStateEvent> const& r1, shared_ptr<RoomStateEvent> const& r2){return r1->to < r2->from;});
             sorted
-                ->foreach([to](RoomStateEvent const& rse) mutable {
-                              *to<<rse;
+                ->foreach([to](shared_ptr<RoomStateEvent> const& rse) mutable {
+                              *to<<*rse;
                           });
        }
     };
