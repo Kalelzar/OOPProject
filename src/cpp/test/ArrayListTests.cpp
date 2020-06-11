@@ -7,6 +7,7 @@
 #include "gtest/gtest.h"
 
 using namespace Hotel;
+using namespace std;
 
 TEST(ArrayList, DefaultConstructor_Room) {
     ArrayList<Room> rl;

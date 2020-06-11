@@ -2,36 +2,36 @@
 // Created by Kalelzar on 26/03/2020.
 //
 
-#ifndef OOPPROJECT_ARRAYSET_HPP
-#define OOPPROJECT_ARRAYSET_HPP
+#ifndef TRAVELLERAPP_ARRAYSET_HPP
+#define TRAVELLERAPP_ARRAYSET_HPP
 
-#include <iostream>
 #include "ArrayList.hpp"
 
-template<class A>
-class ArraySet : public ArrayList<A> {
+/**
+ * Literally an {@link ArrayList} but when adding items it checks if the element
+ * is already in the list.
+ */
+template <class A> class ArraySet : public ArrayList<A> {
 public:
+  ArraySet(ArraySet<A> const &set) : ArrayList<A>(set) {}
 
-    ArraySet(ArraySet<A> const &set) : ArrayList<A>(set) {}
+  ArraySet(int capacity) : ArrayList<A>(capacity) {}
 
-    ArraySet(int capacity) : ArrayList<A>(capacity) {}
+  ArraySet() : ArrayList<A>() {}
 
-    ArraySet() : ArrayList<A>() {}
+  void insert(A const &elem, unsigned at) override {
 
-    void insert(A const &elem, unsigned at) override {
+    if (at < 0)
+      return;
 
-        if (at < 0) return;
-
-        for (unsigned i = 0; i < this->length(); i++) {
-            if (this->get(i) == elem) {
-                return;
-            }
-        }
-
-        ArrayList<A>::insert(elem, at);
+    for (unsigned i = 0; i < this->length(); i++) {
+      if (this->get(i) == elem) {
+        return;
+      }
     }
 
+    ArrayList<A>::insert(elem, at);
+  }
 };
 
-
-#endif //OOPPROJECT_ARRAYSET_HPP
+#endif // TRAVELLERAPP_ARRAYSET_HPP

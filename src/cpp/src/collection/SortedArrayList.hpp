@@ -4,6 +4,7 @@
 #include "ArrayList.hpp"
 #include <iostream>
 
+///Not implemented
 template<class A>
 class SortedArrayList : public ArrayList<A> {
 

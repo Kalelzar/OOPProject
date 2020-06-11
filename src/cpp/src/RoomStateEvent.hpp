@@ -2,148 +2,121 @@
 // Created by Kalelzar on 30/03/2020.
 //
 
-
-
 #ifndef OOPPROJECT_ROOMSTATEEVENT_HPP
 #define OOPPROJECT_ROOMSTATEEVENT_HPP
 
-#include "Room.hpp"
 #include "Date.hpp"
+#include "Room.hpp"
 
 namespace Hotel {
 
-    /**
-     * Describes the state a room is in.
-     * A room is either free, taken or unavailable.
-     * Only a free room can be checked-into.
-     * Only a taken room can be checked-out of.
-     * Only a free room may be marked unavailable.
-     * If state is unknown then something went horribly wrong.
-     */
-    enum class RoomState {
-        FREE,
-        TAKEN,
-        WAS_TAKEN,
-        UNAVAILABLE,
-        UNKNOWN = -1
-    };
+/**
+ * Describes the state a room is in.
+ * A room is either free, taken or unavailable.
+ * Only a free room can be checked-into.
+ * Only a taken room can be checked-out of.
+ * Only a free room may be marked unavailable.
+ * If state is unknown then something went horribly wrong.
+ */
+enum class RoomState { FREE, TAKEN, WAS_TAKEN, UNAVAILABLE, UNKNOWN = -1 };
 
-    class RoomStateEvent {
-    private:
-        char *note{};
+class RoomStateEvent {
+private:
+  char *note{};
 
-        /**
-         * Frees the memory associated with the note
-         */
-        void freeNote() {
-            delete[] note;
-        }
+  /**
+   * Frees the memory associated with the note
+   */
+  void freeNote() { delete[] note; }
 
-        /**
-         * Safely copies a different room state event to this one
-         * @param other the room state event to copy
-         */
-        void copy(RoomStateEvent const &other);
+  /**
+   * Safely copies a different room state event to this one
+   * @param other the room state event to copy
+   */
+  void copy(RoomStateEvent const &other);
 
-        void init(RoomState const &_state,
-                  Room const &_room,
-                  Date const &_from,
-                  Date const &_to,
-                  const char *_note,
-                  int _extra);
+  /// Initialize the event
+  void init(RoomState const &_state, Room const &_room, Date const &_from,
+            Date const &_to, const char *_note, int _extra);
 
-    public:
+public:
+  RoomState state;
+  Room room;
+  Date from;
+  Date to;
+  int extra;
 
+  RoomStateEvent();
 
-        RoomState state;
-        Room room;
-        Date from;
-        Date to;
-        int extra;
+  RoomStateEvent(RoomState const &_state, Room const &_room, Date const &_from,
+                 Date const &_to);
 
-        RoomStateEvent();
+  RoomStateEvent(RoomState const &_state, Room const &_room, Date const &_from,
+                 Date const &_to, const char *_note, int extra);
 
-        RoomStateEvent(RoomState const &_state,
-                       Room const &_room,
-                       Date const &_from,
-                       Date const &_to);
+  RoomStateEvent(RoomStateEvent const &other);
 
-        RoomStateEvent(RoomState const &_state,
-                       Room const &_room,
-                       Date const &_from,
-                       Date const &_to,
-                       const char *_note,
-                       int extra);
+  RoomStateEvent &operator=(RoomStateEvent const &other);
 
+  ~RoomStateEvent() { freeNote(); }
 
-        RoomStateEvent(RoomStateEvent const &other);
+  /**
+   * Set the note attached to this room state event
+   * @param note the note
+   */
+  void setNote(const char *note);
 
-        RoomStateEvent &operator=(RoomStateEvent const &other);
+  /**
+   * The note attached to this room state event
+   * @return the note
+   */
+  char *getNote() const { return note; }
 
-        ~RoomStateEvent() {
-            freeNote();
-        }
+  bool operator==(RoomStateEvent const &other) const;
 
-        /**
-         * Set the note attached to this room state event
-         * @param note the note
-         */
-        void setNote(const char *note);
+  bool operator!=(RoomStateEvent const &other) const;
 
-        /**
-         * The note attached to this room state event
-         * @return the note
-         */
-        char *getNote() const { return note; }
+  bool operator>(RoomStateEvent const &other) const;
 
+  bool operator>=(RoomStateEvent const &other) const;
 
-        bool operator==(RoomStateEvent const &other) const;
+  bool operator<(RoomStateEvent const &other) const;
 
-        bool operator!=(RoomStateEvent const &other) const;
+  bool operator<=(RoomStateEvent const &other) const;
 
-        bool operator>(RoomStateEvent const &other) const;
+  friend std::ostream &operator<<(std::ostream &out,
+                                  RoomStateEvent const &rse) {
+    switch (rse.state) {
+    case RoomState::FREE:
+      out << "free ";
+      break;
+    case RoomState::TAKEN:
+    case RoomState::WAS_TAKEN:
+      out << "checkin ";
+      break;
+    case RoomState::UNAVAILABLE:
+      out << "unavailable ";
+      break;
+    case RoomState::UNKNOWN:
+      out << "unknown ";
+      break;
+    }
 
-        bool operator>=(RoomStateEvent const &other) const;
+    out << rse.room.id << " " << rse.from << " " << rse.to << " \""
+        << rse.getNote() << "\"";
 
-        bool operator<(RoomStateEvent const &other) const;
+    if (rse.extra != -1) {
+      out << " " << rse.extra;
+    }
 
-        bool operator<=(RoomStateEvent const &other) const;
+    out << std::endl;
+    if (rse.state == RoomState::WAS_TAKEN) {
+      out << "checkout " << rse.room.id << std::endl;
+    }
+    return out;
+  }
+};
 
-        friend std::ostream& operator<<(std::ostream& out,
-                                        RoomStateEvent const& rse) {
-            switch(rse.state){
-            case RoomState::FREE:
-                out<<"free ";
-                break;
-            case RoomState::TAKEN:
-            case RoomState::WAS_TAKEN:
-                out<<"checkin ";
-                break;
-            case RoomState::UNAVAILABLE:
-                out<<"unavailable ";
-                break;
-            case RoomState::UNKNOWN:
-                out<<"unknown ";
-                break;
-            }
+} // namespace Hotel
 
-            out<<rse.room.id<<" "<<rse.from<<" "
-               <<rse.to<<" \""<<rse.getNote()<<"\"";
-
-            if(rse.extra != -1){
-                out<<" "<<rse.extra;
-            }
-
-            out<<std::endl;
-            if(rse.state == RoomState::WAS_TAKEN){
-                out<<"checkout "<<rse.room.id<<std::endl;
-            }
-            return out;
-        }
-
-    };
-
-
-}
-
-#endif //OOPPROJECT_ROOMSTATEEVENT_HPP
+#endif // OOPPROJECT_ROOMSTATEEVENT_HPP

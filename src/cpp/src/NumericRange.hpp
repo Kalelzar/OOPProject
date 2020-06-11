@@ -3,6 +3,7 @@
 
 #include <functional>
 
+//An inclusive range of numbers
 class NumericRange{
 
 private:
@@ -15,6 +16,7 @@ public:
     NumericRange();
     NumericRange(int _lower, int _upper);
 
+    ///Apply the given function to all numbers in the range
     void iterate(std::function<void(int)> consumer) const;
 
 };

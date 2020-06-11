@@ -2,6 +2,7 @@
 #include "../src/collection/RangeBinaryTree.hpp"
 #include "../src/collection/BinaryNode.hpp"
 
+using namespace std;
 
 TEST(RangeBinaryTree, Populate) {
     RangeBinaryTree<int, int> tree;

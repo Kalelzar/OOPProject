@@ -32,11 +32,14 @@ TEST(HashMap, Remove) {
 TEST(HashMap, GetEntries) {
     HashMap<int, int> map;
     map.put(2, 5);
-    Entry<int, int> entry = {2, 5, false};
+    Entry<int, int> entry = {2, 5};
     bool found = false;
     for (unsigned i = 0; i < map.capacity(); i++) {
-        found = map.underlying()[i] == entry;
-        if (found) break;
+      if (!map.underlying()[i])
+        continue;
+      found = *map.underlying()[i] == entry;
+      if (found)
+        break;
     }
     ASSERT_TRUE(found);
 }
@@ -44,18 +47,24 @@ TEST(HashMap, GetEntries) {
 TEST(HashMap, Clear) {
     HashMap<int, int> map;
     map.put(2, 5);
-    Entry<int, int> entry = {2, 5, false};
+    Entry<int, int> entry = {2, 5};
     bool found = false;
     for (unsigned i = 0; i < map.capacity(); i++) {
-        found = map.underlying()[i] == entry;
-        if (found) break;
+        if (!map.underlying()[i]) continue;
+        found = *map.underlying()[i] == entry;
+      if (found)
+        break;
     }
     ASSERT_TRUE(found);
     map.clear();
     found = false;
     for (unsigned i = 0; i < map.capacity(); i++) {
-        found = map.underlying()[i] == entry;
-        if (found) break;
+      if (!map.underlying()[i])
+        continue;
+
+      found = *map.underlying()[i] == entry;
+      if (found)
+        break;
     }
     ASSERT_FALSE(found);
 }

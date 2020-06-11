@@ -1,64 +1,21 @@
 #ifndef OOPPROJECT_HTLPRETTYPRINTER_HPP
 #define OOPPROJECT_HTLPRETTYPRINTER_HPP
 
-#include "../collection/ArrayList.hpp"
 #include "../Room.hpp"
 #include "../RoomStateEvent.hpp"
+#include "../collection/ArrayList.hpp"
 
 namespace Hotel {
-    class HTLPrettyPrinter {
+class HTLPrettyPrinter {
 
-    private:
+private:
+public:
+  static void printRooms(std::unique_ptr<ArrayList<Room>> const &rooms,
+                         std::ostream *to);
 
-    public:
-
-        static void printRooms(unique_ptr<ArrayList<Room>> const& rooms, std::ostream* to){
-            if(rooms->length()==0) return;
-            unique_ptr<ArrayList<Room>> sorted = rooms
-                ->sort([](Room r1, Room r2){return r1.id < r2.id;});
-            int ind = 0;
-            int startid = sorted->get(0).id;
-            int cbeds  = sorted->get(0).beds;
-            int curid = startid;
-            do {
-                int nid = sorted->get(ind).id;
-                int beds = sorted->get(ind).beds;
-
-                ind++;
-                if(abs(curid-nid) <= 1 && beds == cbeds){
-
-                    curid=nid;
-                }else{
-
-                    if(startid == curid) {
-                        *to<<"add "<<curid<<" "<<cbeds<<std::endl;
-                    }else{
-                        *to<<"add "<<startid<<"-"<<curid<<" "<<cbeds<<std::endl;
-                    }
-                    cbeds = beds;
-                    startid = nid;
-                    curid = nid;
-                }
-                if(ind >= sorted->length()){
-
-                    if(startid == curid) {
-                        *to<<"add "<<curid<<" "<<cbeds<<std::endl;
-                    }else{
-                        *to<<"add "<<startid<<"-"<<curid<<" "<<cbeds<<std::endl;
-                    }
-                }
-            }while(ind < sorted->length());
-        }
-
-        static void printState(unique_ptr<ArrayList<shared_ptr<RoomStateEvent>>> const& rooms, std::ostream* to){
-            if(rooms->length()==0) return;
-            unique_ptr<ArrayList<shared_ptr<RoomStateEvent>>> sorted = rooms
-                ->sort([](shared_ptr<RoomStateEvent> const& r1, shared_ptr<RoomStateEvent> const& r2){return r1->to < r2->from;});
-            sorted
-                ->foreach([to](shared_ptr<RoomStateEvent> const& rse) mutable {
-                              *to<<*rse;
-                          });
-       }
-    };
-}
-#endif //OOPPROJECT_HTLPRETTYPRINTER_HPP
+  static void printState(
+      std::unique_ptr<ArrayList<std::shared_ptr<RoomStateEvent>>> const &rooms,
+      std::ostream *to);
+};
+} // namespace Hotel
+#endif // OOPPROJECT_HTLPRETTYPRINTER_HPP
