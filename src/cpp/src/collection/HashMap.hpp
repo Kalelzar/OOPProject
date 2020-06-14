@@ -217,7 +217,7 @@ private:
    */
   void free() {
     // LOG(INFO, "Free HashMap");
-    if (!array || !this)
+    if (!array)
       return;
     for (unsigned i = 0; i < capacity(); i++) {
       if (array[i])
